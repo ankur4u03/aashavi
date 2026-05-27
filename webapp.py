@@ -1,13 +1,14 @@
 import streamlit as st
-from google import genai
+import google.generativeai as genai
 
 # ============================================
 # GEMINI API
 # ============================================
 
-client = genai.Client(
-    api_key="AIzaSyAXsEN8dC7z-PhNzLBB-Lk0Db3KfxNq8hI"
+genai.configure(
+    api_key=st.secrets["AIzaSyAXsEN8dC7z-PhNzLBB-Lk0Db3KfxNq8hI"]
 )
+
 
 # ============================================
 # PAGE CONFIG
@@ -226,22 +227,16 @@ if prompt:
 
     with st.chat_message("assistant"):
 
-        try:
+    try:
 
-            response = client.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=prompt
-            )
+        model = genai.GenerativeModel("gemini-2.5-flash")
 
-            reply = response.text
+        response = model.generate_content(prompt)
 
-            st.markdown(reply)
+        reply = response.text
 
-            st.session_state.messages.append({
-                "role": "assistant",
-                "content": reply
-            })
+        st.markdown(reply)
 
-        except Exception as e:
+    except Exception as e:
 
-            st.error(f"Error: {e}")
+        st.error(f"Error: {e}")
