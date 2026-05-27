@@ -19,7 +19,7 @@ genai.configure(
     api_key="AIzaSyAxk68b44Dof-PWUjir9Sm3KBp2XE7hBcU"
 )
 
-model = genai.GenerativeModel("gemini-2.5-flash")
+model = genai.GenerativeModel("gemini-1.5-flash")
 
 # ==========================================
 # CUSTOM CSS
