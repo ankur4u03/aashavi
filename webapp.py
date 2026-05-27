@@ -1,9 +1,9 @@
 import streamlit as st
 import google.generativeai as genai
 
-# =========================
+# ==========================================
 # PAGE CONFIG
-# =========================
+# ==========================================
 
 st.set_page_config(
     page_title="Gemini AI Assistant",
@@ -11,9 +11,9 @@ st.set_page_config(
     layout="wide"
 )
 
-# =========================
+# ==========================================
 # GEMINI API
-# =========================
+# ==========================================
 
 genai.configure(
     api_key="AIzaSyAXsEN8dC7z-PhNzLBB-Lk0Db3KfxNq8hI"
@@ -21,33 +21,49 @@ genai.configure(
 
 model = genai.GenerativeModel("gemini-2.5-flash")
 
-# =========================
+# ==========================================
 # CUSTOM CSS
-# =========================
+# ==========================================
 
 st.markdown("""
 <style>
 
+/* GLOBAL */
+
+html, body, [class*="css"] {
+    font-family: 'Poppins', sans-serif;
+}
+
 /* MAIN BACKGROUND */
+
 .stApp {
-    background: linear-gradient(to bottom right, #020617, #0f172a);
+    background: linear-gradient(135deg, #020617, #0f172a);
     color: white;
 }
 
-/* REMOVE STREAMLIT HEADER */
+/* REMOVE STREAMLIT DEFAULT */
+
 header {
     visibility: hidden;
 }
 
-/* REMOVE FOOTER */
 footer {
     visibility: hidden;
 }
 
-/* MAIN TITLE */
+/* MAIN CONTAINER */
+
+.main .block-container {
+    padding-top: 2rem;
+    padding-bottom: 8rem;
+    max-width: 1000px;
+}
+
+/* TITLE */
+
 .main-title {
     text-align: center;
-    font-size: 60px;
+    font-size: 64px;
     font-weight: 800;
     color: white;
     margin-top: 20px;
@@ -56,30 +72,35 @@ footer {
 
 .sub-title {
     text-align: center;
-    font-size: 20px;
     color: #94a3b8;
+    font-size: 22px;
     margin-bottom: 40px;
 }
 
 /* CHAT MESSAGE */
+
 .stChatMessage {
-    background: rgba(15, 23, 42, 0.95);
+    background: rgba(15, 23, 42, 0.9);
     border: 1px solid rgba(255,255,255,0.08);
-    padding: 16px;
-    border-radius: 18px;
-    margin-bottom: 16px;
+    padding: 18px;
+    border-radius: 20px;
+    margin-bottom: 18px;
+    backdrop-filter: blur(12px);
 }
 
-/* INPUT BOX FIX */
+/* CHAT INPUT */
+
 .stChatInput {
     position: fixed;
     bottom: 20px;
-    left: 320px;
-    right: 30px;
-    background: transparent;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(900px, calc(100% - 30px));
+    z-index: 999;
 }
 
-/* TEXTAREA */
+/* INPUT TEXTAREA */
+
 [data-testid="stChatInput"] textarea {
     background: rgba(15, 23, 42, 0.95) !important;
     color: white !important;
@@ -89,13 +110,22 @@ footer {
     font-size: 17px !important;
 }
 
+/* INPUT BOX FOCUS */
+
+[data-testid="stChatInput"] textarea:focus {
+    border: 1px solid #7c3aed !important;
+    box-shadow: 0 0 15px rgba(124,58,237,0.4);
+}
+
 /* SIDEBAR */
+
 section[data-testid="stSidebar"] {
     background: #081126;
     border-right: 1px solid rgba(255,255,255,0.08);
 }
 
-/* SIDEBAR TEXT */
+/* SIDEBAR TITLE */
+
 .sidebar-title {
     font-size: 34px;
     font-weight: bold;
@@ -110,6 +140,7 @@ section[data-testid="stSidebar"] {
 }
 
 /* BUTTON */
+
 .stButton button {
     width: 100%;
     border-radius: 14px;
@@ -119,18 +150,48 @@ section[data-testid="stSidebar"] {
     color: white;
     font-size: 18px;
     font-weight: bold;
+    transition: 0.3s;
 }
 
 .stButton button:hover {
-    opacity: 0.9;
+    transform: scale(1.02);
+    opacity: 0.95;
+}
+
+/* MOBILE RESPONSIVE */
+
+@media (max-width: 768px) {
+
+    .main-title {
+        font-size: 46px !important;
+        line-height: 1.2;
+    }
+
+    .sub-title {
+        font-size: 18px !important;
+    }
+
+    .stChatInput {
+        width: calc(100% - 16px);
+        bottom: 10px;
+    }
+
+    .stChatMessage {
+        padding: 14px;
+    }
+
+    .main .block-container {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-# =========================
+# ==========================================
 # SIDEBAR
-# =========================
+# ==========================================
 
 with st.sidebar:
 
@@ -147,9 +208,9 @@ with st.sidebar:
         st.session_state.messages = []
         st.rerun()
 
-# =========================
+# ==========================================
 # HERO SECTION
-# =========================
+# ==========================================
 
 st.markdown("""
 <div class="main-title">
@@ -161,34 +222,43 @@ Fast • Smart • Modern AI Chatbot
 </div>
 """, unsafe_allow_html=True)
 
-# =========================
+# ==========================================
 # CHAT HISTORY
-# =========================
+# ==========================================
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# SHOW OLD CHATS
+# SHOW OLD MESSAGES
+
 for message in st.session_state.messages:
 
     with st.chat_message(message["role"]):
+
         st.markdown(message["content"])
 
-# =========================
-# CHAT INPUT
-# =========================
+# ==========================================
+# USER INPUT
+# ==========================================
 
 prompt = st.chat_input("Ask anything...")
 
 if prompt:
+
+    # SAVE USER MESSAGE
 
     st.session_state.messages.append({
         "role": "user",
         "content": prompt
     })
 
+    # SHOW USER MESSAGE
+
     with st.chat_message("user"):
+
         st.markdown(prompt)
+
+    # AI RESPONSE
 
     with st.chat_message("assistant"):
 
@@ -199,6 +269,8 @@ if prompt:
             reply = response.text
 
             st.markdown(reply)
+
+            # SAVE AI RESPONSE
 
             st.session_state.messages.append({
                 "role": "assistant",
