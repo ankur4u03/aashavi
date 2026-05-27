@@ -1,39 +1,40 @@
 import streamlit as st
 import google.generativeai as genai
 
-# ==========================================
+# =========================
 # GEMINI API KEY
-# ==========================================
+# =========================
 
 genai.configure(
     api_key="AIzaSyAO-SRIAMQvuUl1D7FCAd-3rAzKhkwnJTE"
 )
 
-# ==========================================
+# =========================
 # MODEL
-# ==========================================
+# =========================
 
-model = genai.GenerativeModel("gemini-pro")
+model = genai.GenerativeModel(
+    "gemini-1.5-flash-latest"
+)
 
-# ==========================================
+# =========================
 # PAGE CONFIG
-# ==========================================
+# =========================
 
 st.set_page_config(
     page_title="Gemini AI Assistant",
-    page_icon="🤖",
+    page_icon="✨",
     layout="wide"
 )
 
-# ==========================================
+# =========================
 # CUSTOM CSS
-# ==========================================
+# =========================
 
 st.markdown("""
 <style>
 
 /* HIDE STREAMLIT */
-
 #MainMenu {
     visibility: hidden;
 }
@@ -131,13 +132,13 @@ section[data-testid="stSidebar"] {
 </style>
 """, unsafe_allow_html=True)
 
-# ==========================================
+# =========================
 # SIDEBAR
-# ==========================================
+# =========================
 
 with st.sidebar:
 
-    st.title("🤖 Gemini AI")
+    st.title("🧠 Gemini AI")
 
     st.write("Modern AI Chatbot")
     st.write("Made by Ankur 🚀")
@@ -150,9 +151,9 @@ with st.sidebar:
 
         st.rerun()
 
-# ==========================================
+# =========================
 # TITLE
-# ==========================================
+# =========================
 
 st.markdown(
     """
@@ -172,17 +173,14 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# ==========================================
+# =========================
 # CHAT HISTORY
-# ==========================================
+# =========================
 
 if "messages" not in st.session_state:
-
     st.session_state.messages = []
 
-# ==========================================
 # SHOW OLD CHATS
-# ==========================================
 
 for message in st.session_state.messages:
 
@@ -190,15 +188,15 @@ for message in st.session_state.messages:
 
         st.markdown(message["content"])
 
-# ==========================================
+# =========================
 # USER INPUT
-# ==========================================
+# =========================
 
 prompt = st.chat_input("Ask anything...")
 
-# ==========================================
+# =========================
 # CHATBOT
-# ==========================================
+# =========================
 
 if prompt:
 
