@@ -6,7 +6,7 @@ from google import genai
 # =========================
 
 client = genai.Client(
-    api_key="AIzaSyAO-SRIAMQvuUl1D7FCAd-3rAzKhkwnJTE"
+    api_key="YOUR_GEMINI_API_KEY"
 )
 
 # =========================
@@ -20,11 +20,51 @@ st.set_page_config(
 )
 
 # =========================
-# CUSTOM CSS
+# HIDE STREAMLIT BRANDING
 # =========================
 
-st.markdown("""
+hide_streamlit_style = """
 <style>
+
+/* Hide Streamlit Branding */
+
+#MainMenu {
+    visibility: hidden;
+}
+
+footer {
+    visibility: hidden;
+}
+
+header {
+    visibility: hidden;
+}
+
+/* Hide Deploy Button */
+
+[data-testid="stToolbar"] {
+    display: none;
+}
+
+/* Hide Decoration */
+
+[data-testid="stDecoration"] {
+    display: none;
+}
+
+/* Hide Status Widget */
+
+[data-testid="stStatusWidget"] {
+    display: none;
+}
+
+/* Hide Bottom Right Buttons */
+
+button[kind="header"] {
+    display: none;
+}
+
+/* Full App Style */
 
 html, body, [class*="css"] {
     font-family: 'Poppins', sans-serif;
@@ -111,7 +151,9 @@ section[data-testid="stSidebar"] {
 }
 
 </style>
-""", unsafe_allow_html=True)
+"""
+
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 # =========================
 # SIDEBAR
@@ -174,6 +216,7 @@ prompt = st.chat_input("Ask anything...")
 if prompt:
 
     # USER MESSAGE
+
     st.session_state.messages.append({
         "role": "user",
         "content": prompt
@@ -184,6 +227,7 @@ if prompt:
         st.markdown(prompt)
 
     # AI RESPONSE
+
     with st.chat_message("assistant"):
 
         response = client.models.generate_content(
@@ -196,6 +240,7 @@ if prompt:
         st.markdown(reply)
 
     # SAVE RESPONSE
+
     st.session_state.messages.append({
         "role": "assistant",
         "content": reply
