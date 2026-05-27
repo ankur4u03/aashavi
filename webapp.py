@@ -13,12 +13,10 @@ genai.configure(
 # MODEL
 # =========================
 
-model = genai.GenerativeModel(
-    model_name="gemini-1.5-flash"
-)
+model = genai.GenerativeModel("gemini-1.5-flash")
 
 # =========================
-# PAGE CONFIG
+# PAGE
 # =========================
 
 st.set_page_config(
@@ -28,7 +26,7 @@ st.set_page_config(
 )
 
 # =========================
-# CUSTOM CSS
+# CSS
 # =========================
 
 st.markdown("""
@@ -39,18 +37,13 @@ footer {visibility:hidden;}
 header {visibility:hidden;}
 
 .stApp{
-    background: linear-gradient(
-        135deg,
-        #0f172a,
-        #111827,
-        #1e293b
-    );
+    background: linear-gradient(135deg,#0f172a,#111827,#1e293b);
     color:white;
 }
 
 .main-title{
     text-align:center;
-    font-size:60px;
+    font-size:55px;
     font-weight:bold;
     margin-top:20px;
 }
@@ -63,7 +56,7 @@ header {visibility:hidden;}
 }
 
 .stChatMessage{
-    background: rgba(255,255,255,0.05);
+    background:rgba(255,255,255,0.05);
     border-radius:20px;
     padding:15px;
     margin-bottom:15px;
@@ -77,29 +70,8 @@ header {visibility:hidden;}
     width:70%;
 }
 
-[data-testid="stChatInput"] textarea{
-    background:rgba(255,255,255,0.08)!important;
-    color:white!important;
-    border-radius:20px!important;
-}
-
 </style>
 """, unsafe_allow_html=True)
-
-# =========================
-# SIDEBAR
-# =========================
-
-with st.sidebar:
-
-    st.title("🤖 Gemini AI")
-
-    st.write("Made by Ankur 🚀")
-
-    if st.button("🗑 Clear Chat"):
-
-        st.session_state.messages = []
-        st.rerun()
 
 # =========================
 # TITLE
@@ -116,15 +88,11 @@ st.markdown(
 )
 
 # =========================
-# SESSION
+# CHAT HISTORY
 # =========================
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
-
-# =========================
-# SHOW CHATS
-# =========================
 
 for message in st.session_state.messages:
 
@@ -150,7 +118,6 @@ if prompt:
     })
 
     with st.chat_message("user"):
-
         st.markdown(prompt)
 
     with st.chat_message("assistant"):
@@ -170,4 +137,4 @@ if prompt:
 
         except Exception as e:
 
-            st.error(e)
+            st.error(f"Error: {e}")
