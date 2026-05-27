@@ -1,7 +1,7 @@
 from google import genai
 
 # API KEY
-client = genai.Client(api_key="AIzaSyAXsEN8dC7z-PhNzLBB-Lk0Db3KfxNq8hI")
+client = genai.Client(api_key="AIzaSyAxk68b44Dof-PWUjir9Sm3KBp2XE7hBcU")
 
 print("Gemini AI Chatbot Started!")
 print("Type 'exit' to close.\n")

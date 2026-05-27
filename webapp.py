@@ -16,7 +16,7 @@ st.set_page_config(
 # ==========================================
 
 genai.configure(
-    api_key="AIzaSyAXsEN8dC7z-PhNzLBB-Lk0Db3KfxNq8hI"
+    api_key="AIzaSyAxk68b44Dof-PWUjir9Sm3KBp2XE7hBcU"
 )
 
 model = genai.GenerativeModel("gemini-2.5-flash")
