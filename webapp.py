@@ -1,13 +1,15 @@
 import streamlit as st
-from google import genai
+import google.generativeai as genai
 
 # =========================
-# GEMINI CLIENT
+# GEMINI API
 # =========================
 
-client = genai.Client(
-    api_key="YOUR_GEMINI_API_KEY"
+genai.configure(
+    api_key="AIzaSyAO-SRIAMQvuUl1D7FCAd-3rAzKhkwnJTE"
 )
+
+model = genai.GenerativeModel("gemini-1.5-flash")
 
 # =========================
 # PAGE CONFIG
@@ -20,140 +22,48 @@ st.set_page_config(
 )
 
 # =========================
-# HIDE STREAMLIT BRANDING
+# HIDE STREAMLIT THINGS
 # =========================
 
-hide_streamlit_style = """
+st.markdown("""
 <style>
 
-/* Hide Streamlit Branding */
-
-#MainMenu {
-    visibility: hidden;
-}
-
-footer {
-    visibility: hidden;
-}
-
-header {
-    visibility: hidden;
-}
-
-/* Hide Deploy Button */
-
-[data-testid="stToolbar"] {
-    display: none;
-}
-
-/* Hide Decoration */
-
-[data-testid="stDecoration"] {
-    display: none;
-}
-
-/* Hide Status Widget */
-
-[data-testid="stStatusWidget"] {
-    display: none;
-}
-
-/* Hide Bottom Right Buttons */
-
-button[kind="header"] {
-    display: none;
-}
-
-/* Full App Style */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+.stDeployButton {display:none;}
 
 html, body, [class*="css"] {
-    font-family: 'Poppins', sans-serif;
+    font-family: sans-serif;
 }
 
-.stApp {
-    background: linear-gradient(
-        135deg,
-        #0f172a,
-        #111827,
-        #1e293b
-    );
-    color: white;
+.stApp{
+    background: linear-gradient(135deg,#0f172a,#111827,#1e293b);
+    color:white;
 }
 
-/* MAIN TITLE */
-
-.main-title {
-    text-align: center;
-    font-size: 60px;
-    font-weight: bold;
-    color: white;
-    margin-top: 20px;
+.main-title{
+    text-align:center;
+    font-size:55px;
+    font-weight:bold;
+    color:white;
 }
 
-.subtitle {
-    text-align: center;
-    color: #94a3b8;
-    font-size: 20px;
-    margin-bottom: 40px;
+.subtitle{
+    text-align:center;
+    color:#cbd5e1;
+    margin-bottom:30px;
 }
 
-/* CHAT MESSAGE */
-
-.stChatMessage {
+.stChatMessage{
     background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    backdrop-filter: blur(12px);
-    border-radius: 20px;
-    padding: 15px;
-    margin-bottom: 15px;
-}
-
-/* INPUT BOX */
-
-[data-testid="stChatInput"] {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60%;
-}
-
-[data-testid="stChatInput"] textarea {
-    background: rgba(255,255,255,0.08) !important;
-    color: white !important;
-    border-radius: 20px !important;
-    border: 1px solid rgba(255,255,255,0.1) !important;
-    padding: 15px !important;
-}
-
-/* SIDEBAR */
-
-section[data-testid="stSidebar"] {
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(15px);
-    border-right: 1px solid rgba(255,255,255,0.1);
-}
-
-/* BUTTON */
-
-.stButton button {
-    width: 100%;
-    border-radius: 15px;
-    background: #2563eb;
-    color: white;
-    border: none;
-    padding: 10px;
-    font-size: 16px;
-}
-
-.stButton button:hover {
-    background: #1d4ed8;
+    border-radius:20px;
+    padding:10px;
+    margin-bottom:10px;
 }
 
 </style>
-"""
-
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
 # =========================
 # SIDEBAR
@@ -162,13 +72,9 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 with st.sidebar:
 
     st.title("🤖 Gemini AI")
-
-    st.write("Modern AI Chatbot")
     st.write("Made by Ankur 🚀")
 
-    st.divider()
-
-    if st.button("🗑 Clear Chat"):
+    if st.button("Clear Chat"):
         st.session_state.messages = []
         st.rerun()
 
@@ -182,7 +88,7 @@ st.markdown(
 )
 
 st.markdown(
-    "<div class='subtitle'>Fast • Smart • Modern AI Chatbot powered by Gemini 🚀</div>",
+    "<div class='subtitle'>Fast • Smart • AI Chatbot</div>",
     unsafe_allow_html=True
 )
 
@@ -193,55 +99,42 @@ st.markdown(
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# =========================
-# SHOW OLD MESSAGES
-# =========================
+for message in st.session_state.messages:
 
-for msg in st.session_state.messages:
-
-    with st.chat_message(msg["role"]):
-
-        st.markdown(msg["content"])
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
 # =========================
-# USER INPUT
+# INPUT
 # =========================
 
 prompt = st.chat_input("Ask anything...")
 
-# =========================
-# CHAT LOGIC
-# =========================
-
 if prompt:
 
-    # USER MESSAGE
-
     st.session_state.messages.append({
-        "role": "user",
-        "content": prompt
+        "role":"user",
+        "content":prompt
     })
 
     with st.chat_message("user"):
-
         st.markdown(prompt)
-
-    # AI RESPONSE
 
     with st.chat_message("assistant"):
 
-        response = client.models.generate_content(
-            model="gemini-2.5-flash-lite",
-            contents=prompt
-        )
+        try:
 
-        reply = response.text
+            response = model.generate_content(prompt)
 
-        st.markdown(reply)
+            reply = response.text
 
-    # SAVE RESPONSE
+            st.markdown(reply)
 
-    st.session_state.messages.append({
-        "role": "assistant",
-        "content": reply
-    })
+            st.session_state.messages.append({
+                "role":"assistant",
+                "content":reply
+            })
+
+        except Exception as e:
+
+            st.error(e)
