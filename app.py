@@ -1,58 +1,26 @@
-import streamlit as st
+from google import genai
 
-st.set_page_config(
-    page_title="Gemini AI Assistant",
-    page_icon="🤖",
-    layout="wide"
-)
+# API KEY
+client = genai.Client(api_key="AIzaSyAO-SRIAMQvuUl1D7FCAd-3rAzKhkwnJTE")
 
-st.markdown("""
-<style>
+print("Gemini AI Chatbot Started!")
+print("Type 'exit' to close.\n")
 
-#MainMenu {visibility: hidden;}
-footer {visibility: hidden;}
-header {visibility: hidden;}
+while True:
+    user_input = input("You: ")
 
-.stApp{
-    background: linear-gradient(135deg,#0f172a,#111827,#1e293b);
-    color:white;
-}
+    if user_input.lower() == "exit":
+        print("Chatbot Closed.")
+        break
 
-.main-title{
-    text-align:center;
-    font-size:55px;
-    font-weight:bold;
-    color:white;
-    margin-top:20px;
-}
+    try:
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=user_input
+        )
 
-.subtitle{
-    text-align:center;
-    color:#cbd5e1;
-    font-size:20px;
-    margin-bottom:40px;
-}
+        print("\nAI:", response.text)
+        print()
 
-</style>
-""", unsafe_allow_html=True)
-
-with st.sidebar:
-
-    st.title("🤖 Gemini AI")
-    st.write("Made by Ankur 🚀")
-
-    st.divider()
-
-    st.button("🗑 Clear Chat")
-
-st.markdown(
-    "<div class='main-title'>✨ Gemini AI Assistant</div>",
-    unsafe_allow_html=True
-)
-
-st.markdown(
-    "<div class='subtitle'>Fast • Smart • Modern AI Chatbot powered by Gemini 🚀</div>",
-    unsafe_allow_html=True
-)
-
-st.chat_input("Ask anything...")
+    except Exception as e:
+        print("Error:", e)
