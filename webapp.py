@@ -2,14 +2,16 @@ import streamlit as st
 import google.generativeai as genai
 
 # =========================
-# GEMINI API
+# GEMINI API CONFIG
 # =========================
 
 genai.configure(
     api_key="AIzaSyAO-SRIAMQvuUl1D7FCAd-3rAzKhkwnJTE"
 )
 
-model="gemini-2.5-flash"
+model = genai.GenerativeModel(
+    "models/gemini-1.5-flash"
+)
 
 # =========================
 # PAGE CONFIG
@@ -22,44 +24,100 @@ st.set_page_config(
 )
 
 # =========================
-# HIDE STREAMLIT THINGS
+# CUSTOM CSS
 # =========================
 
 st.markdown("""
 <style>
 
-#MainMenu {visibility: hidden;}
-footer {visibility: hidden;}
-header {visibility: hidden;}
-.stDeployButton {display:none;}
+#MainMenu {
+    visibility: hidden;
+}
+
+footer {
+    visibility: hidden;
+}
+
+header {
+    visibility: hidden;
+}
+
+.stDeployButton {
+    display:none;
+}
 
 html, body, [class*="css"] {
     font-family: sans-serif;
 }
 
-.stApp{
-    background: linear-gradient(135deg,#0f172a,#111827,#1e293b);
-    color:white;
+.stApp {
+    background: linear-gradient(
+        135deg,
+        #0f172a,
+        #111827,
+        #1e293b
+    );
+    color: white;
 }
 
-.main-title{
-    text-align:center;
-    font-size:55px;
-    font-weight:bold;
-    color:white;
+/* TITLE */
+
+.main-title {
+    text-align: center;
+    font-size: 55px;
+    font-weight: bold;
+    color: white;
+    margin-top: 20px;
 }
 
-.subtitle{
-    text-align:center;
-    color:#cbd5e1;
-    margin-bottom:30px;
+.subtitle {
+    text-align: center;
+    color: #cbd5e1;
+    font-size: 20px;
+    margin-bottom: 40px;
 }
 
-.stChatMessage{
+/* CHAT */
+
+.stChatMessage {
     background: rgba(255,255,255,0.05);
-    border-radius:20px;
-    padding:10px;
-    margin-bottom:10px;
+    border-radius: 20px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+/* INPUT BOX */
+
+[data-testid="stChatInput"] {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70%;
+}
+
+[data-testid="stChatInput"] textarea {
+    background: rgba(255,255,255,0.08) !important;
+    color: white !important;
+    border-radius: 20px !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+}
+
+/* SIDEBAR */
+
+section[data-testid="stSidebar"] {
+    background: rgba(255,255,255,0.05);
+}
+
+/* BUTTON */
+
+.stButton button {
+    width: 100%;
+    border-radius: 15px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 10px;
 }
 
 </style>
@@ -72,9 +130,13 @@ html, body, [class*="css"] {
 with st.sidebar:
 
     st.title("🤖 Gemini AI")
+
+    st.write("Modern AI Chatbot")
     st.write("Made by Ankur 🚀")
 
-    if st.button("Clear Chat"):
+    st.divider()
+
+    if st.button("🗑 Clear Chat"):
         st.session_state.messages = []
         st.rerun()
 
@@ -99,26 +161,40 @@ st.markdown(
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-for message in st.session_state.messages:
+# =========================
+# SHOW OLD MESSAGES
+# =========================
 
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+for msg in st.session_state.messages:
+
+    with st.chat_message(msg["role"]):
+
+        st.markdown(msg["content"])
 
 # =========================
-# INPUT
+# USER INPUT
 # =========================
 
 prompt = st.chat_input("Ask anything...")
 
+# =========================
+# CHATBOT LOGIC
+# =========================
+
 if prompt:
 
+    # USER MESSAGE
+
     st.session_state.messages.append({
-        "role":"user",
-        "content":prompt
+        "role": "user",
+        "content": prompt
     })
 
     with st.chat_message("user"):
+
         st.markdown(prompt)
+
+    # AI RESPONSE
 
     with st.chat_message("assistant"):
 
@@ -131,8 +207,8 @@ if prompt:
             st.markdown(reply)
 
             st.session_state.messages.append({
-                "role":"assistant",
-                "content":reply
+                "role": "assistant",
+                "content": reply
             })
 
         except Exception as e:
