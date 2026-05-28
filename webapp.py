@@ -2,9 +2,9 @@ import streamlit as st
 import os
 from groq import Groq
 
-# =========================
+# ======================
 # PAGE CONFIG
-# =========================
+# ======================
 
 st.set_page_config(
     page_title="Aashvi AI",
@@ -12,29 +12,29 @@ st.set_page_config(
     layout="wide"
 )
 
-# =========================
-# API KEY
-# =========================
+# ======================
+# GROQ API
+# ======================
 
 client = Groq(
     api_key=os.getenv("GROQ_API_KEY")
 )
 
-# =========================
+# ======================
 # SESSION STATE
-# =========================
+# ======================
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# =========================
-# CUSTOM CSS
-# =========================
+# ======================
+# CSS
+# ======================
 
 st.markdown("""
 <style>
 
-/* HIDE STREAMLIT DEFAULT */
+/* HIDE STREAMLIT */
 
 #MainMenu {
     visibility: hidden;
@@ -46,22 +46,6 @@ footer {
 
 header {
     visibility: hidden;
-}
-
-[data-testid="stToolbar"] {
-    display: none;
-}
-
-[data-testid="stDecoration"] {
-    display: none;
-}
-
-[data-testid="stStatusWidget"] {
-    display: none;
-}
-
-.stDeployButton {
-    display: none;
 }
 
 /* APP */
@@ -80,76 +64,70 @@ section[data-testid="stSidebar"] {
 }
 
 .sidebar-title {
-    font-size: 40px;
+    font-size: 38px;
     font-weight: bold;
     color: white;
-    margin-top: 10px;
     margin-bottom: 20px;
 }
 
 .new-chat-btn button {
     width: 100%;
-    border-radius: 14px;
+    border-radius: 12px;
     background: #2563eb;
     color: white;
     border: none;
-    font-size: 16px;
     padding: 12px;
+    font-size: 16px;
 }
 
-/* CHAT */
-
-.chat-container {
-    max-width: 850px;
-    margin: auto;
-    padding-bottom: 120px;
-}
+/* MAIN */
 
 .main-title {
     text-align: center;
-    font-size: 70px;
+    font-size: 72px;
     font-weight: bold;
+    margin-top: 60px;
     color: white;
-    margin-top: 70px;
 }
 
 .sub-title {
     text-align: center;
     color: #cbd5e1;
-    font-size: 28px;
-    margin-bottom: 50px;
+    font-size: 24px;
+    margin-bottom: 40px;
 }
 
-/* USER MESSAGE */
+/* CHAT */
 
-.user-message {
+.chat-wrap {
+    max-width: 900px;
+    margin: auto;
+    padding-bottom: 120px;
+}
+
+.user-msg {
     background: #2563eb;
-    padding: 16px 22px;
-    border-radius: 22px;
-    color: white;
+    padding: 14px 20px;
+    border-radius: 20px;
     width: fit-content;
     max-width: 70%;
     margin-left: auto;
-    margin-top: 18px;
-    margin-bottom: 18px;
-    font-size: 17px;
-    box-shadow: 0 0 20px rgba(37,99,235,0.4);
+    margin-top: 15px;
+    color: white;
+    font-size: 16px;
 }
 
-/* AI MESSAGE */
-
-.ai-message {
+.ai-msg {
     background: #111827;
-    padding: 18px 22px;
-    border-radius: 22px;
-    color: white;
+    padding: 14px 20px;
+    border-radius: 20px;
     width: fit-content;
-    max-width: 75%;
+    max-width: 70%;
     margin-right: auto;
-    margin-top: 18px;
-    margin-bottom: 18px;
-    font-size: 17px;
+    margin-top: 15px;
+    color: white;
     border: 1px solid #1f2937;
+    font-size: 16px;
 }
 
 /* INPUT */
@@ -164,27 +142,21 @@ section[data-testid="stSidebar"] {
 .stChatInput input {
     background: #111827 !important;
     color: white !important;
+    border-radius: 16px !important;
     border: 1px solid #374151 !important;
-    border-radius: 18px !important;
     padding: 18px !important;
-    font-size: 16px !important;
 }
 
 /* MOBILE */
 
 @media (max-width: 768px) {
 
-    section[data-testid="stSidebar"] {
-        width: 85vw !important;
-    }
-
     .main-title {
-        font-size: 52px;
-        margin-top: 40px;
+        font-size: 48px;
     }
 
     .sub-title {
-        font-size: 22px;
+        font-size: 20px;
     }
 
     .stChatInput {
@@ -193,19 +165,18 @@ section[data-testid="stSidebar"] {
         bottom: 10px !important;
     }
 
-    .user-message,
-    .ai-message {
+    .user-msg,
+    .ai-msg {
         max-width: 90%;
-        font-size: 16px;
     }
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-# =========================
+# ======================
 # SIDEBAR
-# =========================
+# ======================
 
 with st.sidebar:
 
@@ -223,14 +194,9 @@ with st.sidebar:
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-# =========================
+# ======================
 # MAIN TITLE
-# =========================
-
-st.markdown(
-    "<div class='chat-container'>",
-    unsafe_allow_html=True
-)
+# ======================
 
 if len(st.session_state.messages) == 0:
 
@@ -244,56 +210,52 @@ if len(st.session_state.messages) == 0:
         unsafe_allow_html=True
     )
 
-# =========================
-# SHOW CHAT
-# =========================
+# ======================
+# CHAT AREA
+# ======================
+
+st.markdown("<div class='chat-wrap'>", unsafe_allow_html=True)
 
 for message in st.session_state.messages:
 
     if message["role"] == "user":
 
         st.markdown(
-            f"<div class='user-message'>{message['content']}</div>",
+            f"<div class='user-msg'>{message['content']}</div>",
             unsafe_allow_html=True
         )
 
     else:
 
         st.markdown(
-            f"<div class='ai-message'>{message['content']}</div>",
+            f"<div class='ai-msg'>{message['content']}</div>",
             unsafe_allow_html=True
         )
 
-# =========================
+st.markdown("</div>", unsafe_allow_html=True)
+
+# ======================
 # USER INPUT
-# =========================
+# ======================
 
 prompt = st.chat_input("Ask anything")
 
-# =========================
+# ======================
 # RESPONSE
-# =========================
+# ======================
 
 if prompt:
 
-    # SAVE USER MESSAGE
+    # SAVE USER MSG
 
-    st.session_state.messages.append(
-        {
-            "role": "user",
-            "content": prompt
-        }
-    )
+    st.session_state.messages.append({
+        "role": "user",
+        "content": prompt
+    })
 
-    # GREETING SYSTEM
+    greetings = ["hi", "hello", "hey", "hii"]
 
-    greetings = [
-        "hi",
-        "hello",
-        "hey",
-        "hii",
-        "helo"
-    ]
+    # GREETING RESPONSE
 
     if prompt.lower().strip() in greetings:
 
@@ -310,7 +272,6 @@ if prompt:
                 messages=st.session_state.messages,
 
                 temperature=0.7,
-
                 max_tokens=1024
             )
 
@@ -320,15 +281,11 @@ if prompt:
 
             reply = f"Error: {e}"
 
-    # SAVE AI RESPONSE
+    # SAVE AI MSG
 
-    st.session_state.messages.append(
-        {
-            "role": "assistant",
-            "content": reply
-        }
-    )
+    st.session_state.messages.append({
+        "role": "assistant",
+        "content": reply
+    })
 
     st.rerun()
-
-st.markdown("</div>", unsafe_allow_html=True)
