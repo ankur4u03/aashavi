@@ -1,5 +1,5 @@
 # =========================================
-# AASHVI AI FULL PREMIUM VERSION
+# AASHVI AI FINAL PREMIUM VERSION
 # =========================================
 
 import streamlit as st
@@ -216,7 +216,7 @@ section[data-testid="stSidebar"] {
 
 .main-title {
     text-align: center;
-    font-size: 52px;
+    font-size: 50px;
     font-weight: 800;
     color: white;
     margin-top: 25px;
@@ -229,38 +229,11 @@ section[data-testid="stSidebar"] {
     margin-bottom: 35px;
 }
 
-/* CHAT */
-
-.user-message {
-    background: #2563eb;
-    color: white;
-    padding: 12px 16px;
-    border-radius: 18px 18px 4px 18px;
-    width: fit-content;
-    max-width: 75%;
-    margin-left: auto;
-    margin-bottom: 14px;
-    font-size: 14px;
-    line-height: 1.7;
-}
-
-.ai-message {
-    background: #1e293b;
-    color: white;
-    padding: 12px 16px;
-    border-radius: 18px 18px 18px 4px;
-    width: fit-content;
-    max-width: 75%;
-    margin-bottom: 14px;
-    font-size: 14px;
-    line-height: 1.7;
-}
-
-/* INPUT */
+/* CHAT INPUT */
 
 .stChatInput {
     position: fixed;
-    bottom: 18px;
+    bottom: 15px;
     left: 28%;
     width: 63%;
 }
@@ -270,7 +243,7 @@ section[data-testid="stSidebar"] {
     color: white !important;
     border: 1px solid rgba(255,255,255,0.08) !important;
     border-radius: 16px !important;
-    padding: 10px !important;
+    padding: 12px !important;
     font-size: 14px !important;
 }
 
@@ -283,7 +256,6 @@ section[data-testid="stSidebar"] {
     text-align: center;
     font-size: 12px;
     font-weight: 500;
-    margin-bottom: 12px;
     min-height: 42px;
 }
 
@@ -300,9 +272,10 @@ h1, h2, h3 {
 p, li {
     color: #e5e7eb !important;
     line-height: 1.8;
+    font-size: 15px;
 }
 
-/* CODE BLOCK */
+/* CODE */
 
 pre {
     background: #111827 !important;
@@ -494,7 +467,7 @@ if len(messages) == 0:
             )
 
 # =========================================
-# SHOW CHAT HISTORY
+# SHOW CHAT
 # =========================================
 
 for message in messages:
@@ -504,7 +477,7 @@ for message in messages:
         st.markdown(message["content"])
 
 # =========================================
-# CHAT INPUT
+# INPUT
 # =========================================
 
 user_input = st.chat_input(
@@ -521,9 +494,7 @@ if "prompt" in locals():
 
 if user_input:
 
-    # =========================================
     # AUTO CHAT RENAME
-    # =========================================
 
     if (
         st.session_state.current_chat.startswith("Chat")
@@ -560,9 +531,7 @@ if user_input:
 
         st.session_state.current_chat = title
 
-    # =========================================
     # SAVE USER MESSAGE
-    # =========================================
 
     st.session_state.chat_sessions[
         st.session_state.current_chat
@@ -585,9 +554,28 @@ if user_input:
 
         st.markdown(user_input)
 
-    # =========================================
-    # AI RESPONSE STREAMING
-    # =========================================
+    # SYSTEM PROMPT
+
+    system_prompt = {
+        "role": "system",
+        "content": """
+You are Aashvi AI.
+
+Always format responses beautifully.
+
+Rules:
+- Use headings
+- Use bullet points
+- Use spacing
+- Use short paragraphs
+- Use markdown formatting
+- Use code blocks for code
+- Never write giant paragraphs
+- Make answers look like ChatGPT
+"""
+    }
+
+    # AI RESPONSE
 
     with st.chat_message("assistant"):
 
@@ -601,8 +589,11 @@ if user_input:
 
                 model="llama-3.3-70b-versatile",
 
-                messages=st.session_state.chat_sessions[
-                    st.session_state.current_chat
+                messages=[
+                    system_prompt,
+                    *st.session_state.chat_sessions[
+                        st.session_state.current_chat
+                    ]
                 ],
 
                 temperature=0.7,
@@ -611,7 +602,7 @@ if user_input:
 
             reply = completion.choices[0].message.content
 
-            # STREAM EFFECT
+            # STREAMING EFFECT
 
             for word in reply.split():
 
