@@ -1,6 +1,7 @@
 import streamlit as st
 import os
 import time
+import sqlite3
 from groq import Groq
 
 # =========================================
@@ -15,6 +16,25 @@ st.set_page_config(
 )
 
 # =========================================
+# DATABASE
+# =========================================
+
+conn = sqlite3.connect("aashvi_ai.db", check_same_thread=False)
+
+cursor = conn.cursor()
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS chats (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    chat_name TEXT,
+    role TEXT,
+    content TEXT
+)
+""")
+
+conn.commit()
+
+# =========================================
 # GROQ CLIENT
 # =========================================
 
@@ -23,18 +43,71 @@ client = Groq(
 )
 
 # =========================================
+# LOAD CHATS FROM DB
+# =========================================
+
+def load_chats():
+
+    cursor.execute("SELECT DISTINCT chat_name FROM chats")
+
+    chat_names = cursor.fetchall()
+
+    chat_sessions = {}
+
+    for name in chat_names:
+
+        chat_name = name[0]
+
+        cursor.execute(
+            "SELECT role, content FROM chats WHERE chat_name=?",
+            (chat_name,)
+        )
+
+        messages = cursor.fetchall()
+
+        chat_sessions[chat_name] = []
+
+        for msg in messages:
+
+            chat_sessions[chat_name].append(
+                {
+                    "role": msg[0],
+                    "content": msg[1]
+                }
+            )
+
+    if not chat_sessions:
+
+        chat_sessions["New Chat"] = []
+
+    return chat_sessions
+
+# =========================================
+# SAVE MESSAGE
+# =========================================
+
+def save_message(chat_name, role, content):
+
+    cursor.execute(
+        "INSERT INTO chats (chat_name, role, content) VALUES (?, ?, ?)",
+        (chat_name, role, content)
+    )
+
+    conn.commit()
+
+# =========================================
 # SESSION STATE
 # =========================================
 
 if "chat_sessions" not in st.session_state:
 
-    st.session_state.chat_sessions = {
-        "New Chat": []
-    }
+    st.session_state.chat_sessions = load_chats()
 
 if "current_chat" not in st.session_state:
 
-    st.session_state.current_chat = "New Chat"
+    st.session_state.current_chat = list(
+        st.session_state.chat_sessions.keys()
+    )[0]
 
 # =========================================
 # CUSTOM CSS
@@ -42,8 +115,6 @@ if "current_chat" not in st.session_state:
 
 st.markdown("""
 <style>
-
-/* HIDE STREAMLIT */
 
 #MainMenu {
     visibility: hidden;
@@ -61,14 +132,10 @@ header {
     display: none;
 }
 
-/* APP */
-
 .stApp {
     background: #0b1120;
     color: white;
 }
-
-/* SIDEBAR */
 
 section[data-testid="stSidebar"] {
     background: #111827;
@@ -77,8 +144,6 @@ section[data-testid="stSidebar"] {
     border-right: 1px solid rgba(255,255,255,0.06);
 }
 
-/* LOGO */
-
 .logo {
     font-size: 22px;
     font-weight: 700;
@@ -86,8 +151,6 @@ section[data-testid="stSidebar"] {
     margin-top: 8px;
     margin-bottom: 25px;
 }
-
-/* BUTTON */
 
 .stButton button {
     width: 100%;
@@ -107,8 +170,6 @@ section[data-testid="stSidebar"] {
     background: #334155;
 }
 
-/* RECENT */
-
 .recent-title {
     color: #94a3b8;
     font-size: 12px;
@@ -116,8 +177,6 @@ section[data-testid="stSidebar"] {
     margin-bottom: 12px;
     padding-left: 5px;
 }
-
-/* MAIN TITLE */
 
 .main-title {
     text-align: center;
@@ -133,8 +192,6 @@ section[data-testid="stSidebar"] {
     font-size: 16px;
     margin-bottom: 35px;
 }
-
-/* CHAT */
 
 .user-message {
     background: #2563eb;
@@ -159,8 +216,6 @@ section[data-testid="stSidebar"] {
     font-size: 14px;
 }
 
-/* INPUT */
-
 .stChatInput {
     position: fixed;
     bottom: 18px;
@@ -177,8 +232,6 @@ section[data-testid="stSidebar"] {
     font-size: 14px !important;
 }
 
-/* CARDS */
-
 .card-btn .stButton button {
     background: #172033;
     border-radius: 14px;
@@ -192,34 +245,6 @@ section[data-testid="stSidebar"] {
 
 .card-btn .stButton button:hover {
     background: #253046;
-}
-
-/* MOBILE */
-
-@media (max-width: 768px) {
-
-    section[data-testid="stSidebar"] {
-        width: 100% !important;
-        min-width: 100% !important;
-    }
-
-    .main-title {
-        font-size: 38px;
-    }
-
-    .sub-title {
-        font-size: 14px;
-    }
-
-    .stChatInput {
-        left: 5%;
-        width: 90%;
-    }
-
-    .user-message,
-    .ai-message {
-        max-width: 95%;
-    }
 }
 
 </style>
@@ -248,14 +273,14 @@ with st.sidebar:
 
         st.rerun()
 
-    # RECENT CHATS TITLE
+    # RECENT
 
     st.markdown(
         "<div class='recent-title'>Recent Chats</div>",
         unsafe_allow_html=True
     )
 
-    # CHAT LIST
+    # CHAT HISTORY
 
     for chat_name in list(st.session_state.chat_sessions.keys()):
 
@@ -277,7 +302,7 @@ messages = st.session_state.chat_sessions[
 ]
 
 # =========================================
-# WELCOME SCREEN
+# HOME SCREEN
 # =========================================
 
 if len(messages) == 0:
@@ -292,60 +317,34 @@ if len(messages) == 0:
         unsafe_allow_html=True
     )
 
-    # SINGLE ROW CARDS
-
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
 
-        st.markdown("<div class='card-btn'>", unsafe_allow_html=True)
+        if st.button("✨ Viral Reel Script"):
 
-        if st.button(
-            "✨ Viral Reel Script",
-            key="viral_script"
-        ):
             prompt = "Create a viral Instagram reel script"
-
-        st.markdown("</div>", unsafe_allow_html=True)
 
     with col2:
 
-        st.markdown("<div class='card-btn'>", unsafe_allow_html=True)
+        if st.button("🚀 YouTube Ideas"):
 
-        if st.button(
-            "🚀 YouTube Ideas",
-            key="youtube_ideas"
-        ):
             prompt = "Give me viral YouTube video ideas"
-
-        st.markdown("</div>", unsafe_allow_html=True)
 
     with col3:
 
-        st.markdown("<div class='card-btn'>", unsafe_allow_html=True)
+        if st.button("💻 Python Error"):
 
-        if st.button(
-            "💻 Python Error",
-            key="python_error"
-        ):
             prompt = "Help me fix my Python error"
-
-        st.markdown("</div>", unsafe_allow_html=True)
 
     with col4:
 
-        st.markdown("<div class='card-btn'>", unsafe_allow_html=True)
+        if st.button("📈 SEO Strategy"):
 
-        if st.button(
-            "📈 SEO Strategy",
-            key="seo_strategy"
-        ):
             prompt = "Create an SEO strategy for YouTube"
 
-        st.markdown("</div>", unsafe_allow_html=True)
-
 # =========================================
-# SHOW CHAT HISTORY
+# SHOW CHAT
 # =========================================
 
 for message in messages:
@@ -365,14 +364,10 @@ for message in messages:
         )
 
 # =========================================
-# CHAT INPUT
+# INPUT
 # =========================================
 
 user_input = st.chat_input("Ask anything...")
-
-# =========================================
-# HANDLE CARD BUTTONS
-# =========================================
 
 if "prompt" in locals():
 
@@ -393,6 +388,12 @@ if user_input:
             "role": "user",
             "content": user_input
         }
+    )
+
+    save_message(
+        st.session_state.current_chat,
+        "user",
+        user_input
     )
 
     st.markdown(
@@ -443,6 +444,12 @@ if user_input:
                 "role": "assistant",
                 "content": reply
             }
+        )
+
+        save_message(
+            st.session_state.current_chat,
+            "assistant",
+            reply
         )
 
     except Exception as e:
