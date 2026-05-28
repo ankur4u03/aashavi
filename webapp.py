@@ -465,7 +465,7 @@ messages = st.session_state.chat_sessions[
 # HOME SCREEN
 # =========================================
 
-if len(messages) == 0:
+if True:
 
     st.markdown(
         """
@@ -479,7 +479,7 @@ if len(messages) == 0:
     st.markdown(
         """
         <div class='sub-title'>
-            Think Faster with Aashvi AI ⚡
+            What can I help you with today?
         </div>
         """,
         unsafe_allow_html=True
