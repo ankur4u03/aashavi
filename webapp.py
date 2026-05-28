@@ -1,10 +1,11 @@
 # =========================================
-# AASHVI AI FINAL STABLE VERSION
+# AASHVI AI - FINAL PREMIUM VERSION
 # =========================================
 
 import streamlit as st
 import os
 import sqlite3
+import time
 from groq import Groq
 
 # =========================================
@@ -134,7 +135,7 @@ if "current_chat" not in st.session_state:
     )[0]
 
 # =========================================
-# CSS
+# CUSTOM CSS
 # =========================================
 
 st.markdown("""
@@ -161,14 +162,14 @@ header {
 /* APP */
 
 .stApp {
-    background: #0b1120;
+    background: #020817;
     color: white;
 }
 
 /* SIDEBAR */
 
 section[data-testid="stSidebar"] {
-    background: #111827;
+    background: #0f172a;
     width: 240px !important;
     min-width: 240px !important;
     border-right: 1px solid rgba(255,255,255,0.06);
@@ -180,7 +181,7 @@ section[data-testid="stSidebar"] {
     font-size: 24px;
     font-weight: 700;
     color: white;
-    margin-top: 8px;
+    margin-top: 5px;
     margin-bottom: 25px;
 }
 
@@ -190,7 +191,7 @@ section[data-testid="stSidebar"] {
     width: 100%;
     border-radius: 12px;
     border: none;
-    background: #1e293b;
+    background: #172033;
     color: white;
     padding: 10px;
     transition: 0.2s;
@@ -201,10 +202,10 @@ section[data-testid="stSidebar"] {
 }
 
 .stButton button:hover {
-    background: #334155;
+    background: #253046;
 }
 
-/* TITLES */
+/* RECENT */
 
 .recent-title {
     color: #94a3b8;
@@ -213,22 +214,24 @@ section[data-testid="stSidebar"] {
     margin-bottom: 12px;
 }
 
+/* TITLE */
+
 .main-title {
     text-align: center;
-    font-size: 50px;
+    font-size: 52px;
     font-weight: 800;
     color: white;
-    margin-top: 25px;
+    margin-top: 40px;
 }
 
 .sub-title {
     text-align: center;
-    color: #9ca3af;
+    color: #94a3b8;
     font-size: 16px;
     margin-bottom: 35px;
 }
 
-/* CHAT BUBBLES */
+/* CHAT */
 
 .user-message {
     background: #2563eb;
@@ -238,21 +241,24 @@ section[data-testid="stSidebar"] {
     width: fit-content;
     max-width: 75%;
     margin-left: auto;
-    margin-bottom: 16px;
+    margin-bottom: 15px;
     font-size: 15px;
     line-height: 1.8;
+    white-space: pre-wrap;
 }
 
 .ai-message {
-    background: #1e293b;
+    background: #172033;
     color: white;
     padding: 14px 18px;
     border-radius: 18px 18px 18px 4px;
     width: fit-content;
     max-width: 75%;
-    margin-bottom: 16px;
+    margin-bottom: 15px;
     font-size: 15px;
     line-height: 1.8;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
 }
 
 /* INPUT */
@@ -265,15 +271,15 @@ section[data-testid="stSidebar"] {
 }
 
 .stChatInput input {
-    background: #1e293b !important;
+    background: #172033 !important;
     color: white !important;
-    border: 1px solid rgba(255,255,255,0.08) !important;
+    border: 1px solid rgba(255,255,255,0.06) !important;
     border-radius: 16px !important;
     padding: 12px !important;
     font-size: 14px !important;
 }
 
-/* CARD BUTTONS */
+/* SUGGESTION BUTTONS */
 
 .card-btn .stButton button {
     background: #172033;
@@ -281,7 +287,6 @@ section[data-testid="stSidebar"] {
     padding: 10px;
     text-align: center;
     font-size: 12px;
-    font-weight: 500;
     min-height: 42px;
 }
 
@@ -341,11 +346,13 @@ with st.sidebar:
             new_chat_name
         ] = []
 
-        st.session_state.current_chat = new_chat_name
+        st.session_state.current_chat = (
+            new_chat_name
+        )
 
         st.rerun()
 
-    # RECENT CHATS
+    # RECENT TITLE
 
     st.markdown(
         "<div class='recent-title'>Recent Chats</div>",
@@ -456,25 +463,33 @@ if len(messages) == 0:
 
         if st.button("✨ Viral Reel Script"):
 
-            prompt = "Create a viral Instagram reel script"
+            prompt = (
+                "Create a viral Instagram reel script"
+            )
 
     with col2:
 
         if st.button("🚀 YouTube Ideas"):
 
-            prompt = "Give me viral YouTube video ideas"
+            prompt = (
+                "Give me viral YouTube video ideas"
+            )
 
     with col3:
 
         if st.button("💻 Python Error"):
 
-            prompt = "Help me fix my Python error"
+            prompt = (
+                "Help me fix my Python error"
+            )
 
     with col4:
 
         if st.button("📈 SEO Strategy"):
 
-            prompt = "Create an SEO strategy"
+            prompt = (
+                "Create an SEO strategy"
+            )
 
 # =========================================
 # SHOW CHAT
@@ -486,10 +501,12 @@ for message in messages:
 
         st.markdown(
             f"""
-            <div class='user-message'>
-                {message['content']}
-            </div>
-            """,
+<div class='user-message'>
+
+{message['content']}
+
+</div>
+""",
             unsafe_allow_html=True
         )
 
@@ -497,15 +514,17 @@ for message in messages:
 
         st.markdown(
             f"""
-            <div class='ai-message'>
-                {message['content']}
-            </div>
-            """,
+<div class='ai-message'>
+
+{message['content']}
+
+</div>
+""",
             unsafe_allow_html=True
         )
 
 # =========================================
-# CHAT INPUT
+# INPUT
 # =========================================
 
 user_input = st.chat_input(
@@ -522,7 +541,7 @@ if "prompt" in locals():
 
 if user_input:
 
-    # AUTO RENAME
+    # AUTO CHAT RENAME
 
     if (
         st.session_state.current_chat.startswith("Chat")
@@ -580,10 +599,12 @@ if user_input:
 
     st.markdown(
         f"""
-        <div class='user-message'>
-            {user_input}
-        </div>
-        """,
+<div class='user-message'>
+
+{user_input}
+
+</div>
+""",
         unsafe_allow_html=True
     )
 
@@ -594,17 +615,14 @@ if user_input:
         "content": """
 You are Aashvi AI.
 
-Always format responses beautifully.
-
 Rules:
+- Format beautifully
+- Use markdown
 - Use headings
 - Use bullet points
+- Use code blocks
 - Use spacing
-- Use short paragraphs
-- Use markdown formatting
-- Use code blocks for code
 - Never write giant paragraphs
-- Make answers look like ChatGPT
 """
     }
 
@@ -629,14 +647,39 @@ Rules:
 
         reply = completion.choices[0].message.content
 
-        # SHOW AI RESPONSE
+        # REALTIME TYPING
 
-        st.markdown(
+        response_placeholder = st.empty()
+
+        full_response = ""
+
+        for word in reply.split():
+
+            full_response += word + " "
+
+            response_placeholder.markdown(
+                f"""
+<div class='ai-message'>
+
+{full_response}
+
+</div>
+""",
+                unsafe_allow_html=True
+            )
+
+            time.sleep(0.02)
+
+        # FINAL RESPONSE
+
+        response_placeholder.markdown(
             f"""
-            <div class='ai-message'>
-                {reply}
-            </div>
-            """,
+<div class='ai-message'>
+
+{reply}
+
+</div>
+""",
             unsafe_allow_html=True
         )
 
