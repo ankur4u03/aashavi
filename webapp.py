@@ -9,14 +9,35 @@ st.set_page_config(
     layout="centered"
 )
 
-# API KEY
-client = Groq(
-    api_key=os.getenv("GROQ_API_KEY")
-)
-
-# CUSTOM CSS
-st.markdown("""
+# HIDE STREAMLIT BRANDING
+hide_streamlit_style = """
 <style>
+
+#MainMenu {
+    visibility: hidden;
+}
+
+footer {
+    visibility: hidden;
+}
+
+header {
+    visibility: hidden;
+}
+
+[data-testid="stToolbar"] {
+    display: none;
+}
+
+[data-testid="stDecoration"] {
+    display: none;
+}
+
+[data-testid="stStatusWidget"] {
+    visibility: hidden;
+    height: 0%;
+    position: fixed;
+}
 
 .stApp {
     background: linear-gradient(to bottom, #050816, #0b1026);
@@ -60,7 +81,14 @@ st.markdown("""
 }
 
 </style>
-""", unsafe_allow_html=True)
+"""
+
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
+# API KEY
+client = Groq(
+    api_key=os.getenv("GROQ_API_KEY")
+)
 
 # TITLE
 st.markdown(
