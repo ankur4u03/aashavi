@@ -1,49 +1,40 @@
 import streamlit as st
 import os
-import time
 from groq import Groq
 
-# =====================================
+# =========================
 # PAGE CONFIG
-# =====================================
+# =========================
 
 st.set_page_config(
     page_title="Aashvi AI",
     page_icon="🌸",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="wide"
 )
 
-# =====================================
-# API
-# =====================================
+# =========================
+# API CLIENT
+# =========================
 
 client = Groq(
     api_key=os.getenv("GROQ_API_KEY")
 )
 
-# =====================================
+# =========================
 # SESSION STATE
-# =====================================
+# =========================
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# =====================================
-# CSS
-# =====================================
+# =========================
+# CUSTOM CSS
+# =========================
 
 st.markdown("""
 <style>
 
-/* APP */
-
-.stApp {
-    background-color: #212121;
-    color: white;
-}
-
-/* HIDE STREAMLIT */
+/* HIDE STREAMLIT DEFAULT UI */
 
 #MainMenu {
     visibility: hidden;
@@ -61,173 +52,202 @@ header {
     display: none;
 }
 
+[data-testid="stDecoration"] {
+    display: none;
+}
+
+[data-testid="stStatusWidget"] {
+    display: none;
+}
+
+[data-testid="collapsedControl"] {
+    display: none;
+}
+
+/* APP */
+
+.stApp {
+    background-color: #212121;
+    color: white;
+}
+
 /* SIDEBAR */
 
 section[data-testid="stSidebar"] {
     background-color: #171717;
-    border-right: 1px solid #2b2b2b;
-    width: 240px !important;
+    border-right: 1px solid #2d2d2d;
+    width: 260px !important;
 }
 
-/* REMOVE BUTTON STYLE */
+/* SIDEBAR LOGO */
+
+.sidebar-logo {
+    font-size: 38px;
+    font-weight: bold;
+    color: white;
+    margin-top: 10px;
+    margin-bottom: 30px;
+}
+
+/* NEW CHAT BUTTON */
 
 .stButton button {
-    background: transparent;
-    border: none;
+    width: 100%;
+    background-color: transparent;
     color: white;
-    text-align: left;
+    border: 1px solid #3a3a3a;
+    border-radius: 12px;
     padding: 12px;
-    border-radius: 10px;
-    font-size: 15px;
-    font-weight: 500;
+    text-align: left;
+    font-size: 16px;
+    transition: 0.3s;
 }
 
 .stButton button:hover {
-    background: #2a2a2a;
+    background-color: #2a2a2a;
+    border: 1px solid #555;
 }
 
-/* LOGO */
-
-.logo {
-    font-size: 30px;
-    font-weight: 700;
-    color: white;
-    margin-bottom: 25px;
-}
-
-/* TITLE */
+/* CHAT TITLE */
 
 .main-title {
     text-align: center;
-    font-size: 52px;
-    font-weight: 700;
+    font-size: 70px;
+    font-weight: 800;
     color: white;
-    margin-top: 40px;
+    margin-top: 60px;
+    margin-bottom: 10px;
 }
+
+/* SUBTITLE */
 
 .sub-title {
     text-align: center;
-    color: #9ca3af;
+    color: #b4b4b4;
+    font-size: 24px;
+    margin-bottom: 50px;
+}
+
+/* CHAT MESSAGE */
+
+.chat-user {
+    background-color: #2f2f2f;
+    padding: 18px;
+    border-radius: 14px;
+    margin-bottom: 15px;
     font-size: 18px;
-    margin-bottom: 40px;
 }
 
-/* USER CHAT */
-
-.user-message {
-    background: #303030;
-    padding: 16px;
+.chat-ai {
+    background-color: transparent;
+    padding: 18px;
     border-radius: 14px;
-    margin-top: 18px;
-    margin-bottom: 18px;
-    color: white;
-    font-size: 16px;
-    line-height: 1.6;
-}
-
-/* AI CHAT */
-
-.ai-message {
-    background: transparent;
-    padding: 16px;
-    border-radius: 14px;
-    margin-bottom: 18px;
-    color: white;
-    font-size: 16px;
+    margin-bottom: 15px;
+    font-size: 18px;
     line-height: 1.7;
 }
 
-/* CHAT INPUT */
+/* INPUT */
 
 .stChatInput {
     position: fixed;
     bottom: 20px;
-    left: 28%;
-    width: 65%;
+    left: 320px;
+    right: 40px;
 }
 
 .stChatInput input {
-    background: #2f2f2f !important;
+    background-color: #2b2b2b !important;
     color: white !important;
-    border: 1px solid #3f3f3f !important;
+    border: 1px solid #444 !important;
     border-radius: 18px !important;
-    padding: 16px !important;
-    font-size: 16px !important;
+    padding: 18px !important;
+    font-size: 17px !important;
 }
 
-/* MOBILE */
+/* RECENT */
 
-@media (max-width: 768px) {
+.recent-title {
+    color: #8e8e8e;
+    font-size: 14px;
+    margin-top: 25px;
+    margin-bottom: 10px;
+}
 
-    .stChatInput {
-        left: 3%;
-        width: 94%;
-    }
+/* CHAT HISTORY */
 
-    .main-title {
-        font-size: 38px;
-    }
+.chat-history {
+    padding: 12px;
+    border-radius: 10px;
+    color: white;
+    margin-bottom: 8px;
+    background-color: transparent;
+    cursor: pointer;
+    transition: 0.3s;
+}
 
-    section[data-testid="stSidebar"] {
-        width: 100% !important;
-    }
+.chat-history:hover {
+    background-color: #2a2a2a;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-# =====================================
+# =========================
 # SIDEBAR
-# =====================================
+# =========================
 
 with st.sidebar:
 
     st.markdown(
-        "<div class='logo'>🌸 Aashvi AI</div>",
+        "<div class='sidebar-logo'>🌸 Aashvi AI</div>",
         unsafe_allow_html=True
     )
 
-    st.button("➕ New Chat")
+    if st.button("➕ New Chat"):
 
-    st.markdown("---")
+        st.session_state.messages = []
+        st.rerun()
 
     st.markdown(
-        """
-        <div style='color:#9ca3af;
-        font-size:14px;
-        margin-top:10px;
-        margin-bottom:15px;'>
-
-        Recent Chats
-
-        </div>
-        """,
+        "<div class='recent-title'>Recent Chats</div>",
         unsafe_allow_html=True
     )
 
-    st.button("💬 Motivation Ideas")
+    st.markdown(
+        "<div class='chat-history'>💬 Motivation Ideas</div>",
+        unsafe_allow_html=True
+    )
 
-    st.button("💬 Viral Content")
+    st.markdown(
+        "<div class='chat-history'>💬 Viral Content</div>",
+        unsafe_allow_html=True
+    )
 
-    st.button("💬 YouTube SEO")
+    st.markdown(
+        "<div class='chat-history'>💬 YouTube SEO</div>",
+        unsafe_allow_html=True
+    )
 
-# =====================================
+# =========================
 # MAIN TITLE
-# =====================================
+# =========================
 
-st.markdown(
-    "<div class='main-title'>🌸 Aashvi AI</div>",
-    unsafe_allow_html=True
-)
+if len(st.session_state.messages) == 0:
 
-st.markdown(
-    "<div class='sub-title'>Think Faster with Aashvi AI ⚡</div>",
-    unsafe_allow_html=True
-)
+    st.markdown(
+        "<div class='main-title'>🌸 Aashvi AI</div>",
+        unsafe_allow_html=True
+    )
 
-# =====================================
+    st.markdown(
+        "<div class='sub-title'>Think Faster with Aashvi AI ⚡</div>",
+        unsafe_allow_html=True
+    )
+
+# =========================
 # SHOW CHAT
-# =====================================
+# =========================
 
 for message in st.session_state.messages:
 
@@ -235,8 +255,8 @@ for message in st.session_state.messages:
 
         st.markdown(
             f"""
-            <div class='user-message'>
-            {message['content']}
+            <div class='chat-user'>
+                {message['content']}
             </div>
             """,
             unsafe_allow_html=True
@@ -246,47 +266,40 @@ for message in st.session_state.messages:
 
         st.markdown(
             f"""
-            <div class='ai-message'>
-            {message['content']}
+            <div class='chat-ai'>
+                {message['content']}
             </div>
             """,
             unsafe_allow_html=True
         )
 
-# =====================================
-# INPUT
-# =====================================
+# =========================
+# USER INPUT
+# =========================
 
 prompt = st.chat_input("Ask anything")
 
-# =====================================
-# RESPONSE
-# =====================================
+# =========================
+# AI RESPONSE
+# =========================
 
 if prompt:
 
     # SAVE USER MESSAGE
 
-    st.session_state.messages.append({
-        "role": "user",
-        "content": prompt
-    })
+    st.session_state.messages.append(
+        {
+            "role": "user",
+            "content": prompt
+        }
+    )
+
+    # SHOW USER MESSAGE
 
     st.markdown(
         f"""
-        <div class='user-message'>
-        {prompt}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    thinking = st.empty()
-
-    thinking.markdown(
-        """
-        <div class='ai-message'>
-        ✨ Aashvi AI is thinking...
+        <div class='chat-user'>
+            {prompt}
         </div>
         """,
         unsafe_allow_html=True
@@ -311,23 +324,25 @@ if prompt:
 
         reply = completion.choices[0].message.content
 
-        time.sleep(1)
-
-        thinking.empty()
+        # SHOW AI RESPONSE
 
         st.markdown(
             f"""
-            <div class='ai-message'>
-            {reply}
+            <div class='chat-ai'>
+                {reply}
             </div>
             """,
             unsafe_allow_html=True
         )
 
-        st.session_state.messages.append({
-            "role": "assistant",
-            "content": reply
-        })
+        # SAVE AI RESPONSE
+
+        st.session_state.messages.append(
+            {
+                "role": "assistant",
+                "content": reply
+            }
+        )
 
     except Exception as e:
 
