@@ -48,6 +48,168 @@ header {
     display: none !important;
 }
 
+/* MAIN APP */
+
+.stApp {
+    background: linear-gradient(135deg, #050816, #0b1026);
+    color: white;
+}
+
+/* SIDEBAR */
+
+section[data-testid="stSidebar"] {
+    background: rgba(10, 15, 31, 0.98);
+    border-right: 1px solid rgba(255,255,255,0.06);
+    width: 320px !important;
+    min-width: 320px !important;
+}
+
+/* LOGO */
+
+.sidebar-logo {
+    font-size: 32px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 30px;
+}
+
+/* BUTTONS */
+
+.stButton button {
+    width: 100%;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.05);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 14px;
+    transition: 0.3s;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.stButton button:hover {
+    background: rgba(255,255,255,0.12);
+    transform: scale(1.02);
+}
+
+/* CHAT ROW */
+
+.chat-row {
+    margin-bottom: 12px;
+}
+
+/* MAIN TITLE */
+
+.main-title {
+    text-align: center;
+    font-size: 64px;
+    font-weight: 800;
+    color: white;
+    margin-top: 30px;
+}
+
+.sub-title {
+    text-align: center;
+    color: #9ca3af;
+    font-size: 20px;
+    margin-bottom: 40px;
+}
+
+/* CHAT BUBBLES */
+
+.user-msg {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    padding: 14px 18px;
+    border-radius: 18px 18px 4px 18px;
+    margin-bottom: 14px;
+    margin-left: auto;
+    width: fit-content;
+    max-width: 75%;
+    color: white;
+    box-shadow: 0px 4px 18px rgba(37,99,235,0.3);
+    font-size: 16px;
+}
+
+.ai-msg {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(10px);
+    padding: 14px 18px;
+    border-radius: 18px 18px 18px 4px;
+    margin-bottom: 14px;
+    width: fit-content;
+    max-width: 75%;
+    color: white;
+    border: 1px solid rgba(255,255,255,0.05);
+    font-size: 16px;
+}
+
+/* INPUT */
+
+.stChatInput {
+    position: fixed;
+    bottom: 20px;
+    left: 28%;
+    width: 48%;
+}
+
+.stChatInput input {
+    background: rgba(255,255,255,0.08) !important;
+    border: 1px solid rgba(255,255,255,0.06) !important;
+    color: white !important;
+    border-radius: 18px !important;
+    padding: 14px !important;
+}
+
+/* PROFILE CARD */
+
+.profile-card {
+    margin-top: 60px;
+    padding: 22px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.06);
+    text-align: center;
+}
+
+.profile-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    margin-top: 10px;
+}
+
+.profile-role {
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+
+    section[data-testid="stSidebar"] {
+        width: 100% !important;
+        min-width: 100% !important;
+    }
+
+    .main-title {
+        font-size: 42px;
+    }
+
+    .stChatInput {
+        left: 5%;
+        width: 90%;
+    }
+
+    .user-msg,
+    .ai-msg {
+        max-width: 95%;
+    }
+}
+
 </style>
 """
 
@@ -66,159 +228,6 @@ if "chat_sessions" not in st.session_state:
 if "current_chat" not in st.session_state:
 
     st.session_state.current_chat = "New Chat"
-
-# =========================
-# CUSTOM CSS
-# =========================
-
-st.markdown("""
-<style>
-
-/* MAIN APP */
-
-.stApp {
-    background: linear-gradient(135deg, #050816, #0b1026);
-    color: white;
-    overflow: hidden;
-}
-
-/* SIDEBAR */
-
-section[data-testid="stSidebar"] {
-    background: rgba(10, 15, 31, 0.95);
-    border-right: 1px solid rgba(255,255,255,0.08);
-    backdrop-filter: blur(12px);
-}
-
-/* SIDEBAR TITLE */
-
-.sidebar-logo {
-    font-size: 28px;
-    font-weight: bold;
-    color: white;
-    text-align: center;
-    margin-top: 10px;
-    margin-bottom: 25px;
-}
-
-/* BUTTONS */
-
-.stButton button {
-    width: 100%;
-    border-radius: 14px;
-    background: rgba(255,255,255,0.05);
-    color: white;
-    border: 1px solid rgba(255,255,255,0.08);
-    padding: 12px;
-    transition: 0.3s;
-}
-
-.stButton button:hover {
-    background: rgba(255,255,255,0.12);
-    transform: scale(1.02);
-}
-
-/* TITLE */
-
-.main-title {
-    text-align: center;
-    font-size: 64px;
-    font-weight: 800;
-    color: white;
-    margin-top: 20px;
-}
-
-.sub-title {
-    text-align: center;
-    color: #b0b3c7;
-    font-size: 20px;
-    margin-bottom: 40px;
-}
-
-/* CHAT BUBBLES */
-
-.user-msg {
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
-    padding: 14px 18px;
-    border-radius: 18px 18px 4px 18px;
-    margin-bottom: 14px;
-    margin-left: auto;
-    width: fit-content;
-    max-width: 75%;
-    color: white;
-    box-shadow: 0px 4px 20px rgba(37,99,235,0.3);
-    font-size: 16px;
-}
-
-.ai-msg {
-    background: rgba(255,255,255,0.06);
-    backdrop-filter: blur(10px);
-    padding: 14px 18px;
-    border-radius: 18px 18px 18px 4px;
-    margin-bottom: 14px;
-    width: fit-content;
-    max-width: 75%;
-    color: white;
-    border: 1px solid rgba(255,255,255,0.05);
-    font-size: 16px;
-}
-
-/* INPUT BOX */
-
-.stChatInput {
-    position: fixed;
-    bottom: 20px;
-    left: 25%;
-    width: 50%;
-}
-
-.stChatInput input {
-    background: rgba(255,255,255,0.08) !important;
-    border: 1px solid rgba(255,255,255,0.08) !important;
-    color: white !important;
-    border-radius: 18px !important;
-    padding: 14px !important;
-    backdrop-filter: blur(12px);
-}
-
-/* PROFILE CARD */
-
-.profile-card {
-    background: rgba(255,255,255,0.05);
-    padding: 15px;
-    border-radius: 16px;
-    text-align: center;
-    margin-top: 30px;
-    border: 1px solid rgba(255,255,255,0.06);
-}
-
-.profile-name {
-    color: white;
-    font-weight: bold;
-    margin-top: 10px;
-}
-
-/* MOBILE */
-
-@media (max-width: 768px) {
-
-    .main-title {
-        font-size: 42px;
-    }
-
-    .stChatInput {
-        left: 5%;
-        width: 90%;
-    }
-
-    .user-msg,
-    .ai-msg {
-        max-width: 95%;
-    }
-}
-
-</style>
-""", unsafe_allow_html=True)
 
 # =========================
 # SIDEBAR
@@ -247,37 +256,52 @@ with st.sidebar:
 
     # CHAT HISTORY
 
-    for chat in st.session_state.chat_sessions.keys():
+    for chat in list(st.session_state.chat_sessions.keys()):
+
+        st.markdown("<div class='chat-row'>", unsafe_allow_html=True)
 
         col1, col2 = st.columns([5,1])
 
+        # OPEN CHAT
+
         with col1:
 
-            if st.button(f"💬 {chat}", key=chat):
+            if st.button(f"💬 {chat}", key=f"chat_{chat}"):
 
                 st.session_state.current_chat = chat
 
                 st.rerun()
 
+        # 3 DOT MENU
+
         with col2:
 
-            if st.button("🗑️", key=f"delete_{chat}"):
+            with st.popover("⋮"):
 
-                del st.session_state.chat_sessions[chat]
+                st.write(chat)
 
-                if len(st.session_state.chat_sessions) == 0:
+                if st.button(
+                    "🗑️ Delete Chat",
+                    key=f"delete_{chat}"
+                ):
 
-                    st.session_state.chat_sessions["New Chat"] = []
+                    del st.session_state.chat_sessions[chat]
 
-                    st.session_state.current_chat = "New Chat"
+                    if len(st.session_state.chat_sessions) == 0:
 
-                else:
+                        st.session_state.chat_sessions["New Chat"] = []
 
-                    st.session_state.current_chat = list(
-                        st.session_state.chat_sessions.keys()
-                    )[0]
+                        st.session_state.current_chat = "New Chat"
 
-                st.rerun()
+                    else:
+
+                        st.session_state.current_chat = list(
+                            st.session_state.chat_sessions.keys()
+                        )[0]
+
+                    st.rerun()
+
+        st.markdown("</div>", unsafe_allow_html=True)
 
     # PROFILE CARD
 
@@ -286,7 +310,7 @@ with st.sidebar:
         <div class="profile-card">
             👤
             <div class="profile-name">Ankur</div>
-            <div style="color:#9ca3af;font-size:14px;">
+            <div class="profile-role">
                 Aashvi AI Creator
             </div>
         </div>
@@ -309,7 +333,7 @@ st.markdown(
 )
 
 # =========================
-# CHAT DISPLAY
+# SHOW CHAT HISTORY
 # =========================
 
 messages = st.session_state.chat_sessions[
@@ -339,7 +363,7 @@ for msg in messages:
 prompt = st.chat_input("Ask anything...")
 
 # =========================
-# AI CHAT LOGIC
+# AI RESPONSE
 # =========================
 
 if prompt:
@@ -358,7 +382,7 @@ if prompt:
         unsafe_allow_html=True
     )
 
-    # TYPING ANIMATION
+    # THINKING
 
     typing_placeholder = st.empty()
 
