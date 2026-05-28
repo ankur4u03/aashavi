@@ -1,5 +1,5 @@
 # =========================================
-# AASHVI AI - FINAL PREMIUM VERSION
+# AASHVI AI - FINAL CLEAN CHATGPT UI
 # =========================================
 
 import streamlit as st
@@ -162,17 +162,17 @@ header {
 /* APP */
 
 .stApp {
-    background: #020817;
+    background: #0a0a0a;
     color: white;
 }
 
 /* SIDEBAR */
 
 section[data-testid="stSidebar"] {
-    background: #0f172a;
-    width: 240px !important;
-    min-width: 240px !important;
-    border-right: 1px solid rgba(255,255,255,0.06);
+    background: #111111;
+    width: 260px !important;
+    min-width: 260px !important;
+    border-right: 1px solid rgba(255,255,255,0.05);
 }
 
 /* LOGO */
@@ -191,7 +191,7 @@ section[data-testid="stSidebar"] {
     width: 100%;
     border-radius: 12px;
     border: none;
-    background: #172033;
+    background: #1b1b1b;
     color: white;
     padding: 10px;
     transition: 0.2s;
@@ -202,32 +202,32 @@ section[data-testid="stSidebar"] {
 }
 
 .stButton button:hover {
-    background: #253046;
+    background: #2a2a2a;
 }
 
 /* RECENT */
 
 .recent-title {
-    color: #94a3b8;
+    color: #888;
     font-size: 12px;
     margin-top: 20px;
     margin-bottom: 12px;
 }
 
-/* TITLE */
+/* MAIN TITLE */
 
 .main-title {
     text-align: center;
-    font-size: 52px;
+    font-size: 54px;
     font-weight: 800;
     color: white;
-    margin-top: 40px;
+    margin-top: 80px;
 }
 
 .sub-title {
     text-align: center;
-    color: #94a3b8;
-    font-size: 16px;
+    color: #9ca3af;
+    font-size: 18px;
     margin-bottom: 35px;
 }
 
@@ -248,7 +248,7 @@ section[data-testid="stSidebar"] {
 }
 
 .ai-message {
-    background: #172033;
+    background: #1a1a1a;
     color: white;
     padding: 14px 18px;
     border-radius: 18px 18px 18px 4px;
@@ -271,39 +271,26 @@ section[data-testid="stSidebar"] {
 }
 
 .stChatInput input {
-    background: #172033 !important;
+    background: #1a1a1a !important;
     color: white !important;
-    border: 1px solid rgba(255,255,255,0.06) !important;
-    border-radius: 16px !important;
-    padding: 12px !important;
-    font-size: 14px !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    border-radius: 18px !important;
+    padding: 14px !important;
+    font-size: 15px !important;
 }
 
-/* SUGGESTION BUTTONS */
+/* HOME BUTTONS */
 
-.card-btn .stButton button {
-    background: #172033;
-    border-radius: 14px;
-    padding: 10px;
+.home-btn .stButton button {
+    background: #1a1a1a;
+    border-radius: 30px;
     text-align: center;
-    font-size: 12px;
-    min-height: 42px;
+    font-size: 13px;
+    min-height: 45px;
 }
 
-.card-btn .stButton button:hover {
-    background: #253046;
-}
-
-/* MARKDOWN */
-
-h1, h2, h3 {
-    color: white !important;
-}
-
-p, li {
-    color: #e5e7eb !important;
-    line-height: 1.8;
-    font-size: 15px;
+.home-btn .stButton button:hover {
+    background: #2a2a2a;
 }
 
 /* CODE */
@@ -317,9 +304,12 @@ pre {
 
 code {
     color: #38bdf8 !important;
-    background: #111827 !important;
-    padding: 3px 6px;
-    border-radius: 6px;
+}
+
+/* MARKDOWN */
+
+p, li {
+    line-height: 1.8;
 }
 
 </style>
@@ -352,7 +342,7 @@ with st.sidebar:
 
         st.rerun()
 
-    # RECENT TITLE
+    # RECENT
 
     st.markdown(
         "<div class='recent-title'>Recent Chats</div>",
@@ -426,7 +416,7 @@ with st.sidebar:
                 st.rerun()
 
 # =========================================
-# MAIN PAGE
+# MAIN
 # =========================================
 
 messages = st.session_state.chat_sessions[
@@ -451,45 +441,31 @@ if len(messages) == 0:
     st.markdown(
         """
         <div class='sub-title'>
-            Think Faster with Aashvi AI ⚡
+            How can I help you today?
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3 = st.columns(3)
 
     with col1:
 
-        if st.button("✨ Viral Reel Script"):
+        if st.button("🎬 Reel Ideas"):
 
-            prompt = (
-                "Create a viral Instagram reel script"
-            )
+            prompt = "Give me viral reel ideas"
 
     with col2:
 
-        if st.button("🚀 YouTube Ideas"):
+        if st.button("💻 Python Help"):
 
-            prompt = (
-                "Give me viral YouTube video ideas"
-            )
+            prompt = "Help me with Python"
 
     with col3:
 
-        if st.button("💻 Python Error"):
+        if st.button("📈 SEO Tips"):
 
-            prompt = (
-                "Help me fix my Python error"
-            )
-
-    with col4:
-
-        if st.button("📈 SEO Strategy"):
-
-            prompt = (
-                "Create an SEO strategy"
-            )
+            prompt = "Give me SEO tips"
 
 # =========================================
 # SHOW CHAT
@@ -541,7 +517,7 @@ if "prompt" in locals():
 
 if user_input:
 
-    # AUTO CHAT RENAME
+    # AUTO RENAME
 
     if (
         st.session_state.current_chat.startswith("Chat")
@@ -615,14 +591,15 @@ if user_input:
         "content": """
 You are Aashvi AI.
 
+Behave like ChatGPT.
+
 Rules:
-- Format beautifully
-- Use markdown
-- Use headings
-- Use bullet points
-- Use code blocks
-- Use spacing
-- Never write giant paragraphs
+- Keep responses clean
+- Only answer what user asks
+- No long welcome messages
+- Use markdown only when needed
+- Use code blocks only for code
+- Keep replies modern and minimal
 """
     }
 
