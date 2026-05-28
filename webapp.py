@@ -2,84 +2,80 @@ import streamlit as st
 import os
 from groq import Groq
 
-# PAGE CONFIG
+# ---------------- PAGE CONFIG ----------------
 st.set_page_config(
     page_title="Aashvi AI",
     page_icon="🌸",
     layout="wide"
 )
 
-# API KEY
+# ---------------- GROQ API ----------------
 client = Groq(
     api_key=os.getenv("GROQ_API_KEY")
 )
 
-# SESSION STATE
+# ---------------- SESSION ----------------
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# CUSTOM CSS
+# ---------------- CSS ----------------
 st.markdown("""
 <style>
 
-/* MAIN APP */
+/* APP */
 .stApp{
-    background: linear-gradient(to bottom, #020817, #07122b);
+    background: linear-gradient(to bottom, #020817, #07152f);
     color:white;
-    overflow:hidden;
 }
 
-/* REMOVE STREAMLIT */
-#MainMenu {visibility:hidden;}
-footer {visibility:hidden;}
-header {visibility:hidden;}
+/* HIDE STREAMLIT */
+#MainMenu{visibility:hidden;}
+footer{visibility:hidden;}
+header{visibility:hidden;}
 
 /* SIDEBAR */
 .sidebar{
     background:#081225;
     height:100vh;
-    padding:25px 18px;
-    border-right:1px solid rgba(255,255,255,0.08);
+    padding:25px 20px;
+    border-right:1px solid rgba(255,255,255,0.06);
 }
 
 .logo{
-    font-size:28px;
+    font-size:26px;
     font-weight:700;
-    margin-bottom:35px;
+    color:white;
+    margin-bottom:30px;
 }
 
-.newchat{
+.new-chat{
     background:#182742;
-    padding:14px 18px;
-    border-radius:16px;
-    font-size:20px;
+    padding:14px;
+    border-radius:14px;
+    color:white;
     font-weight:600;
+    text-align:center;
     margin-bottom:35px;
     cursor:pointer;
-    width:180px;
 }
 
-.newchat:hover{
+.new-chat:hover{
     background:#223455;
 }
 
-.recent{
-    color:#9aa4bf;
-    font-size:15px;
+.recent-title{
+    color:#9ca3af;
+    font-size:14px;
     margin-bottom:18px;
 }
 
-.chat-item{
+.chat-history{
     background:#13203a;
-    padding:13px 16px;
-    border-radius:14px;
+    padding:12px 14px;
+    border-radius:12px;
     margin-bottom:12px;
-    cursor:pointer;
-    transition:0.3s;
-}
-
-.chat-item:hover{
-    background:#1d2a4a;
+    color:white;
+    font-size:15px;
 }
 
 /* MAIN */
@@ -96,60 +92,57 @@ header {visibility:hidden;}
 
 .subtitle{
     font-size:24px;
-    color:#b9c1d9;
+    color:#b8c1d9;
     margin-top:10px;
 }
 
-/* CARDS */
-.cards-container{
+/* SUGGESTION CARDS */
+.cards{
     display:flex;
     justify-content:center;
     gap:18px;
-    margin-top:50px;
     flex-wrap:wrap;
+    margin-top:50px;
 }
 
 .card{
     background:#16213a;
-    padding:14px 18px;
-    border-radius:14px;
-    color:white;
-    font-size:16px;
-    font-weight:500;
-    cursor:pointer;
-    border:1px solid rgba(255,255,255,0.05);
-    transition:0.3s;
-    min-width:220px;
-    max-width:220px;
+    padding:16px 20px;
+    border-radius:16px;
+    width:220px;
     text-align:center;
+    font-size:16px;
+    font-weight:600;
+    color:white;
+    border:1px solid rgba(255,255,255,0.05);
 }
 
 .card:hover{
     background:#1d2a4a;
-    transform:translateY(-2px);
 }
 
-/* CHAT */
-.user-msg{
+/* CHAT UI */
+.user-message{
     background:#2563eb;
+    color:white;
     padding:14px 18px;
     border-radius:18px;
-    width:fit-content;
-    margin-left:auto;
     margin-top:25px;
-    margin-bottom:12px;
-    max-width:60%;
+    margin-left:auto;
+    width:fit-content;
+    max-width:65%;
     text-align:left;
 }
 
-.ai-msg{
+.ai-message{
     background:#182742;
+    color:white;
     padding:14px 18px;
     border-radius:18px;
-    width:fit-content;
+    margin-top:18px;
     margin-right:auto;
-    margin-bottom:18px;
-    max-width:70%;
+    width:fit-content;
+    max-width:75%;
     text-align:left;
 }
 
@@ -157,52 +150,64 @@ header {visibility:hidden;}
 .stChatInput{
     position:fixed;
     bottom:20px;
-    left:340px;
+    left:330px;
     right:40px;
 }
 
 .stChatInput input{
     background:#111827 !important;
     color:white !important;
-    border:1px solid rgba(255,255,255,0.08) !important;
     border-radius:18px !important;
+    border:1px solid rgba(255,255,255,0.08) !important;
     padding:18px !important;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-# LAYOUT
-col1, col2 = st.columns([1, 4])
+# ---------------- LAYOUT ----------------
+sidebar, main = st.columns([1, 4])
 
-# SIDEBAR
-with col1:
+# ---------------- SIDEBAR ----------------
+with sidebar:
 
     st.markdown("""
     <div class="sidebar">
 
         <div class="logo">🌸 Aashvi AI</div>
 
-        <div class="newchat">➕ New Chat</div>
+        <div class="new-chat">
+            ➕ New Chat
+        </div>
 
-        <div class="recent">Recent Chats</div>
+        <div class="recent-title">
+            Recent Chats
+        </div>
 
-        <div class="chat-item">💬 Motivation Ideas</div>
+        <div class="chat-history">
+            💬 Motivation Ideas
+        </div>
 
-        <div class="chat-item">💬 Viral Content</div>
+        <div class="chat-history">
+            💬 Viral Content
+        </div>
 
-        <div class="chat-item">💬 YouTube SEO</div>
+        <div class="chat-history">
+            💬 YouTube SEO
+        </div>
 
     </div>
     """, unsafe_allow_html=True)
 
-# MAIN AREA
-with col2:
+# ---------------- MAIN ----------------
+with main:
 
     st.markdown("""
     <div class="main-area">
 
-        <div class="title">🌸 Aashvi AI</div>
+        <div class="title">
+            🌸 Aashvi AI
+        </div>
 
         <div class="subtitle">
             Think Faster with Aashvi AI ⚡
@@ -211,46 +216,54 @@ with col2:
     </div>
     """, unsafe_allow_html=True)
 
-    # SHOW CARDS ONLY IF NO CHAT
+    # SHOW CARDS ONLY WHEN CHAT EMPTY
     if len(st.session_state.messages) == 0:
 
         st.markdown("""
-        <div class="cards-container">
+        <div class="cards">
 
-            <div class="card">✨ Create Viral Reel Script</div>
+            <div class="card">
+                ✨ Create Viral Reel Script
+            </div>
 
-            <div class="card">💻 Fix Python Error</div>
+            <div class="card">
+                💻 Fix Python Error
+            </div>
 
-            <div class="card">🚀 YouTube Video Ideas</div>
+            <div class="card">
+                🚀 YouTube Video Ideas
+            </div>
 
-            <div class="card">📈 SEO Strategy</div>
+            <div class="card">
+                📈 SEO Strategy
+            </div>
 
         </div>
         """, unsafe_allow_html=True)
 
-    # SHOW CHAT
+    # CHAT HISTORY
     for msg in st.session_state.messages:
 
         if msg["role"] == "user":
 
             st.markdown(
-                f"<div class='user-msg'>{msg['content']}</div>",
+                f"<div class='user-message'>{msg['content']}</div>",
                 unsafe_allow_html=True
             )
 
         else:
 
             st.markdown(
-                f"<div class='ai-msg'>{msg['content']}</div>",
+                f"<div class='ai-message'>{msg['content']}</div>",
                 unsafe_allow_html=True
             )
 
-# CHAT INPUT
+# ---------------- CHAT INPUT ----------------
 prompt = st.chat_input("Ask anything...")
 
 if prompt:
 
-    # SAVE USER MSG
+    # USER MESSAGE
     st.session_state.messages.append({
         "role": "user",
         "content": prompt
@@ -274,7 +287,7 @@ if prompt:
 
         reply = completion.choices[0].message.content
 
-        # SAVE AI MSG
+        # SAVE AI MESSAGE
         st.session_state.messages.append({
             "role": "assistant",
             "content": reply
