@@ -479,7 +479,7 @@ if len(messages) == 0:
     st.markdown(
         """
         <div class='sub-title'>
-            What can I help you with today?
+            Think Faster with Aashvi AI ⚡
         </div>
         """,
         unsafe_allow_html=True
