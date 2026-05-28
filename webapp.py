@@ -2,9 +2,9 @@ import streamlit as st
 import os
 from groq import Groq
 
-# ======================
+# =========================
 # PAGE CONFIG
-# ======================
+# =========================
 
 st.set_page_config(
     page_title="Aashvi AI",
@@ -12,24 +12,24 @@ st.set_page_config(
     layout="wide"
 )
 
-# ======================
+# =========================
 # GROQ API
-# ======================
+# =========================
 
 client = Groq(
     api_key=os.getenv("GROQ_API_KEY")
 )
 
-# ======================
+# =========================
 # SESSION STATE
-# ======================
+# =========================
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# ======================
-# CSS
-# ======================
+# =========================
+# CUSTOM CSS
+# =========================
 
 st.markdown("""
 <style>
@@ -46,6 +46,10 @@ footer {
 
 header {
     visibility: hidden;
+}
+
+[data-testid="stToolbar"] {
+    display: none;
 }
 
 /* APP */
@@ -67,12 +71,13 @@ section[data-testid="stSidebar"] {
     font-size: 38px;
     font-weight: bold;
     color: white;
+    margin-top: 10px;
     margin-bottom: 20px;
 }
 
 .new-chat-btn button {
     width: 100%;
-    border-radius: 12px;
+    border-radius: 14px;
     background: #2563eb;
     color: white;
     border: none;
@@ -86,7 +91,7 @@ section[data-testid="stSidebar"] {
     text-align: center;
     font-size: 72px;
     font-weight: bold;
-    margin-top: 60px;
+    margin-top: 35px;
     color: white;
 }
 
@@ -94,37 +99,44 @@ section[data-testid="stSidebar"] {
     text-align: center;
     color: #cbd5e1;
     font-size: 24px;
-    margin-bottom: 40px;
+    margin-bottom: 50px;
 }
 
-/* CHAT */
+/* CHAT AREA */
 
-.chat-wrap {
+.chat-container {
     max-width: 900px;
     margin: auto;
     padding-bottom: 120px;
 }
 
+/* USER MESSAGE */
+
 .user-msg {
     background: #2563eb;
     padding: 14px 20px;
-    border-radius: 20px;
+    border-radius: 22px;
     width: fit-content;
     max-width: 70%;
     margin-left: auto;
-    margin-top: 15px;
+    margin-top: 18px;
+    margin-bottom: 18px;
     color: white;
     font-size: 16px;
+    box-shadow: 0 0 18px rgba(37,99,235,0.3);
 }
+
+/* AI MESSAGE */
 
 .ai-msg {
     background: #111827;
     padding: 14px 20px;
-    border-radius: 20px;
+    border-radius: 22px;
     width: fit-content;
     max-width: 70%;
     margin-right: auto;
-    margin-top: 15px;
+    margin-top: 18px;
+    margin-bottom: 18px;
     color: white;
     border: 1px solid #1f2937;
     font-size: 16px;
@@ -142,17 +154,23 @@ section[data-testid="stSidebar"] {
 .stChatInput input {
     background: #111827 !important;
     color: white !important;
-    border-radius: 16px !important;
+    border-radius: 18px !important;
     border: 1px solid #374151 !important;
     padding: 18px !important;
+    font-size: 16px !important;
 }
 
 /* MOBILE */
 
 @media (max-width: 768px) {
 
+    section[data-testid="stSidebar"] {
+        width: 80vw !important;
+    }
+
     .main-title {
-        font-size: 48px;
+        font-size: 50px;
+        margin-top: 20px;
     }
 
     .sub-title {
@@ -174,9 +192,9 @@ section[data-testid="stSidebar"] {
 </style>
 """, unsafe_allow_html=True)
 
-# ======================
+# =========================
 # SIDEBAR
-# ======================
+# =========================
 
 with st.sidebar:
 
@@ -194,27 +212,25 @@ with st.sidebar:
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-# ======================
-# MAIN TITLE
-# ======================
+# =========================
+# TITLE ALWAYS VISIBLE
+# =========================
 
-if len(st.session_state.messages) == 0:
+st.markdown(
+    "<div class='main-title'>🌸 Aashvi AI</div>",
+    unsafe_allow_html=True
+)
 
-    st.markdown(
-        "<div class='main-title'>🌸 Aashvi AI</div>",
-        unsafe_allow_html=True
-    )
+st.markdown(
+    "<div class='sub-title'>Think Faster with Aashvi AI ⚡</div>",
+    unsafe_allow_html=True
+)
 
-    st.markdown(
-        "<div class='sub-title'>Think Faster with Aashvi AI ⚡</div>",
-        unsafe_allow_html=True
-    )
-
-# ======================
+# =========================
 # CHAT AREA
-# ======================
+# =========================
 
-st.markdown("<div class='chat-wrap'>", unsafe_allow_html=True)
+st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
 
 for message in st.session_state.messages:
 
@@ -234,26 +250,32 @@ for message in st.session_state.messages:
 
 st.markdown("</div>", unsafe_allow_html=True)
 
-# ======================
+# =========================
 # USER INPUT
-# ======================
+# =========================
 
 prompt = st.chat_input("Ask anything")
 
-# ======================
+# =========================
 # RESPONSE
-# ======================
+# =========================
 
 if prompt:
 
-    # SAVE USER MSG
+    # SAVE USER MESSAGE
 
     st.session_state.messages.append({
         "role": "user",
         "content": prompt
     })
 
-    greetings = ["hi", "hello", "hey", "hii"]
+    greetings = [
+        "hi",
+        "hello",
+        "hey",
+        "hii",
+        "helo"
+    ]
 
     # GREETING RESPONSE
 
@@ -281,7 +303,7 @@ if prompt:
 
             reply = f"Error: {e}"
 
-    # SAVE AI MSG
+    # SAVE AI RESPONSE
 
     st.session_state.messages.append({
         "role": "assistant",
