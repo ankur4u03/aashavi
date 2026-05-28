@@ -229,7 +229,7 @@ section[data-testid="stSidebar"] {
     margin-bottom: 35px;
 }
 
-/* CHATGPT STYLE CHAT */
+/* CHAT */
 
 [data-testid="stChatMessage"] {
     background: transparent !important;
@@ -253,23 +253,6 @@ section[data-testid="stSidebar"] {
     border-radius: 16px !important;
     padding: 10px !important;
     font-size: 14px !important;
-}
-
-/* CARDS */
-
-.card-btn .stButton button {
-    background: #172033;
-    border-radius: 14px;
-    padding: 10px;
-    text-align: center;
-    font-size: 12px;
-    font-weight: 500;
-    margin-bottom: 12px;
-    min-height: 42px;
-}
-
-.card-btn .stButton button:hover {
-    background: #253046;
 }
 
 /* MARKDOWN */
@@ -601,10 +584,12 @@ if user_input:
                 full_response += word + " "
 
                 response_placeholder.markdown(
-                    full_response
+                    full_response + "▌"
                 )
 
                 time.sleep(0.03)
+
+            response_placeholder.markdown(reply)
 
         # SAVE RESPONSE
 
@@ -658,10 +643,12 @@ if user_input:
                     full_response += word + " "
 
                     response_placeholder.markdown(
-                        full_response
+                        full_response + "▌"
                     )
 
                     time.sleep(0.03)
+
+                response_placeholder.markdown(reply)
 
                 # SAVE AI RESPONSE
 
