@@ -1,10 +1,9 @@
 # =========================================
-# AASHVI AI FINAL PREMIUM VERSION
+# AASHVI AI FINAL STABLE VERSION
 # =========================================
 
 import streamlit as st
 import os
-import time
 import sqlite3
 from groq import Groq
 
@@ -229,7 +228,34 @@ section[data-testid="stSidebar"] {
     margin-bottom: 35px;
 }
 
-/* CHAT INPUT */
+/* CHAT BUBBLES */
+
+.user-message {
+    background: #2563eb;
+    color: white;
+    padding: 14px 18px;
+    border-radius: 18px 18px 4px 18px;
+    width: fit-content;
+    max-width: 75%;
+    margin-left: auto;
+    margin-bottom: 16px;
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+.ai-message {
+    background: #1e293b;
+    color: white;
+    padding: 14px 18px;
+    border-radius: 18px 18px 18px 4px;
+    width: fit-content;
+    max-width: 75%;
+    margin-bottom: 16px;
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+/* INPUT */
 
 .stChatInput {
     position: fixed;
@@ -247,7 +273,7 @@ section[data-testid="stSidebar"] {
     font-size: 14px !important;
 }
 
-/* CARDS */
+/* CARD BUTTONS */
 
 .card-btn .stButton button {
     background: #172033;
@@ -428,43 +454,27 @@ if len(messages) == 0:
 
     with col1:
 
-        if st.button(
-            "✨ Viral Reel Script"
-        ):
+        if st.button("✨ Viral Reel Script"):
 
-            prompt = (
-                "Create a viral Instagram reel script"
-            )
+            prompt = "Create a viral Instagram reel script"
 
     with col2:
 
-        if st.button(
-            "🚀 YouTube Ideas"
-        ):
+        if st.button("🚀 YouTube Ideas"):
 
-            prompt = (
-                "Give me viral YouTube video ideas"
-            )
+            prompt = "Give me viral YouTube video ideas"
 
     with col3:
 
-        if st.button(
-            "💻 Python Error"
-        ):
+        if st.button("💻 Python Error"):
 
-            prompt = (
-                "Help me fix my Python error"
-            )
+            prompt = "Help me fix my Python error"
 
     with col4:
 
-        if st.button(
-            "📈 SEO Strategy"
-        ):
+        if st.button("📈 SEO Strategy"):
 
-            prompt = (
-                "Create an SEO strategy"
-            )
+            prompt = "Create an SEO strategy"
 
 # =========================================
 # SHOW CHAT
@@ -472,12 +482,30 @@ if len(messages) == 0:
 
 for message in messages:
 
-    with st.chat_message(message["role"]):
+    if message["role"] == "user":
 
-        st.markdown(message["content"])
+        st.markdown(
+            f"""
+            <div class='user-message'>
+                {message['content']}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    else:
+
+        st.markdown(
+            f"""
+            <div class='ai-message'>
+                {message['content']}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
 # =========================================
-# INPUT
+# CHAT INPUT
 # =========================================
 
 user_input = st.chat_input(
@@ -494,7 +522,7 @@ if "prompt" in locals():
 
 if user_input:
 
-    # AUTO CHAT RENAME
+    # AUTO RENAME
 
     if (
         st.session_state.current_chat.startswith("Chat")
@@ -550,9 +578,14 @@ if user_input:
 
     # SHOW USER MESSAGE
 
-    with st.chat_message("user"):
-
-        st.markdown(user_input)
+    st.markdown(
+        f"""
+        <div class='user-message'>
+            {user_input}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
     # SYSTEM PROMPT
 
@@ -577,60 +610,53 @@ Rules:
 
     # AI RESPONSE
 
-    with st.chat_message("assistant"):
+    try:
 
-        response_placeholder = st.empty()
+        completion = client.chat.completions.create(
 
-        full_response = ""
+            model="llama-3.3-70b-versatile",
 
-        try:
+            messages=[
+                system_prompt,
+                *st.session_state.chat_sessions[
+                    st.session_state.current_chat
+                ]
+            ],
 
-            completion = client.chat.completions.create(
+            temperature=0.7,
+            max_tokens=1024
+        )
 
-                model="llama-3.3-70b-versatile",
+        reply = completion.choices[0].message.content
 
-                messages=[
-                    system_prompt,
-                    *st.session_state.chat_sessions[
-                        st.session_state.current_chat
-                    ]
-                ],
+        # SHOW AI RESPONSE
 
-                temperature=0.7,
-                max_tokens=1024
-            )
+        st.markdown(
+            f"""
+            <div class='ai-message'>
+                {reply}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
-            reply = completion.choices[0].message.content
+        # SAVE AI RESPONSE
 
-            # STREAMING EFFECT
+        st.session_state.chat_sessions[
+            st.session_state.current_chat
+        ].append(
+            {
+                "role": "assistant",
+                "content": reply
+            }
+        )
 
-            for word in reply.split():
+        save_message(
+            st.session_state.current_chat,
+            "assistant",
+            reply
+        )
 
-                full_response += word + " "
+    except Exception as e:
 
-                response_placeholder.markdown(
-                    full_response
-                )
-
-                time.sleep(0.03)
-
-            # SAVE AI RESPONSE
-
-            st.session_state.chat_sessions[
-                st.session_state.current_chat
-            ].append(
-                {
-                    "role": "assistant",
-                    "content": reply
-                }
-            )
-
-            save_message(
-                st.session_state.current_chat,
-                "assistant",
-                reply
-            )
-
-        except Exception as e:
-
-            st.error(f"Error: {e}")
+        st.error(f"Error: {e}")
