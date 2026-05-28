@@ -1,5 +1,5 @@
 # =========================================
-# AASHVI AI - PERFECT CHATGPT STYLE UI
+# AASHVI AI - FINAL PERFECT CHATGPT UI
 # =========================================
 
 import streamlit as st
@@ -40,14 +40,6 @@ CREATE TABLE IF NOT EXISTS chats (
 """)
 
 conn.commit()
-
-# =========================================
-# GROQ CLIENT
-# =========================================
-
-client = Groq(
-    api_key=os.getenv("GROQ_API_KEY")
-)
 
 # =========================================
 # LOAD CHATS
@@ -121,6 +113,14 @@ def save_message(
     conn.commit()
 
 # =========================================
+# GROQ CLIENT
+# =========================================
+
+client = Groq(
+    api_key=os.getenv("GROQ_API_KEY")
+)
+
+# =========================================
 # SESSION
 # =========================================
 
@@ -162,7 +162,7 @@ header {
 /* APP */
 
 .stApp {
-    background: #0a0a0a;
+    background: #000000;
     color: white;
 }
 
@@ -182,16 +182,16 @@ section[data-testid="stSidebar"] {
 
 .logo {
 
-    font-size: 26px;
+    font-size: 28px;
     font-weight: 700;
 
     color: white;
 
     margin-top: 10px;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
 }
 
-/* BUTTONS */
+/* BUTTON */
 
 .stButton button {
 
@@ -201,11 +201,11 @@ section[data-testid="stSidebar"] {
 
     border: none;
 
-    background: #1b1b1b;
+    background: #1a1a1a;
 
     color: white;
 
-    padding: 11px;
+    padding: 12px;
 
     transition: 0.2s;
 
@@ -218,7 +218,7 @@ section[data-testid="stSidebar"] {
 
 .stButton button:hover {
 
-    background: #2a2a2a;
+    background: #2b2b2b;
 }
 
 /* RECENT */
@@ -230,7 +230,7 @@ section[data-testid="stSidebar"] {
     font-size: 12px;
 
     margin-top: 20px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
 /* HOME */
@@ -239,27 +239,52 @@ section[data-testid="stSidebar"] {
 
     text-align: center;
 
-    font-size: 64px;
+    font-size: 68px;
 
     font-weight: 800;
 
     color: white;
 
-    margin-top: 140px;
+    margin-top: 130px;
 }
 
 .sub-title {
 
     text-align: center;
 
-    color: #9ca3af;
+    color: #a1a1aa;
 
     font-size: 20px;
 
+    margin-top: 8px;
     margin-bottom: 40px;
 }
 
-/* CHAT */
+/* HOME BUTTONS */
+
+.home-btn .stButton button {
+
+    border-radius: 30px;
+
+    background: #1a1a1a;
+
+    min-height: 45px;
+
+    text-align: center;
+
+    font-size: 13px;
+}
+
+/* CHAT CONTAINER */
+
+.chat-container {
+
+    width: 100%;
+
+    overflow: auto;
+}
+
+/* USER MESSAGE */
 
 .user-message {
 
@@ -271,22 +296,29 @@ section[data-testid="stSidebar"] {
 
     border-radius: 18px 18px 4px 18px;
 
-    width: fit-content;
+    display: inline-block;
 
-    max-width: 700px;
+    max-width: 70%;
 
-    margin-left: auto;
-    margin-right: 40px;
+    float: right;
 
-    margin-top: 18px;
-    margin-bottom: 18px;
+    clear: both;
+
+    margin-top: 16px;
+    margin-bottom: 16px;
+
+    margin-right: 35px;
 
     font-size: 15px;
 
     line-height: 1.7;
 
+    word-wrap: break-word;
+
     white-space: pre-wrap;
 }
+
+/* AI MESSAGE */
 
 .ai-message {
 
@@ -298,22 +330,26 @@ section[data-testid="stSidebar"] {
 
     border-radius: 18px 18px 18px 4px;
 
-    width: fit-content;
+    display: inline-block;
 
-    max-width: 700px;
+    max-width: 70%;
 
-    margin-left: 40px;
+    float: left;
 
-    margin-top: 18px;
-    margin-bottom: 18px;
+    clear: both;
+
+    margin-top: 16px;
+    margin-bottom: 16px;
+
+    margin-left: 35px;
 
     font-size: 15px;
 
-    line-height: 1.7;
+    line-height: 1.8;
+
+    word-wrap: break-word;
 
     white-space: pre-wrap;
-
-    overflow-wrap: break-word;
 }
 
 /* INPUT */
@@ -348,21 +384,6 @@ section[data-testid="stSidebar"] {
     font-size: 15px !important;
 }
 
-/* HOME BUTTONS */
-
-.home-btn .stButton button {
-
-    background: #1a1a1a;
-
-    border-radius: 30px;
-
-    text-align: center;
-
-    font-size: 13px;
-
-    min-height: 45px;
-}
-
 /* CODE */
 
 pre {
@@ -379,13 +400,6 @@ pre {
 code {
 
     color: #38bdf8 !important;
-}
-
-/* MARKDOWN */
-
-p, li {
-
-    line-height: 1.8;
 }
 
 </style>
@@ -519,7 +533,10 @@ if len(messages) == 0:
         unsafe_allow_html=True
     )
 
-    st.markdown("<div class='home-btn'>", unsafe_allow_html=True)
+    st.markdown(
+        "<div class='home-btn'>",
+        unsafe_allow_html=True
+    )
 
     col1, col2, col3 = st.columns(3)
 
@@ -541,7 +558,10 @@ if len(messages) == 0:
 
             prompt = "Give me SEO tips"
 
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown(
+        "</div>",
+        unsafe_allow_html=True
+    )
 
 # =========================================
 # SHOW CHAT
@@ -553,10 +573,10 @@ for message in messages:
 
         st.markdown(
             f"""
+<div class='chat-container'>
 <div class='user-message'>
-
 {message['content']}
-
+</div>
 </div>
 """,
             unsafe_allow_html=True
@@ -566,10 +586,10 @@ for message in messages:
 
         st.markdown(
             f"""
+<div class='chat-container'>
 <div class='ai-message'>
-
 {message['content']}
-
+</div>
 </div>
 """,
             unsafe_allow_html=True
@@ -588,7 +608,7 @@ if "prompt" in locals():
     user_input = prompt
 
 # =========================================
-# RESPONSE
+# AI RESPONSE
 # =========================================
 
 if user_input:
@@ -651,54 +671,30 @@ if user_input:
 
     st.markdown(
         f"""
+<div class='chat-container'>
 <div class='user-message'>
-
 {user_input}
-
+</div>
 </div>
 """,
         unsafe_allow_html=True
     )
 
-    # SYSTEM PROMPT
+    # GREETING REPLY
 
-    system_prompt = {
-        "role": "system",
-        "content": """
-You are Aashvi AI.
+    greetings = [
+        "hi",
+        "hello",
+        "hey",
+        "hii",
+        "yo"
+    ]
 
-Behave like ChatGPT.
+    if user_input.lower().strip() in greetings:
 
-Keep replies:
-- clean
-- modern
-- direct
-- minimal
+        reply = """
+What can I help you with today?
 """
-    }
-
-    # AI
-
-    try:
-
-        completion = client.chat.completions.create(
-
-            model="llama-3.3-70b-versatile",
-
-            messages=[
-                system_prompt,
-                *st.session_state.chat_sessions[
-                    st.session_state.current_chat
-                ]
-            ],
-
-            temperature=0.7,
-            max_tokens=1024
-        )
-
-        reply = completion.choices[0].message.content
-
-        # REALTIME TYPING
 
         response_placeholder = st.empty()
 
@@ -710,31 +706,16 @@ Keep replies:
 
             response_placeholder.markdown(
                 f"""
+<div class='chat-container'>
 <div class='ai-message'>
-
 {full_response}
-
+</div>
 </div>
 """,
                 unsafe_allow_html=True
             )
 
-            time.sleep(0.02)
-
-        # FINAL RESPONSE
-
-        response_placeholder.markdown(
-            f"""
-<div class='ai-message'>
-
-{reply}
-
-</div>
-""",
-            unsafe_allow_html=True
-        )
-
-        # SAVE AI
+            time.sleep(0.03)
 
         st.session_state.chat_sessions[
             st.session_state.current_chat
@@ -751,6 +732,60 @@ Keep replies:
             reply
         )
 
-    except Exception as e:
+    else:
 
-        st.error(f"Error: {e}")
+        try:
+
+            completion = client.chat.completions.create(
+
+                model="llama-3.3-70b-versatile",
+
+                messages=st.session_state.chat_sessions[
+                    st.session_state.current_chat
+                ],
+
+                temperature=0.7,
+                max_tokens=1024
+            )
+
+            reply = completion.choices[0].message.content
+
+            response_placeholder = st.empty()
+
+            full_response = ""
+
+            for word in reply.split():
+
+                full_response += word + " "
+
+                response_placeholder.markdown(
+                    f"""
+<div class='chat-container'>
+<div class='ai-message'>
+{full_response}
+</div>
+</div>
+""",
+                    unsafe_allow_html=True
+                )
+
+                time.sleep(0.02)
+
+            st.session_state.chat_sessions[
+                st.session_state.current_chat
+            ].append(
+                {
+                    "role": "assistant",
+                    "content": reply
+                }
+            )
+
+            save_message(
+                st.session_state.current_chat,
+                "assistant",
+                reply
+            )
+
+        except Exception as e:
+
+            st.error(f"Error: {e}")
