@@ -184,10 +184,10 @@ section[data-testid="stSidebar"] {
     border-radius: 14px;
     padding: 10px;
     text-align: center;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
     margin-bottom: 12px;
-    min-height: 48px;
+    min-height: 42px;
 }
 
 .card-btn .stButton button:hover {
@@ -292,25 +292,19 @@ if len(messages) == 0:
         unsafe_allow_html=True
     )
 
-    # SMALL CARDS
+    # SINGLE ROW CARDS
 
-    col1, col2 = st.columns(2)
+    col1, col2, col3, col4 = st.columns(4)
 
     with col1:
 
         st.markdown("<div class='card-btn'>", unsafe_allow_html=True)
 
         if st.button(
-            "✨ Create Viral Reel Script",
+            "✨ Viral Reel Script",
             key="viral_script"
         ):
             prompt = "Create a viral Instagram reel script"
-
-        if st.button(
-            "🚀 YouTube Video Ideas",
-            key="youtube_ideas"
-        ):
-            prompt = "Give me viral YouTube video ideas"
 
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -319,10 +313,28 @@ if len(messages) == 0:
         st.markdown("<div class='card-btn'>", unsafe_allow_html=True)
 
         if st.button(
-            "💻 Fix Python Error",
+            "🚀 YouTube Ideas",
+            key="youtube_ideas"
+        ):
+            prompt = "Give me viral YouTube video ideas"
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    with col3:
+
+        st.markdown("<div class='card-btn'>", unsafe_allow_html=True)
+
+        if st.button(
+            "💻 Python Error",
             key="python_error"
         ):
             prompt = "Help me fix my Python error"
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    with col4:
+
+        st.markdown("<div class='card-btn'>", unsafe_allow_html=True)
 
         if st.button(
             "📈 SEO Strategy",
