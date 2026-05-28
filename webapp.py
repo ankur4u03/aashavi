@@ -9,7 +9,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# HIDE STREAMLIT BRANDING
+# HIDE STREAMLIT BRANDING + BADGES
 hide_streamlit_style = """
 <style>
 
@@ -37,6 +37,16 @@ header {
     visibility: hidden;
     height: 0%;
     position: fixed;
+}
+
+.stDeployButton {
+    display: none;
+}
+
+.viewerBadge_container__1QSob,
+.styles_viewerBadge__1yB5_,
+.viewerBadge_link__1S137 {
+    display: none !important;
 }
 
 .stApp {
