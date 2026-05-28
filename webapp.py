@@ -149,7 +149,7 @@ st.markdown("""
 footer,
 header,
 [data-testid="stToolbar"]{
-    display:none;
+    display:none !important;
 }
 
 /* =========================
@@ -162,26 +162,39 @@ header,
 }
 
 /* =========================
+   MAIN LAYOUT
+========================= */
+
+.main .block-container{
+    max-width:900px;
+    padding-top:40px;
+    padding-bottom:120px;
+}
+
+/* =========================
    SIDEBAR
 ========================= */
 
 section[data-testid="stSidebar"]{
-    background:#111827;
+    background:#111827 !important;
+    border-right:1px solid rgba(255,255,255,0.06);
     width:260px !important;
     min-width:260px !important;
-    border-right:1px solid rgba(255,255,255,0.06);
 }
 
-/* =========================
-   LOGO
-========================= */
-
 .logo{
-    font-size:30px;
+    font-size:32px;
     font-weight:700;
+    color:white;
     margin-top:10px;
     margin-bottom:30px;
-    color:white;
+}
+
+.recent-title{
+    color:#94a3b8;
+    font-size:13px;
+    margin-top:20px;
+    margin-bottom:15px;
 }
 
 /* =========================
@@ -190,14 +203,13 @@ section[data-testid="stSidebar"]{
 
 .stButton button{
     width:100%;
-    border:none;
-    border-radius:14px;
     background:#1e293b;
     color:white;
+    border:none;
+    border-radius:14px;
     padding:12px;
-    font-size:14px;
-    transition:0.2s;
     margin-bottom:10px;
+    transition:0.2s;
 }
 
 .stButton button:hover{
@@ -208,46 +220,29 @@ section[data-testid="stSidebar"]{
    TITLES
 ========================= */
 
-.recent-title{
-    color:#94a3b8;
-    font-size:13px;
-    margin-top:20px;
-    margin-bottom:15px;
-}
-
 .main-title{
     text-align:center;
-    font-size:62px;
+    font-size:64px;
     font-weight:800;
-    margin-top:40px;
     color:white;
+    margin-top:30px;
 }
 
 .sub-title{
     text-align:center;
-    font-size:20px;
     color:#9ca3af;
-    margin-bottom:40px;
+    font-size:20px;
+    margin-bottom:50px;
 }
 
 /* =========================
-   CHAT CONTAINER
-========================= */
-
-.main .block-container{
-    max-width:1000px;
-    padding-top:30px;
-    padding-bottom:120px;
-}
-
-/* =========================
-   CHAT AREA
+   CHAT
 ========================= */
 
 .user-wrap{
     display:flex;
     justify-content:flex-end;
-    margin-bottom:24px;
+    margin-bottom:22px;
 }
 
 .user-bubble{
@@ -257,14 +252,14 @@ section[data-testid="stSidebar"]{
     border-radius:18px 18px 4px 18px;
     max-width:75%;
     font-size:15px;
-    line-height:1.8;
-    box-shadow:0 2px 10px rgba(37,99,235,0.25);
+    line-height:1.7;
+    word-wrap:break-word;
 }
 
 .ai-wrap{
     display:flex;
     justify-content:flex-start;
-    margin-bottom:24px;
+    margin-bottom:22px;
 }
 
 .ai-bubble{
@@ -276,28 +271,48 @@ section[data-testid="stSidebar"]{
     font-size:15px;
     line-height:1.8;
     border:1px solid rgba(255,255,255,0.05);
+    overflow-x:auto;
 }
 
 /* =========================
-   TEXT
+   MARKDOWN
 ========================= */
 
-p, li{
-    font-size:16px !important;
+.ai-bubble p,
+.ai-bubble li,
+.ai-bubble strong,
+.ai-bubble span{
+    color:white !important;
+    font-size:15px !important;
     line-height:1.8 !important;
-    color:#f3f4f6 !important;
 }
 
 /* =========================
-   INPUT BOX
+   CODE BLOCKS
+========================= */
+
+.ai-bubble pre{
+    background:#020617 !important;
+    padding:16px !important;
+    border-radius:14px !important;
+    overflow-x:auto !important;
+    border:1px solid rgba(255,255,255,0.08);
+    margin-top:10px;
+}
+
+.ai-bubble code{
+    color:#38bdf8 !important;
+    font-size:14px !important;
+}
+
+/* =========================
+   CHAT INPUT
 ========================= */
 
 .stChatInput{
-    position:fixed;
-    bottom:20px;
-    left:50%;
-    transform:translateX(-35%);
-    width:60%;
+    max-width:900px;
+    margin:auto;
+    padding-top:20px;
 }
 
 .stChatInput input{
@@ -307,22 +322,6 @@ p, li{
     border-radius:18px !important;
     padding:14px !important;
     font-size:15px !important;
-}
-
-/* =========================
-   CODE BLOCKS
-========================= */
-
-pre{
-    background:#0f172a !important;
-    border-radius:14px !important;
-    padding:16px !important;
-    border:1px solid rgba(255,255,255,0.06);
-    overflow-x:auto;
-}
-
-code{
-    color:#38bdf8 !important;
 }
 
 /* =========================
@@ -339,20 +338,20 @@ code{
         font-size:16px;
     }
 
-    .stChatInput{
-        width:90%;
-        left:50%;
-        transform:translateX(-50%);
+    .user-bubble,
+    .ai-bubble{
+        max-width:92%;
+        font-size:14px;
     }
 
     section[data-testid="stSidebar"]{
-        width:100% !important;
-        min-width:100% !important;
+        width:85% !important;
+        min-width:85% !important;
     }
 
-    .user-bubble,
-    .ai-bubble{
-        max-width:95%;
+    .main .block-container{
+        padding-left:10px;
+        padding-right:10px;
     }
 }
 
@@ -370,8 +369,6 @@ with st.sidebar:
         unsafe_allow_html=True
     )
 
-    # NEW CHAT
-
     if st.button("➕ New Chat"):
 
         new_chat_name = f"Chat {len(st.session_state.chat_sessions)+1}"
@@ -384,14 +381,10 @@ with st.sidebar:
 
         st.rerun()
 
-    # RECENT CHATS
-
     st.markdown(
         "<div class='recent-title'>Recent Chats</div>",
         unsafe_allow_html=True
     )
-
-    # CHAT LIST
 
     for chat_name in list(
         st.session_state.chat_sessions.keys()
@@ -465,7 +458,7 @@ messages = st.session_state.chat_sessions[
 # HOME SCREEN
 # =========================================
 
-if True:
+if len(messages) == 0:
 
     st.markdown(
         """
@@ -491,8 +484,6 @@ if True:
 
 for message in messages:
 
-    # USER
-
     if message["role"] == "user":
 
         st.markdown(
@@ -506,20 +497,21 @@ for message in messages:
             unsafe_allow_html=True
         )
 
-    # AI
-
     else:
 
-        st.markdown(
-            f"""
-            <div class="ai-wrap">
-                <div class="ai-bubble">
-                    {message["content"]}
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        with st.container():
+
+            st.markdown(
+                '<div class="ai-wrap"><div class="ai-bubble">',
+                unsafe_allow_html=True
+            )
+
+            st.markdown(message["content"])
+
+            st.markdown(
+                '</div></div>',
+                unsafe_allow_html=True
+            )
 
 # =========================================
 # CHAT INPUT
@@ -535,9 +527,7 @@ user_input = st.chat_input(
 
 if user_input:
 
-    # =========================================
-    # AUTO CHAT RENAME
-    # =========================================
+    # AUTO CHAT TITLE
 
     if (
         st.session_state.current_chat.startswith("Chat")
@@ -574,9 +564,7 @@ if user_input:
 
         st.session_state.current_chat = title
 
-    # =========================================
     # SAVE USER MESSAGE
-    # =========================================
 
     st.session_state.chat_sessions[
         st.session_state.current_chat
@@ -606,9 +594,7 @@ if user_input:
         unsafe_allow_html=True
     )
 
-    # =========================================
     # GREETING CHECK
-    # =========================================
 
     greetings = [
         "hi",
@@ -622,13 +608,11 @@ if user_input:
 
     clean_input = user_input.lower().strip()
 
-    # =========================================
     # GREETING RESPONSE
-    # =========================================
 
     if clean_input in greetings:
 
-        reply = "What can I help you with today?"
+        reply = "Hello 👋 How can I help you today?"
 
         response_placeholder = st.empty()
 
@@ -642,7 +626,7 @@ if user_input:
                 f"""
                 <div class="ai-wrap">
                     <div class="ai-bubble">
-                        {full_response}▌
+                        <p>{full_response}▌</p>
                     </div>
                 </div>
                 """,
@@ -655,7 +639,7 @@ if user_input:
             f"""
             <div class="ai-wrap">
                 <div class="ai-bubble">
-                    {reply}
+                    <p>{reply}</p>
                 </div>
             </div>
             """,
@@ -677,9 +661,7 @@ if user_input:
             reply
         )
 
-    # =========================================
     # NORMAL AI RESPONSE
-    # =========================================
 
     else:
 
@@ -703,8 +685,6 @@ if user_input:
 
             reply = completion.choices[0].message.content
 
-            # STREAM EFFECT
-
             for word in reply.split():
 
                 full_response += word + " "
@@ -713,27 +693,25 @@ if user_input:
                     f"""
                     <div class="ai-wrap">
                         <div class="ai-bubble">
-                            {full_response}▌
+                            <p>{full_response}▌</p>
                         </div>
                     </div>
                     """,
                     unsafe_allow_html=True
                 )
 
-                time.sleep(0.03)
+                time.sleep(0.02)
 
             response_placeholder.markdown(
                 f"""
                 <div class="ai-wrap">
                     <div class="ai-bubble">
-                        {reply}
+                        <p>{reply}</p>
                     </div>
                 </div>
                 """,
                 unsafe_allow_html=True
             )
-
-            # SAVE AI RESPONSE
 
             st.session_state.chat_sessions[
                 st.session_state.current_chat
