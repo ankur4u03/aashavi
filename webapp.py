@@ -1,3 +1,7 @@
+# =========================================
+# AASHVI AI FULL PREMIUM VERSION
+# =========================================
+
 import streamlit as st
 import os
 import time
@@ -287,22 +291,7 @@ section[data-testid="stSidebar"] {
     background: #253046;
 }
 
-/* CODE BLOCK */
-
-code {
-    background: #111827 !important;
-    color: #38bdf8 !important;
-    padding: 3px 6px;
-    border-radius: 6px;
-}
-
-pre {
-    background: #111827 !important;
-    border-radius: 12px !important;
-    padding: 14px !important;
-    overflow-x: auto;
-}
-            /* MARKDOWN */
+/* MARKDOWN */
 
 h1, h2, h3 {
     color: white !important;
@@ -313,14 +302,20 @@ p, li {
     line-height: 1.8;
 }
 
+/* CODE BLOCK */
+
 pre {
     background: #111827 !important;
     border-radius: 12px !important;
     padding: 16px !important;
+    overflow-x: auto;
 }
 
 code {
     color: #38bdf8 !important;
+    background: #111827 !important;
+    padding: 3px 6px;
+    border-radius: 6px;
 }
 
 </style>
@@ -499,27 +494,17 @@ if len(messages) == 0:
             )
 
 # =========================================
-# SHOW CHAT
+# SHOW CHAT HISTORY
 # =========================================
 
 for message in messages:
 
-    if message["role"] == "user":
+    with st.chat_message(message["role"]):
 
-        st.markdown(
-            f"""
-            <div class='user-message'>
-                {message['content']}
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        st.markdown(message["content"])
 
-    else:
-
-        st.markdown(reply)
 # =========================================
-# INPUT
+# CHAT INPUT
 # =========================================
 
 user_input = st.chat_input(
@@ -536,7 +521,9 @@ if "prompt" in locals():
 
 if user_input:
 
+    # =========================================
     # AUTO CHAT RENAME
+    # =========================================
 
     if (
         st.session_state.current_chat.startswith("Chat")
@@ -573,7 +560,9 @@ if user_input:
 
         st.session_state.current_chat = title
 
+    # =========================================
     # SAVE USER MESSAGE
+    # =========================================
 
     st.session_state.chat_sessions[
         st.session_state.current_chat
@@ -590,64 +579,67 @@ if user_input:
         user_input
     )
 
-    st.markdown(
-        f"""
-        <div class='user-message'>
-            {user_input}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    # SHOW USER MESSAGE
 
-    # STREAMING RESPONSE
+    with st.chat_message("user"):
 
-    try:
+        st.markdown(user_input)
 
-        completion = client.chat.completions.create(
+    # =========================================
+    # AI RESPONSE STREAMING
+    # =========================================
 
-            model="llama-3.3-70b-versatile",
-
-            messages=st.session_state.chat_sessions[
-                st.session_state.current_chat
-            ],
-
-            temperature=0.7,
-            max_tokens=1024
-        )
-
-        reply = completion.choices[0].message.content
-
-        # TYPING EFFECT
-
-        full_response = ""
+    with st.chat_message("assistant"):
 
         response_placeholder = st.empty()
 
-        for word in reply.split():
+        full_response = ""
 
-            full_response += word + " "
+        try:
 
-            response_placeholder.markdown(full_response)
+            completion = client.chat.completions.create(
 
-            time.sleep(0.03)
+                model="llama-3.3-70b-versatile",
 
-        # SAVE AI RESPONSE
+                messages=st.session_state.chat_sessions[
+                    st.session_state.current_chat
+                ],
 
-        st.session_state.chat_sessions[
-            st.session_state.current_chat
-        ].append(
-            {
-                "role": "assistant",
-                "content": reply
-            }
-        )
+                temperature=0.7,
+                max_tokens=1024
+            )
 
-        save_message(
-            st.session_state.current_chat,
-            "assistant",
-            reply
-        )
+            reply = completion.choices[0].message.content
 
-    except Exception as e:
+            # STREAM EFFECT
 
-        st.error(f"Error: {e}")
+            for word in reply.split():
+
+                full_response += word + " "
+
+                response_placeholder.markdown(
+                    full_response
+                )
+
+                time.sleep(0.03)
+
+            # SAVE AI RESPONSE
+
+            st.session_state.chat_sessions[
+                st.session_state.current_chat
+            ].append(
+                {
+                    "role": "assistant",
+                    "content": reply
+                }
+            )
+
+            save_message(
+                st.session_state.current_chat,
+                "assistant",
+                reply
+            )
+
+        except Exception as e:
+
+            st.error(f"Error: {e}")
