@@ -302,6 +302,26 @@ pre {
     padding: 14px !important;
     overflow-x: auto;
 }
+            /* MARKDOWN */
+
+h1, h2, h3 {
+    color: white !important;
+}
+
+p, li {
+    color: #e5e7eb !important;
+    line-height: 1.8;
+}
+
+pre {
+    background: #111827 !important;
+    border-radius: 12px !important;
+    padding: 16px !important;
+}
+
+code {
+    color: #38bdf8 !important;
+}
 
 </style>
 """, unsafe_allow_html=True)
@@ -497,15 +517,7 @@ for message in messages:
 
     else:
 
-        st.markdown(
-            f"""
-            <div class='ai-message'>
-                {message['content']}
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
+        st.markdown(reply)
 # =========================================
 # INPUT
 # =========================================
@@ -615,14 +627,7 @@ if user_input:
 
             full_response += word + " "
 
-            response_placeholder.markdown(
-                f"""
-                <div class='ai-message'>
-                    {full_response}
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+            response_placeholder.markdown(full_response)
 
             time.sleep(0.03)
 
