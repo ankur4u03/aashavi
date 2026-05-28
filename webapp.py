@@ -1,5 +1,5 @@
 # =========================================
-# AASHVI AI - FINAL CLEAN CHATGPT UI
+# AASHVI AI - PERFECT CHATGPT STYLE UI
 # =========================================
 
 import streamlit as st
@@ -121,7 +121,7 @@ def save_message(
     conn.commit()
 
 # =========================================
-# SESSION STATE
+# SESSION
 # =========================================
 
 if "chat_sessions" not in st.session_state:
@@ -135,13 +135,13 @@ if "current_chat" not in st.session_state:
     )[0]
 
 # =========================================
-# CUSTOM CSS
+# CSS
 # =========================================
 
 st.markdown("""
 <style>
 
-/* HIDE STREAMLIT */
+/* HIDE */
 
 #MainMenu {
     visibility: hidden;
@@ -169,146 +169,222 @@ header {
 /* SIDEBAR */
 
 section[data-testid="stSidebar"] {
+
     background: #111111;
+
     width: 260px !important;
     min-width: 260px !important;
+
     border-right: 1px solid rgba(255,255,255,0.05);
 }
 
 /* LOGO */
 
 .logo {
-    font-size: 24px;
+
+    font-size: 26px;
     font-weight: 700;
+
     color: white;
-    margin-top: 5px;
+
+    margin-top: 10px;
     margin-bottom: 25px;
 }
 
 /* BUTTONS */
 
 .stButton button {
+
     width: 100%;
+
     border-radius: 12px;
+
     border: none;
+
     background: #1b1b1b;
+
     color: white;
-    padding: 10px;
+
+    padding: 11px;
+
     transition: 0.2s;
-    font-size: 13px;
-    font-weight: 500;
+
+    font-size: 14px;
+
     text-align: left;
+
     margin-bottom: 8px;
 }
 
 .stButton button:hover {
+
     background: #2a2a2a;
 }
 
 /* RECENT */
 
 .recent-title {
+
     color: #888;
+
     font-size: 12px;
+
     margin-top: 20px;
     margin-bottom: 12px;
 }
 
-/* MAIN TITLE */
+/* HOME */
 
 .main-title {
+
     text-align: center;
-    font-size: 54px;
+
+    font-size: 64px;
+
     font-weight: 800;
+
     color: white;
-    margin-top: 80px;
+
+    margin-top: 140px;
 }
 
 .sub-title {
+
     text-align: center;
+
     color: #9ca3af;
-    font-size: 18px;
-    margin-bottom: 35px;
+
+    font-size: 20px;
+
+    margin-bottom: 40px;
 }
 
 /* CHAT */
 
 .user-message {
+
     background: #2563eb;
+
     color: white;
+
     padding: 14px 18px;
+
     border-radius: 18px 18px 4px 18px;
+
     width: fit-content;
-    max-width: 75%;
+
+    max-width: 700px;
+
     margin-left: auto;
-    margin-bottom: 15px;
+    margin-right: 40px;
+
+    margin-top: 18px;
+    margin-bottom: 18px;
+
     font-size: 15px;
-    line-height: 1.8;
+
+    line-height: 1.7;
+
     white-space: pre-wrap;
 }
 
 .ai-message {
+
     background: #1a1a1a;
+
     color: white;
+
     padding: 14px 18px;
+
     border-radius: 18px 18px 18px 4px;
+
     width: fit-content;
-    max-width: 75%;
-    margin-bottom: 15px;
+
+    max-width: 700px;
+
+    margin-left: 40px;
+
+    margin-top: 18px;
+    margin-bottom: 18px;
+
     font-size: 15px;
-    line-height: 1.8;
+
+    line-height: 1.7;
+
     white-space: pre-wrap;
+
     overflow-wrap: break-word;
 }
 
 /* INPUT */
 
 .stChatInput {
+
     position: fixed;
-    bottom: 15px;
-    left: 28%;
-    width: 63%;
+
+    bottom: 20px;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    width: 760px;
+
+    max-width: 90%;
 }
 
 .stChatInput input {
+
     background: #1a1a1a !important;
+
     color: white !important;
+
     border: 1px solid rgba(255,255,255,0.08) !important;
+
     border-radius: 18px !important;
+
     padding: 14px !important;
+
     font-size: 15px !important;
 }
 
 /* HOME BUTTONS */
 
 .home-btn .stButton button {
-    background: #1a1a1a;
-    border-radius: 30px;
-    text-align: center;
-    font-size: 13px;
-    min-height: 45px;
-}
 
-.home-btn .stButton button:hover {
-    background: #2a2a2a;
+    background: #1a1a1a;
+
+    border-radius: 30px;
+
+    text-align: center;
+
+    font-size: 13px;
+
+    min-height: 45px;
 }
 
 /* CODE */
 
 pre {
+
     background: #111827 !important;
+
     border-radius: 12px !important;
+
     padding: 16px !important;
+
     overflow-x: auto;
 }
 
 code {
+
     color: #38bdf8 !important;
 }
 
 /* MARKDOWN */
 
 p, li {
+
     line-height: 1.8;
 }
 
@@ -357,8 +433,6 @@ with st.sidebar:
 
         col1, col2 = st.columns([5,1])
 
-        # OPEN CHAT
-
         with col1:
 
             if st.button(
@@ -371,8 +445,6 @@ with st.sidebar:
                 )
 
                 st.rerun()
-
-        # DELETE CHAT
 
         with col2:
 
@@ -447,6 +519,8 @@ if len(messages) == 0:
         unsafe_allow_html=True
     )
 
+    st.markdown("<div class='home-btn'>", unsafe_allow_html=True)
+
     col1, col2, col3 = st.columns(3)
 
     with col1:
@@ -466,6 +540,8 @@ if len(messages) == 0:
         if st.button("📈 SEO Tips"):
 
             prompt = "Give me SEO tips"
+
+    st.markdown("</div>", unsafe_allow_html=True)
 
 # =========================================
 # SHOW CHAT
@@ -512,7 +588,7 @@ if "prompt" in locals():
     user_input = prompt
 
 # =========================================
-# AI RESPONSE
+# RESPONSE
 # =========================================
 
 if user_input:
@@ -554,7 +630,7 @@ if user_input:
 
         st.session_state.current_chat = title
 
-    # SAVE USER MESSAGE
+    # SAVE USER
 
     st.session_state.chat_sessions[
         st.session_state.current_chat
@@ -571,7 +647,7 @@ if user_input:
         user_input
     )
 
-    # SHOW USER MESSAGE
+    # SHOW USER
 
     st.markdown(
         f"""
@@ -593,17 +669,15 @@ You are Aashvi AI.
 
 Behave like ChatGPT.
 
-Rules:
-- Keep responses clean
-- Only answer what user asks
-- No long welcome messages
-- Use markdown only when needed
-- Use code blocks only for code
-- Keep replies modern and minimal
+Keep replies:
+- clean
+- modern
+- direct
+- minimal
 """
     }
 
-    # AI RESPONSE
+    # AI
 
     try:
 
@@ -660,7 +734,7 @@ Rules:
             unsafe_allow_html=True
         )
 
-        # SAVE AI RESPONSE
+        # SAVE AI
 
         st.session_state.chat_sessions[
             st.session_state.current_chat
