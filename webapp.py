@@ -1,13 +1,14 @@
 import streamlit as st
 import os
 from groq import Groq
+import uuid
 
 # PAGE CONFIG
 st.set_page_config(
     page_title="Aashvi AI",
     page_icon="🌸",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
 # API KEY
@@ -38,11 +39,27 @@ header,
     color: white;
 }
 
+/* SIDEBAR */
+
+section[data-testid="stSidebar"] {
+    background: #111827;
+    border-right: 1px solid rgba(255,255,255,0.08);
+}
+
+/* SIDEBAR TITLE */
+
+.sidebar-title {
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
 /* MAIN CONTAINER */
 
 .block-container {
     padding-top: 1rem;
-    max-width: 900px;
+    max-width: 1000px;
 }
 
 /* TITLE */
@@ -62,7 +79,7 @@ header,
     margin-bottom: 35px;
 }
 
-/* CHAT BUBBLE */
+/* USER CHAT */
 
 .user-msg {
     background: #2563eb;
@@ -74,6 +91,8 @@ header,
     font-size: 16px;
     line-height: 1.5;
 }
+
+/* AI CHAT */
 
 .ai-msg {
     background: #1e293b;
@@ -87,14 +106,14 @@ header,
     border: 1px solid rgba(255,255,255,0.05);
 }
 
-/* CHAT INPUT */
+/* INPUT */
 
 .stChatInput {
     position: fixed;
     bottom: 20px;
-    left: 50%;
+    left: 57%;
     transform: translateX(-50%);
-    width: min(900px, calc(100% - 30px));
+    width: min(850px, calc(100% - 320px));
     z-index: 999;
 }
 
@@ -104,6 +123,18 @@ header,
     border-radius: 16px !important;
     border: 1px solid #334155 !important;
     padding: 14px !important;
+}
+
+/* BUTTON */
+
+.stButton button {
+    width: 100%;
+    border-radius: 12px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 10px;
+    margin-bottom: 10px;
 }
 
 /* MOBILE */
@@ -127,7 +158,8 @@ header,
     }
 
     .stChatInput {
-        width: calc(100% - 16px);
+        width: calc(100% - 20px);
+        left: 50%;
         bottom: 10px;
     }
 }
@@ -135,7 +167,66 @@ header,
 </style>
 """, unsafe_allow_html=True)
 
+# SESSION STATE
+
+if "chats" not in st.session_state:
+    st.session_state.chats = {}
+
+if "current_chat" not in st.session_state:
+
+    chat_id = str(uuid.uuid4())
+
+    st.session_state.current_chat = chat_id
+
+    st.session_state.chats[chat_id] = {
+        "title": "New Chat",
+        "messages": []
+    }
+
+# SIDEBAR
+
+with st.sidebar:
+
+    st.markdown(
+        "<div class='sidebar-title'>🌸 Aashvi AI</div>",
+        unsafe_allow_html=True
+    )
+
+    # NEW CHAT BUTTON
+
+    if st.button("➕ New Chat"):
+
+        new_chat_id = str(uuid.uuid4())
+
+        st.session_state.current_chat = new_chat_id
+
+        st.session_state.chats[new_chat_id] = {
+            "title": "New Chat",
+            "messages": []
+        }
+
+        st.rerun()
+
+    st.markdown("### 💬 Chat History")
+
+    # CHAT LIST
+
+    for chat_id, chat_data in st.session_state.chats.items():
+
+        if st.button(chat_data["title"], key=chat_id):
+
+            st.session_state.current_chat = chat_id
+
+            st.rerun()
+
+# CURRENT CHAT
+
+current_chat = st.session_state.chats[
+    st.session_state.current_chat
+]
+
 # TITLE
+
 st.markdown(
     "<div class='main-title'>🌸 Aashvi AI</div>",
     unsafe_allow_html=True
@@ -146,12 +237,9 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# SESSION STATE
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
 # SHOW CHAT HISTORY
-for message in st.session_state.messages:
+
+for message in current_chat["messages"]:
 
     if message["role"] == "user":
 
@@ -168,23 +256,33 @@ for message in st.session_state.messages:
         )
 
 # USER INPUT
+
 prompt = st.chat_input("Message Aashvi AI...")
 
 if prompt:
 
+    # AUTO TITLE
+
+    if current_chat["title"] == "New Chat":
+
+        current_chat["title"] = prompt[:30]
+
     # SAVE USER MESSAGE
-    st.session_state.messages.append({
+
+    current_chat["messages"].append({
         "role": "user",
         "content": prompt
     })
 
     # SHOW USER MESSAGE
+
     st.markdown(
         f"<div class='user-msg'>{prompt}</div>",
         unsafe_allow_html=True
     )
 
     # AI RESPONSE
+
     with st.spinner("Aashvi AI is typing..."):
 
         try:
@@ -206,13 +304,15 @@ if prompt:
             reply = completion.choices[0].message.content
 
             # SHOW AI MESSAGE
+
             st.markdown(
                 f"<div class='ai-msg'>{reply}</div>",
                 unsafe_allow_html=True
             )
 
             # SAVE AI RESPONSE
-            st.session_state.messages.append({
+
+            current_chat["messages"].append({
                 "role": "assistant",
                 "content": reply
             })
