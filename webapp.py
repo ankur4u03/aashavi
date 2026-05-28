@@ -6,12 +6,15 @@ from groq import Groq
 st.set_page_config(
     page_title="Aashvi AI",
     page_icon="🌸",
-    layout="centered"
+    layout="centered",
+    initial_sidebar_state="collapsed"
 )
 
-# HIDE STREAMLIT BRANDING + BADGES
+# HIDE STREAMLIT BRANDING
 hide_streamlit_style = """
 <style>
+
+/* HIDE MENU + FOOTER + HEADER */
 
 #MainMenu {
     visibility: hidden;
@@ -25,34 +28,62 @@ header {
     visibility: hidden;
 }
 
+/* HIDE TOOLBAR */
+
 [data-testid="stToolbar"] {
-    display: none;
+    display: none !important;
 }
 
-[data-testid="stDecoration"] {
-    display: none;
+/* HIDE TOP RIGHT DEPLOY BUTTON */
+
+[data-testid="stDeployButton"] {
+    display: none !important;
 }
 
-[data-testid="stStatusWidget"] {
-    visibility: hidden;
-    height: 0%;
-    position: fixed;
+/* HIDE STREAMLIT BADGE */
+
+.viewerBadge_container__1QSob {
+    display: none !important;
 }
 
-.stDeployButton {
-    display: none;
+.styles_viewerBadge__1yB5_ {
+    display: none !important;
 }
 
-.viewerBadge_container__1QSob,
-.styles_viewerBadge__1yB5_,
 .viewerBadge_link__1S137 {
     display: none !important;
 }
+
+a[title="Hosted with Streamlit"] {
+    display: none !important;
+}
+
+/* HIDE FLOATING BUTTON */
+
+.stActionButton {
+    display: none !important;
+}
+
+/* HIDE STATUS */
+
+[data-testid="stStatusWidget"] {
+    display: none !important;
+}
+
+/* REMOVE EXTRA SPACE */
+
+.block-container {
+    padding-top: 1rem;
+}
+
+/* APP BACKGROUND */
 
 .stApp {
     background: linear-gradient(to bottom, #050816, #0b1026);
     color: white;
 }
+
+/* TITLE */
 
 .main-title {
     text-align: center;
@@ -62,6 +93,8 @@ header {
     margin-top: 20px;
 }
 
+/* SUBTITLE */
+
 .sub-title {
     text-align: center;
     color: #b0b3c7;
@@ -69,25 +102,21 @@ header {
     margin-bottom: 40px;
 }
 
-.chat-user {
-    background-color: #ff7849;
-    padding: 12px;
-    border-radius: 12px;
-    margin-bottom: 10px;
-    color: white;
-}
-
-.chat-ai {
-    background-color: #1b2338;
-    padding: 12px;
-    border-radius: 12px;
-    margin-bottom: 10px;
-    color: white;
-}
+/* CHAT INPUT */
 
 .stChatInput input {
     background-color: #111827 !important;
     color: white !important;
+    border-radius: 12px;
+}
+
+/* CHAT MESSAGE */
+
+.stChatMessage {
+    background-color: #1b2338;
+    border-radius: 15px;
+    padding: 10px;
+    margin-bottom: 10px;
 }
 
 </style>
