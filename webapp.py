@@ -2,227 +2,277 @@ import streamlit as st
 import os
 from groq import Groq
 
-# =====================================
+# =========================
 # PAGE CONFIG
-# =====================================
+# =========================
 
 st.set_page_config(
     page_title="Aashvi AI",
     page_icon="🌸",
-    layout="wide",
-    initial_sidebar_state="collapsed"
+    layout="wide"
 )
 
-# =====================================
-# GROQ CLIENT
-# =====================================
+# =========================
+# API KEY
+# =========================
 
 client = Groq(
     api_key=os.getenv("GROQ_API_KEY")
 )
 
-# =====================================
+# =========================
 # SESSION STATE
-# =====================================
+# =========================
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# =====================================
+# =========================
 # CUSTOM CSS
-# =====================================
+# =========================
 
 st.markdown("""
 <style>
 
-/* HIDE STREAMLIT */
+/* HIDE STREAMLIT DEFAULT */
 
-#MainMenu,
-footer,
-header,
-[data-testid="stToolbar"],
-[data-testid="stDecoration"],
-[data-testid="stStatusWidget"]{
-    display:none !important;
+#MainMenu {
+    visibility: hidden;
+}
+
+footer {
+    visibility: hidden;
+}
+
+header {
+    visibility: hidden;
+}
+
+[data-testid="stToolbar"] {
+    display: none;
+}
+
+[data-testid="stDecoration"] {
+    display: none;
+}
+
+[data-testid="stStatusWidget"] {
+    display: none;
+}
+
+.stDeployButton {
+    display: none;
 }
 
 /* APP */
 
-.stApp{
-    background:#0f172a;
-    color:white;
+.stApp {
+    background: linear-gradient(to bottom, #020617, #020b1f);
+    color: white;
 }
 
-/* MAIN CONTAINER */
+/* SIDEBAR */
 
-.block-container{
-    max-width:1000px;
-    padding-top:2rem;
-    padding-bottom:7rem;
+section[data-testid="stSidebar"] {
+    background: #0b1120;
+    border-right: 1px solid #1e293b;
+    width: 260px !important;
 }
 
-/* TITLE */
-
-.main-title{
-    text-align:center;
-    font-size:72px;
-    font-weight:800;
-    color:white;
-    margin-top:30px;
+.sidebar-title {
+    font-size: 40px;
+    font-weight: bold;
+    color: white;
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
 
-.sub-title{
-    text-align:center;
-    color:#cbd5e1;
-    font-size:24px;
-    margin-bottom:50px;
+.new-chat-btn button {
+    width: 100%;
+    border-radius: 14px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    font-size: 16px;
+    padding: 12px;
 }
 
-/* USER CHAT */
+/* CHAT */
 
-.user-msg{
-    background:#2563eb;
-    color:white;
-    padding:16px 22px;
-    border-radius:22px;
-    width:fit-content;
-    max-width:75%;
-    margin-left:auto;
-    margin-top:18px;
-    margin-bottom:18px;
-    font-size:17px;
-    word-wrap:break-word;
-    box-shadow:0px 4px 15px rgba(37,99,235,0.25);
+.chat-container {
+    max-width: 850px;
+    margin: auto;
+    padding-bottom: 120px;
 }
 
-/* AI CHAT */
-
-.ai-msg{
-    background:#1e293b;
-    color:white;
-    padding:16px 22px;
-    border-radius:22px;
-    width:fit-content;
-    max-width:75%;
-    margin-right:auto;
-    margin-top:18px;
-    margin-bottom:18px;
-    font-size:17px;
-    line-height:1.7;
-    word-wrap:break-word;
+.main-title {
+    text-align: center;
+    font-size: 70px;
+    font-weight: bold;
+    color: white;
+    margin-top: 70px;
 }
 
-/* CHAT INPUT */
-
-.stChatInput{
-    position:fixed;
-    bottom:18px;
-    left:50%;
-    transform:translateX(-50%);
-    width:90%;
-    max-width:900px;
+.sub-title {
+    text-align: center;
+    color: #cbd5e1;
+    font-size: 28px;
+    margin-bottom: 50px;
 }
 
-.stChatInput input{
-    background:#1e293b !important;
-    color:white !important;
-    border:none !important;
-    border-radius:18px !important;
-    padding:18px !important;
-    font-size:16px !important;
+/* USER MESSAGE */
+
+.user-message {
+    background: #2563eb;
+    padding: 16px 22px;
+    border-radius: 22px;
+    color: white;
+    width: fit-content;
+    max-width: 70%;
+    margin-left: auto;
+    margin-top: 18px;
+    margin-bottom: 18px;
+    font-size: 17px;
+    box-shadow: 0 0 20px rgba(37,99,235,0.4);
+}
+
+/* AI MESSAGE */
+
+.ai-message {
+    background: #111827;
+    padding: 18px 22px;
+    border-radius: 22px;
+    color: white;
+    width: fit-content;
+    max-width: 75%;
+    margin-right: auto;
+    margin-top: 18px;
+    margin-bottom: 18px;
+    font-size: 17px;
+    border: 1px solid #1f2937;
+}
+
+/* INPUT */
+
+.stChatInput {
+    position: fixed;
+    bottom: 20px;
+    left: 320px;
+    right: 40px;
+}
+
+.stChatInput input {
+    background: #111827 !important;
+    color: white !important;
+    border: 1px solid #374151 !important;
+    border-radius: 18px !important;
+    padding: 18px !important;
+    font-size: 16px !important;
 }
 
 /* MOBILE */
 
-@media (max-width:768px){
+@media (max-width: 768px) {
 
-    .main-title{
-        font-size:46px;
-        margin-top:10px;
+    section[data-testid="stSidebar"] {
+        width: 85vw !important;
     }
 
-    .sub-title{
-        font-size:18px;
-        margin-bottom:30px;
+    .main-title {
+        font-size: 52px;
+        margin-top: 40px;
     }
 
-    .user-msg,
-    .ai-msg{
-        max-width:90%;
-        font-size:15px;
-        padding:14px 18px;
+    .sub-title {
+        font-size: 22px;
     }
 
-    .stChatInput{
-        width:95%;
-        bottom:10px;
+    .stChatInput {
+        left: 10px !important;
+        right: 10px !important;
+        bottom: 10px !important;
+    }
+
+    .user-message,
+    .ai-message {
+        max-width: 90%;
+        font-size: 16px;
     }
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-# =====================================
-# TITLE
-# =====================================
+# =========================
+# SIDEBAR
+# =========================
+
+with st.sidebar:
+
+    st.markdown(
+        "<div class='sidebar-title'>🌸 Aashvi AI</div>",
+        unsafe_allow_html=True
+    )
+
+    st.markdown("<div class='new-chat-btn'>", unsafe_allow_html=True)
+
+    if st.button("➕ New Chat"):
+
+        st.session_state.messages = []
+        st.rerun()
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# =========================
+# MAIN TITLE
+# =========================
+
+st.markdown(
+    "<div class='chat-container'>",
+    unsafe_allow_html=True
+)
 
 if len(st.session_state.messages) == 0:
 
     st.markdown(
-        """
-        <div class='main-title'>
-            🌸 Aashvi AI
-        </div>
-        """,
+        "<div class='main-title'>🌸 Aashvi AI</div>",
         unsafe_allow_html=True
     )
 
     st.markdown(
-        """
-        <div class='sub-title'>
-            Think Faster with Aashvi AI ⚡
-        </div>
-        """,
+        "<div class='sub-title'>Think Faster with Aashvi AI ⚡</div>",
         unsafe_allow_html=True
     )
 
-# =====================================
-# CHAT HISTORY
-# =====================================
+# =========================
+# SHOW CHAT
+# =========================
 
 for message in st.session_state.messages:
 
     if message["role"] == "user":
 
         st.markdown(
-            f"""
-            <div class='user-msg'>
-                {message["content"]}
-            </div>
-            """,
+            f"<div class='user-message'>{message['content']}</div>",
             unsafe_allow_html=True
         )
 
     else:
 
         st.markdown(
-            f"""
-            <div class='ai-msg'>
-                {message["content"]}
-            </div>
-            """,
+            f"<div class='ai-message'>{message['content']}</div>",
             unsafe_allow_html=True
         )
 
-# =====================================
-# CHAT INPUT
-# =====================================
+# =========================
+# USER INPUT
+# =========================
 
-prompt = st.chat_input("Ask anything...")
+prompt = st.chat_input("Ask anything")
 
-# =====================================
-# AI RESPONSE
-# =====================================
+# =========================
+# RESPONSE
+# =========================
 
 if prompt:
 
@@ -230,59 +280,55 @@ if prompt:
 
     st.session_state.messages.append(
         {
-            "role":"user",
-            "content":prompt
+            "role": "user",
+            "content": prompt
         }
     )
 
-    # SHOW USER MESSAGE
+    # GREETING SYSTEM
 
-    st.markdown(
-        f"""
-        <div class='user-msg'>
-            {prompt}
-        </div>
-        """,
-        unsafe_allow_html=True
+    greetings = [
+        "hi",
+        "hello",
+        "hey",
+        "hii",
+        "helo"
+    ]
+
+    if prompt.lower().strip() in greetings:
+
+        reply = "Hello 👋 How can I help you today?"
+
+    else:
+
+        try:
+
+            completion = client.chat.completions.create(
+
+                model="llama-3.3-70b-versatile",
+
+                messages=st.session_state.messages,
+
+                temperature=0.7,
+
+                max_tokens=1024
+            )
+
+            reply = completion.choices[0].message.content
+
+        except Exception as e:
+
+            reply = f"Error: {e}"
+
+    # SAVE AI RESPONSE
+
+    st.session_state.messages.append(
+        {
+            "role": "assistant",
+            "content": reply
+        }
     )
 
-    try:
+    st.rerun()
 
-        # AI RESPONSE
-
-        completion = client.chat.completions.create(
-
-            model="llama-3.3-70b-versatile",
-
-            messages=st.session_state.messages,
-
-            temperature=0.7,
-
-            max_tokens=1024
-        )
-
-        reply = completion.choices[0].message.content
-
-        # SHOW AI MESSAGE
-
-        st.markdown(
-            f"""
-            <div class='ai-msg'>
-                {reply}
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-        # SAVE AI MESSAGE
-
-        st.session_state.messages.append(
-            {
-                "role":"assistant",
-                "content":reply
-            }
-        )
-
-    except Exception as e:
-
-        st.error(f"Error: {e}")
+st.markdown("</div>", unsafe_allow_html=True)
