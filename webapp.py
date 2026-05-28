@@ -1,7 +1,3 @@
-# =========================================
-# AASHVI AI FULL CODE
-# =========================================
-
 import streamlit as st
 import os
 import time
@@ -141,6 +137,8 @@ if "current_chat" not in st.session_state:
 st.markdown("""
 <style>
 
+/* HIDE STREAMLIT */
+
 #MainMenu {
     visibility: hidden;
 }
@@ -157,6 +155,8 @@ header {
     display: none;
 }
 
+/* APP */
+
 .stApp {
     background: #0b1120;
     color: white;
@@ -170,6 +170,8 @@ section[data-testid="stSidebar"] {
     min-width: 240px !important;
     border-right: 1px solid rgba(255,255,255,0.06);
 }
+
+/* LOGO */
 
 .logo {
     font-size: 24px;
@@ -235,6 +237,7 @@ section[data-testid="stSidebar"] {
     margin-left: auto;
     margin-bottom: 14px;
     font-size: 14px;
+    line-height: 1.7;
 }
 
 .ai-message {
@@ -246,6 +249,7 @@ section[data-testid="stSidebar"] {
     max-width: 75%;
     margin-bottom: 14px;
     font-size: 14px;
+    line-height: 1.7;
 }
 
 /* INPUT */
@@ -281,6 +285,22 @@ section[data-testid="stSidebar"] {
 
 .card-btn .stButton button:hover {
     background: #253046;
+}
+
+/* CODE BLOCK */
+
+code {
+    background: #111827 !important;
+    color: #38bdf8 !important;
+    padding: 3px 6px;
+    border-radius: 6px;
+}
+
+pre {
+    background: #111827 !important;
+    border-radius: 12px !important;
+    padding: 14px !important;
+    overflow-x: auto;
 }
 
 </style>
@@ -504,9 +524,7 @@ if "prompt" in locals():
 
 if user_input:
 
-    # =========================================
     # AUTO CHAT RENAME
-    # =========================================
 
     if (
         st.session_state.current_chat.startswith("Chat")
@@ -569,18 +587,7 @@ if user_input:
         unsafe_allow_html=True
     )
 
-    # THINKING
-
-    thinking = st.empty()
-
-    thinking.markdown(
-        """
-        <div class='ai-message'>
-            ✨ Aashvi AI is thinking...
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    # STREAMING RESPONSE
 
     try:
 
@@ -598,18 +605,26 @@ if user_input:
 
         reply = completion.choices[0].message.content
 
-        time.sleep(1)
+        # TYPING EFFECT
 
-        thinking.empty()
+        full_response = ""
 
-        st.markdown(
-            f"""
-            <div class='ai-message'>
-                {reply}
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        response_placeholder = st.empty()
+
+        for word in reply.split():
+
+            full_response += word + " "
+
+            response_placeholder.markdown(
+                f"""
+                <div class='ai-message'>
+                    {full_response}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+            time.sleep(0.03)
 
         # SAVE AI RESPONSE
 
