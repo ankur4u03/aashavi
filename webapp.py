@@ -64,7 +64,7 @@ header {
 /* APP */
 
 .stApp {
-    background: linear-gradient(to bottom, #020817, #07152f);
+    background: #0b1120;
     color: white;
 }
 
@@ -80,11 +80,11 @@ section[data-testid="stSidebar"] {
 /* LOGO */
 
 .logo {
-    font-size: 30px;
-    font-weight: bold;
+    font-size: 34px;
+    font-weight: 800;
     color: white;
     margin-top: 10px;
-    margin-bottom: 30px;
+    margin-bottom: 35px;
 }
 
 /* BUTTON */
@@ -95,7 +95,7 @@ section[data-testid="stSidebar"] {
     border: none;
     background: #1e293b;
     color: white;
-    padding: 13px;
+    padding: 14px;
     transition: 0.3s;
     font-size: 15px;
     font-weight: 600;
@@ -105,10 +105,9 @@ section[data-testid="stSidebar"] {
 
 .stButton button:hover {
     background: #334155;
-    transform: scale(1.02);
 }
 
-/* RECENT TITLE */
+/* RECENT */
 
 .recent-title {
     color: #94a3b8;
@@ -118,11 +117,11 @@ section[data-testid="stSidebar"] {
     padding-left: 5px;
 }
 
-/* MAIN TITLE */
+/* TITLE */
 
 .main-title {
     text-align: center;
-    font-size: 68px;
+    font-size: 72px;
     font-weight: 800;
     color: white;
     margin-top: 60px;
@@ -132,39 +131,10 @@ section[data-testid="stSidebar"] {
     text-align: center;
     color: #9ca3af;
     font-size: 22px;
-    margin-bottom: 45px;
+    margin-bottom: 50px;
 }
 
-/* SMALL CARDS */
-
-.cards-container {
-    display: flex;
-    justify-content: center;
-    gap: 18px;
-    flex-wrap: wrap;
-    margin-top: 45px;
-}
-
-.card {
-    background: #1e293b;
-    padding: 16px 20px;
-    border-radius: 16px;
-    width: 220px;
-    text-align: center;
-    font-size: 16px;
-    font-weight: 600;
-    color: white;
-    border: 1px solid rgba(255,255,255,0.05);
-    transition: 0.3s;
-    box-shadow: 0px 4px 18px rgba(0,0,0,0.25);
-}
-
-.card:hover {
-    background: #334155;
-    transform: translateY(-3px);
-}
-
-/* CHAT AREA */
+/* CHAT */
 
 .user-message {
     background: #2563eb;
@@ -174,9 +144,8 @@ section[data-testid="stSidebar"] {
     width: fit-content;
     max-width: 75%;
     margin-left: auto;
-    margin-bottom: 15px;
+    margin-bottom: 18px;
     font-size: 16px;
-    box-shadow: 0px 4px 18px rgba(37,99,235,0.3);
 }
 
 .ai-message {
@@ -186,8 +155,7 @@ section[data-testid="stSidebar"] {
     border-radius: 18px 18px 18px 4px;
     width: fit-content;
     max-width: 75%;
-    margin-bottom: 15px;
-    border: 1px solid rgba(255,255,255,0.05);
+    margin-bottom: 18px;
     font-size: 16px;
 }
 
@@ -203,19 +171,30 @@ section[data-testid="stSidebar"] {
 .stChatInput input {
     background: #1e293b !important;
     color: white !important;
-    border: 1px solid rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
     border-radius: 16px !important;
     padding: 14px !important;
+}
+
+/* SUGGESTION CARDS */
+
+.card-btn .stButton button {
+    background: #172033;
+    border-radius: 16px;
+    padding: 16px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.card-btn .stButton button:hover {
+    background: #253046;
 }
 
 /* MOBILE */
 
 @media (max-width: 768px) {
-
-    section[data-testid="stSidebar"] {
-        width: 100% !important;
-        min-width: 100% !important;
-    }
 
     .main-title {
         font-size: 42px;
@@ -229,10 +208,6 @@ section[data-testid="stSidebar"] {
     .user-message,
     .ai-message {
         max-width: 95%;
-    }
-
-    .card {
-        width: 100%;
     }
 }
 
@@ -262,14 +237,14 @@ with st.sidebar:
 
         st.rerun()
 
-    # RECENT TITLE
+    # RECENT CHATS TITLE
 
     st.markdown(
         "<div class='recent-title'>Recent Chats</div>",
         unsafe_allow_html=True
     )
 
-    # CHAT HISTORY
+    # CHAT LIST
 
     for chat_name in list(st.session_state.chat_sessions.keys()):
 
@@ -306,51 +281,45 @@ if len(messages) == 0:
         unsafe_allow_html=True
     )
 
-    st.markdown("""
-    <div class="cards-container">
-
-        <div class="card">
-            ✨ Create Viral Reel Script
-        </div>
-
-        <div class="card">
-            💻 Fix Python Error
-        </div>
-
-        <div class="card">
-            🚀 YouTube Video Ideas
-        </div>
-
-        <div class="card">
-            📈 SEO Strategy
-        </div>
-
-    </div>
-    """, unsafe_allow_html=True)
-
-    # BUTTONS
+    # SMALL CARDS
 
     col1, col2 = st.columns(2)
 
     with col1:
 
-        if st.button("✨ Create Viral Reel Script"):
+        st.markdown("<div class='card-btn'>", unsafe_allow_html=True)
 
+        if st.button(
+            "✨ Create Viral Reel Script",
+            key="viral_script"
+        ):
             prompt = "Create a viral Instagram reel script"
 
-        if st.button("🚀 YouTube Video Ideas"):
-
+        if st.button(
+            "🚀 YouTube Video Ideas",
+            key="youtube_ideas"
+        ):
             prompt = "Give me viral YouTube video ideas"
+
+        st.markdown("</div>", unsafe_allow_html=True)
 
     with col2:
 
-        if st.button("💻 Fix Python Error"):
+        st.markdown("<div class='card-btn'>", unsafe_allow_html=True)
 
+        if st.button(
+            "💻 Fix Python Error",
+            key="python_error"
+        ):
             prompt = "Help me fix my Python error"
 
-        if st.button("📈 SEO Strategy"):
-
+        if st.button(
+            "📈 SEO Strategy",
+            key="seo_strategy"
+        ):
             prompt = "Create an SEO strategy for YouTube"
+
+        st.markdown("</div>", unsafe_allow_html=True)
 
 # =========================================
 # SHOW CHAT HISTORY
@@ -379,7 +348,7 @@ for message in messages:
 user_input = st.chat_input("Ask anything...")
 
 # =========================================
-# HANDLE SUGGESTION BUTTONS
+# HANDLE CARD BUTTON PROMPTS
 # =========================================
 
 if "prompt" in locals():
