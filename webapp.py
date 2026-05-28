@@ -16,17 +16,22 @@ st.set_page_config(
 # SESSION STATE
 # =====================================
 
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+if "chat_sessions" not in st.session_state:
+    st.session_state.chat_sessions = {
+        "New Chat": []
+    }
+
+if "current_chat" not in st.session_state:
+    st.session_state.current_chat = "New Chat"
 
 # =====================================
-# CUSTOM CSS
+# CSS
 # =====================================
 
 st.markdown("""
 <style>
 
-/* HIDE STREAMLIT */
+/* HIDE */
 
 #MainMenu,
 footer,
@@ -70,13 +75,24 @@ section[data-testid="stSidebar"]{
     padding:12px;
     font-size:15px;
     transition:0.2s;
+    margin-bottom:8px;
+    text-align:left;
 }
 
 .stButton button:hover{
     background:#374151;
 }
 
-/* MAIN TITLE */
+/* RECENT */
+
+.recent{
+    margin-top:20px;
+    margin-bottom:10px;
+    color:#9ca3af;
+    font-size:14px;
+}
+
+/* TITLE */
 
 .main-title{
     text-align:center;
@@ -102,7 +118,7 @@ section[data-testid="stSidebar"]{
     padding-bottom:120px;
 }
 
-/* USER MESSAGE */
+/* USER */
 
 .user-row{
     display:flex;
@@ -117,10 +133,9 @@ section[data-testid="stSidebar"]{
     border-radius:18px 18px 4px 18px;
     max-width:70%;
     font-size:15px;
-    line-height:1.7;
 }
 
-/* BOT MESSAGE */
+/* BOT */
 
 .bot-row{
     display:flex;
@@ -135,8 +150,6 @@ section[data-testid="stSidebar"]{
     border-radius:18px 18px 18px 4px;
     max-width:70%;
     font-size:15px;
-    line-height:1.7;
-    border:1px solid rgba(255,255,255,0.05);
 }
 
 /* INPUT */
@@ -155,7 +168,6 @@ section[data-testid="stSidebar"]{
     border:none !important;
     border-radius:18px !important;
     padding:16px !important;
-    font-size:15px !important;
 }
 
 /* MOBILE */
@@ -163,7 +175,7 @@ section[data-testid="stSidebar"]{
 @media(max-width:768px){
 
     .main-title{
-        font-size:44px;
+        font-size:42px;
     }
 
     .sub-title{
@@ -196,14 +208,46 @@ with st.sidebar:
         unsafe_allow_html=True
     )
 
+    # NEW CHAT
+
     if st.button("➕ New Chat"):
 
-        st.session_state.messages = []
+        new_chat = f"Chat {len(st.session_state.chat_sessions)+1}"
+
+        st.session_state.chat_sessions[new_chat] = []
+
+        st.session_state.current_chat = new_chat
 
         st.rerun()
 
+    # RECENT CHATS
+
+    st.markdown(
+        "<div class='recent'>Recent Chats</div>",
+        unsafe_allow_html=True
+    )
+
+    for chat_name in st.session_state.chat_sessions.keys():
+
+        if st.button(
+            f"💬 {chat_name}",
+            key=chat_name
+        ):
+
+            st.session_state.current_chat = chat_name
+
+            st.rerun()
+
 # =====================================
-# MAIN TITLE
+# CURRENT CHAT
+# =====================================
+
+messages = st.session_state.chat_sessions[
+    st.session_state.current_chat
+]
+
+# =====================================
+# TITLE
 # =====================================
 
 st.markdown(
@@ -225,12 +269,12 @@ st.markdown(
 )
 
 # =====================================
-# CHAT AREA
+# SHOW CHAT
 # =====================================
 
 st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
 
-for msg in st.session_state.messages:
+for msg in messages:
 
     if msg["role"] == "user":
 
@@ -261,18 +305,22 @@ for msg in st.session_state.messages:
 st.markdown("</div>", unsafe_allow_html=True)
 
 # =====================================
-# CHAT INPUT
+# INPUT
 # =====================================
 
 prompt = st.chat_input("Ask anything...")
 
 # =====================================
-# AI RESPONSE
+# RESPONSE
 # =====================================
 
 if prompt:
 
-    st.session_state.messages.append({
+    # SAVE USER
+
+    st.session_state.chat_sessions[
+        st.session_state.current_chat
+    ].append({
         "role":"user",
         "content":prompt
     })
@@ -286,6 +334,8 @@ if prompt:
 
     clean = prompt.lower().strip()
 
+    # BOT REPLY
+
     if clean in greetings:
 
         reply = "Hello 👋 How can I help you today?"
@@ -294,7 +344,11 @@ if prompt:
 
         reply = f"You said: {prompt}"
 
-    st.session_state.messages.append({
+    # SAVE BOT
+
+    st.session_state.chat_sessions[
+        st.session_state.current_chat
+    ].append({
         "role":"assistant",
         "content":reply
     })
