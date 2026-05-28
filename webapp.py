@@ -72,35 +72,35 @@ header {
 
 section[data-testid="stSidebar"] {
     background: #111827;
-    width: 260px !important;
-    min-width: 260px !important;
-    border-right: 1px solid rgba(255,255,255,0.08);
+    width: 240px !important;
+    min-width: 240px !important;
+    border-right: 1px solid rgba(255,255,255,0.06);
 }
 
 /* LOGO */
 
 .logo {
-    font-size: 34px;
-    font-weight: 800;
+    font-size: 22px;
+    font-weight: 700;
     color: white;
-    margin-top: 10px;
-    margin-bottom: 35px;
+    margin-top: 8px;
+    margin-bottom: 25px;
 }
 
 /* BUTTON */
 
 .stButton button {
     width: 100%;
-    border-radius: 14px;
+    border-radius: 12px;
     border: none;
     background: #1e293b;
     color: white;
-    padding: 14px;
-    transition: 0.3s;
-    font-size: 15px;
-    font-weight: 600;
+    padding: 10px;
+    transition: 0.2s;
+    font-size: 13px;
+    font-weight: 500;
     text-align: left;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .stButton button:hover {
@@ -111,27 +111,27 @@ section[data-testid="stSidebar"] {
 
 .recent-title {
     color: #94a3b8;
-    font-size: 14px;
-    margin-top: 25px;
-    margin-bottom: 15px;
+    font-size: 12px;
+    margin-top: 20px;
+    margin-bottom: 12px;
     padding-left: 5px;
 }
 
-/* TITLE */
+/* MAIN TITLE */
 
 .main-title {
     text-align: center;
-    font-size: 72px;
+    font-size: 52px;
     font-weight: 800;
     color: white;
-    margin-top: 60px;
+    margin-top: 20px;
 }
 
 .sub-title {
     text-align: center;
     color: #9ca3af;
-    font-size: 22px;
-    margin-bottom: 50px;
+    font-size: 16px;
+    margin-bottom: 35px;
 }
 
 /* CHAT */
@@ -139,33 +139,33 @@ section[data-testid="stSidebar"] {
 .user-message {
     background: #2563eb;
     color: white;
-    padding: 14px 18px;
+    padding: 12px 16px;
     border-radius: 18px 18px 4px 18px;
     width: fit-content;
     max-width: 75%;
     margin-left: auto;
-    margin-bottom: 18px;
-    font-size: 16px;
+    margin-bottom: 14px;
+    font-size: 14px;
 }
 
 .ai-message {
     background: #1e293b;
     color: white;
-    padding: 14px 18px;
+    padding: 12px 16px;
     border-radius: 18px 18px 18px 4px;
     width: fit-content;
     max-width: 75%;
-    margin-bottom: 18px;
-    font-size: 16px;
+    margin-bottom: 14px;
+    font-size: 14px;
 }
 
 /* INPUT */
 
 .stChatInput {
     position: fixed;
-    bottom: 20px;
+    bottom: 18px;
     left: 28%;
-    width: 65%;
+    width: 63%;
 }
 
 .stChatInput input {
@@ -173,19 +173,21 @@ section[data-testid="stSidebar"] {
     color: white !important;
     border: 1px solid rgba(255,255,255,0.08) !important;
     border-radius: 16px !important;
-    padding: 14px !important;
+    padding: 10px !important;
+    font-size: 14px !important;
 }
 
-/* SUGGESTION CARDS */
+/* CARDS */
 
 .card-btn .stButton button {
     background: #172033;
-    border-radius: 16px;
-    padding: 16px;
+    border-radius: 14px;
+    padding: 10px;
     text-align: center;
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 15px;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 12px;
+    min-height: 48px;
 }
 
 .card-btn .stButton button:hover {
@@ -196,8 +198,17 @@ section[data-testid="stSidebar"] {
 
 @media (max-width: 768px) {
 
+    section[data-testid="stSidebar"] {
+        width: 100% !important;
+        min-width: 100% !important;
+    }
+
     .main-title {
-        font-size: 42px;
+        font-size: 38px;
+    }
+
+    .sub-title {
+        font-size: 14px;
     }
 
     .stChatInput {
@@ -348,7 +359,7 @@ for message in messages:
 user_input = st.chat_input("Ask anything...")
 
 # =========================================
-# HANDLE CARD BUTTON PROMPTS
+# HANDLE CARD BUTTONS
 # =========================================
 
 if "prompt" in locals():
@@ -377,7 +388,7 @@ if user_input:
         unsafe_allow_html=True
     )
 
-    # THINKING EFFECT
+    # THINKING
 
     thinking = st.empty()
 
