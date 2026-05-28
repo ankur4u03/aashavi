@@ -1,20 +1,19 @@
 import streamlit as st
+import os
 from groq import Groq
 
 # PAGE CONFIG
 st.set_page_config(
-    page_title="Gemini AI Assistant",
-    page_icon="✨",
+    page_title="Aashvi AI",
+    page_icon="🌸",
     layout="centered"
 )
 
 # API KEY
-import os
-from groq import Groq
-
 client = Groq(
     api_key=os.getenv("GROQ_API_KEY")
 )
+
 # CUSTOM CSS
 st.markdown("""
 <style>
@@ -26,21 +25,38 @@ st.markdown("""
 
 .main-title {
     text-align: center;
-    font-size: 52px;
+    font-size: 55px;
     font-weight: bold;
+    color: white;
     margin-top: 20px;
 }
 
-.subtitle {
+.sub-title {
     text-align: center;
-    color: #a0a0a0;
+    color: #b0b3c7;
+    font-size: 18px;
     margin-bottom: 40px;
 }
 
-.chat-box {
-    padding: 15px;
-    border-radius: 15px;
-    margin-bottom: 15px;
+.chat-user {
+    background-color: #ff7849;
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.chat-ai {
+    background-color: #1b2338;
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.stChatInput input {
+    background-color: #111827 !important;
+    color: white !important;
 }
 
 </style>
@@ -48,35 +64,40 @@ st.markdown("""
 
 # TITLE
 st.markdown(
-    "<div class='main-title'>✨ Gemini AI Assistant</div>",
+    "<h1 class='main-title'>🌸 Aashvi AI</h1>",
     unsafe_allow_html=True
 )
 
+# SUBTITLE
 st.markdown(
-    "<div class='subtitle'>Fast • Smart • Modern AI Chatbot</div>",
+    "<p class='sub-title'>Think Faster with Aashvi AI ⚡</p>",
     unsafe_allow_html=True
 )
 
-# CHAT HISTORY
+# SESSION STATE
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# SHOW OLD MESSAGES
-for msg in st.session_state.messages:
-    with st.chat_message(msg["role"]):
-        st.markdown(msg["content"])
+# SHOW CHAT HISTORY
+for message in st.session_state.messages:
+
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
 # USER INPUT
 prompt = st.chat_input("Ask anything...")
 
 if prompt:
 
-    # USER MESSAGE
-    st.session_state.messages.append({
-        "role": "user",
-        "content": prompt
-    })
+    # SAVE USER MESSAGE
+    st.session_state.messages.append(
+        {
+            "role": "user",
+            "content": prompt
+        }
+    )
 
+    # SHOW USER MESSAGE
     with st.chat_message("user"):
         st.markdown(prompt)
 
@@ -87,12 +108,14 @@ if prompt:
 
             completion = client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
+
                 messages=[
                     {
                         "role": "user",
                         "content": prompt
                     }
                 ],
+
                 temperature=0.7,
                 max_tokens=1024
             )
@@ -101,10 +124,14 @@ if prompt:
 
             st.markdown(reply)
 
-            st.session_state.messages.append({
-                "role": "assistant",
-                "content": reply
-            })
+            # SAVE AI RESPONSE
+            st.session_state.messages.append(
+                {
+                    "role": "assistant",
+                    "content": reply
+                }
+            )
 
         except Exception as e:
+
             st.error(f"Error: {e}")
