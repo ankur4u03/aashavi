@@ -229,31 +229,12 @@ section[data-testid="stSidebar"] {
     margin-bottom: 35px;
 }
 
-/* CHAT */
+/* CHATGPT STYLE CHAT */
 
-.user-message {
-    background: #2563eb;
-    color: white;
-    padding: 12px 16px;
-    border-radius: 18px 18px 4px 18px;
-    width: fit-content;
-    max-width: 75%;
-    margin-left: auto;
-    margin-bottom: 14px;
-    font-size: 14px;
-    line-height: 1.7;
-}
-
-.ai-message {
-    background: #1e293b;
-    color: white;
-    padding: 12px 16px;
-    border-radius: 18px 18px 18px 4px;
-    width: fit-content;
-    max-width: 75%;
-    margin-bottom: 14px;
-    font-size: 14px;
-    line-height: 1.7;
+[data-testid="stChatMessage"] {
+    background: transparent !important;
+    border: none !important;
+    padding: 0px !important;
 }
 
 /* INPUT */
@@ -445,7 +426,7 @@ if len(messages) == 0:
     st.markdown(
         """
         <div class='sub-title'>
-            Think Faster with Aashvi AI ⚡
+            What can I help you with today?
         </div>
         """,
         unsafe_allow_html=True
@@ -586,32 +567,30 @@ if user_input:
         st.markdown(user_input)
 
     # =========================================
-    # AI RESPONSE STREAMING
+    # GREETING REPLY
     # =========================================
 
-    with st.chat_message("assistant"):
+    greetings = [
+        "hi",
+        "hello",
+        "hey",
+        "hii",
+        "yo",
+        "hola",
+        "hlo"
+    ]
 
-        response_placeholder = st.empty()
+    clean_input = user_input.lower().strip()
 
-        full_response = ""
+    if clean_input in greetings:
 
-        try:
+        reply = "What can I help you with today?"
 
-            completion = client.chat.completions.create(
+        with st.chat_message("assistant"):
 
-                model="llama-3.3-70b-versatile",
+            response_placeholder = st.empty()
 
-                messages=st.session_state.chat_sessions[
-                    st.session_state.current_chat
-                ],
-
-                temperature=0.7,
-                max_tokens=1024
-            )
-
-            reply = completion.choices[0].message.content
-
-            # STREAM EFFECT
+            full_response = ""
 
             for word in reply.split():
 
@@ -623,23 +602,80 @@ if user_input:
 
                 time.sleep(0.03)
 
-            # SAVE AI RESPONSE
+        # SAVE AI RESPONSE
 
-            st.session_state.chat_sessions[
-                st.session_state.current_chat
-            ].append(
-                {
-                    "role": "assistant",
-                    "content": reply
-                }
-            )
+        st.session_state.chat_sessions[
+            st.session_state.current_chat
+        ].append(
+            {
+                "role": "assistant",
+                "content": reply
+            }
+        )
 
-            save_message(
-                st.session_state.current_chat,
-                "assistant",
-                reply
-            )
+        save_message(
+            st.session_state.current_chat,
+            "assistant",
+            reply
+        )
 
-        except Exception as e:
+    else:
 
-            st.error(f"Error: {e}")
+        # =========================================
+        # NORMAL AI RESPONSE
+        # =========================================
+
+        with st.chat_message("assistant"):
+
+            response_placeholder = st.empty()
+
+            full_response = ""
+
+            try:
+
+                completion = client.chat.completions.create(
+
+                    model="llama-3.3-70b-versatile",
+
+                    messages=st.session_state.chat_sessions[
+                        st.session_state.current_chat
+                    ],
+
+                    temperature=0.7,
+                    max_tokens=1024
+                )
+
+                reply = completion.choices[0].message.content
+
+                # STREAM EFFECT
+
+                for word in reply.split():
+
+                    full_response += word + " "
+
+                    response_placeholder.markdown(
+                        full_response
+                    )
+
+                    time.sleep(0.03)
+
+                # SAVE AI RESPONSE
+
+                st.session_state.chat_sessions[
+                    st.session_state.current_chat
+                ].append(
+                    {
+                        "role": "assistant",
+                        "content": reply
+                    }
+                )
+
+                save_message(
+                    st.session_state.current_chat,
+                    "assistant",
+                    reply
+                )
+
+            except Exception as e:
+
+                st.error(f"Error: {e}")
