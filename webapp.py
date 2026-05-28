@@ -29,7 +29,7 @@ client = Groq(
 st.markdown("""
 <style>
 
-/* HIDE STREAMLIT DEFAULT */
+/* HIDE STREAMLIT */
 
 #MainMenu {
     visibility: hidden;
@@ -47,7 +47,7 @@ header {
     display: none;
 }
 
-/* APP BACKGROUND */
+/* APP */
 
 .stApp {
     background: #0f172a;
@@ -58,23 +58,22 @@ header {
 
 section[data-testid="stSidebar"] {
     background: #111827;
-    width: 300px !important;
-    min-width: 300px !important;
+    width: 260px !important;
+    min-width: 260px !important;
     border-right: 1px solid rgba(255,255,255,0.08);
 }
 
-/* SIDEBAR LOGO */
+/* LOGO */
 
 .logo {
-    font-size: 32px;
+    font-size: 30px;
     font-weight: bold;
     color: white;
-    text-align: center;
     margin-top: 10px;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
 }
 
-/* NEW CHAT BUTTON */
+/* BUTTON */
 
 .stButton button {
     width: 100%;
@@ -86,21 +85,17 @@ section[data-testid="stSidebar"] {
     transition: 0.3s;
     font-size: 15px;
     font-weight: 600;
+    text-align: left;
 }
 
 .stButton button:hover {
     background: #334155;
-    transform: scale(1.01);
 }
 
 /* CHAT LIST */
 
-.chat-item {
-    background: rgba(255,255,255,0.04);
-    padding: 12px;
-    border-radius: 12px;
+.chat-btn {
     margin-bottom: 10px;
-    border: 1px solid rgba(255,255,255,0.04);
 }
 
 /* MAIN TITLE */
@@ -120,7 +115,7 @@ section[data-testid="stSidebar"] {
     margin-bottom: 40px;
 }
 
-/* USER CHAT */
+/* CHAT AREA */
 
 .user-message {
     background: #2563eb;
@@ -135,8 +130,6 @@ section[data-testid="stSidebar"] {
     box-shadow: 0px 4px 18px rgba(37,99,235,0.3);
 }
 
-/* AI CHAT */
-
 .ai-message {
     background: #1e293b;
     color: white;
@@ -149,13 +142,13 @@ section[data-testid="stSidebar"] {
     font-size: 16px;
 }
 
-/* CHAT INPUT */
+/* INPUT */
 
 .stChatInput {
     position: fixed;
     bottom: 20px;
-    left: 33%;
-    width: 55%;
+    left: 28%;
+    width: 65%;
 }
 
 .stChatInput input {
@@ -164,28 +157,6 @@ section[data-testid="stSidebar"] {
     border: 1px solid rgba(255,255,255,0.05) !important;
     border-radius: 16px !important;
     padding: 14px !important;
-}
-
-/* PROFILE CARD */
-
-.profile-card {
-    margin-top: 40px;
-    padding: 20px;
-    border-radius: 18px;
-    background: rgba(255,255,255,0.04);
-    text-align: center;
-    border: 1px solid rgba(255,255,255,0.05);
-}
-
-.profile-name {
-    color: white;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.profile-role {
-    color: #9ca3af;
-    font-size: 14px;
 }
 
 /* MOBILE */
@@ -252,68 +223,20 @@ with st.sidebar:
 
         st.rerun()
 
-    st.markdown("---")
+    st.markdown("<br>", unsafe_allow_html=True)
 
-    # CHAT HISTORY
+    # CHAT HISTORY ONLY
 
     for chat_name in list(st.session_state.chat_sessions.keys()):
 
-        col1, col2 = st.columns([5,1])
+        if st.button(
+            f"💬 {chat_name}",
+            key=f"open_{chat_name}"
+        ):
 
-        # OPEN CHAT
+            st.session_state.current_chat = chat_name
 
-        with col1:
-
-            if st.button(
-                f"💬 {chat_name}",
-                key=f"open_{chat_name}"
-            ):
-
-                st.session_state.current_chat = chat_name
-
-                st.rerun()
-
-        # 3 DOT MENU
-
-        with col2:
-
-            with st.popover("⋮"):
-
-                st.write(chat_name)
-
-                if st.button(
-                    "🗑 Delete Chat",
-                    key=f"delete_{chat_name}"
-                ):
-
-                    del st.session_state.chat_sessions[chat_name]
-
-                    if len(st.session_state.chat_sessions) == 0:
-
-                        st.session_state.chat_sessions["New Chat"] = []
-
-                        st.session_state.current_chat = "New Chat"
-
-                    else:
-
-                        st.session_state.current_chat = list(
-                            st.session_state.chat_sessions.keys()
-                        )[0]
-
-                    st.rerun()
-
-    # PROFILE CARD
-
-    st.markdown(
-        """
-        <div class="profile-card">
-            👤
-            <div class="profile-name">Ankur</div>
-            <div class="profile-role">Aashvi AI Creator</div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+            st.rerun()
 
 # =========================================
 # MAIN PAGE
@@ -381,7 +304,7 @@ if prompt:
         unsafe_allow_html=True
     )
 
-    # TYPING EFFECT
+    # THINKING EFFECT
 
     thinking = st.empty()
 
