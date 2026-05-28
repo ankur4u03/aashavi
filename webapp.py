@@ -19,13 +19,6 @@ st.set_page_config(
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-if "chat_history" not in st.session_state:
-    st.session_state.chat_history = [
-        "Motivation Ideas",
-        "Viral Content",
-        "YouTube SEO"
-    ]
-
 # =====================================
 # CUSTOM CSS
 # =====================================
@@ -33,28 +26,22 @@ if "chat_history" not in st.session_state:
 st.markdown("""
 <style>
 
-/* =========================
-   HIDE STREAMLIT DEFAULT
-========================= */
+/* HIDE STREAMLIT */
 
 #MainMenu,
 footer,
-header {
+header{
     display:none;
 }
 
-/* =========================
-   APP BACKGROUND
-========================= */
+/* APP */
 
 .stApp{
     background:#0b1020;
     color:white;
 }
 
-/* =========================
-   SIDEBAR
-========================= */
+/* SIDEBAR */
 
 section[data-testid="stSidebar"]{
     background:#111827;
@@ -63,9 +50,7 @@ section[data-testid="stSidebar"]{
     border-right:1px solid rgba(255,255,255,0.08);
 }
 
-/* =========================
-   LOGO
-========================= */
+/* LOGO */
 
 .logo{
     font-size:34px;
@@ -74,9 +59,7 @@ section[data-testid="stSidebar"]{
     margin-bottom:30px;
 }
 
-/* =========================
-   BUTTONS
-========================= */
+/* BUTTON */
 
 .stButton button{
     width:100%;
@@ -87,36 +70,13 @@ section[data-testid="stSidebar"]{
     padding:12px;
     font-size:15px;
     transition:0.2s;
-    margin-bottom:10px;
 }
 
 .stButton button:hover{
     background:#374151;
 }
 
-/* =========================
-   RECENT CHATS
-========================= */
-
-.recent{
-    color:#9ca3af;
-    font-size:14px;
-    margin-top:25px;
-    margin-bottom:10px;
-}
-
-.chat-item{
-    background:#111827;
-    padding:12px;
-    border-radius:12px;
-    margin-bottom:10px;
-    color:white;
-    border:1px solid rgba(255,255,255,0.05);
-}
-
-/* =========================
-   MAIN TITLE
-========================= */
+/* MAIN TITLE */
 
 .main-title{
     text-align:center;
@@ -133,9 +93,7 @@ section[data-testid="stSidebar"]{
     margin-bottom:40px;
 }
 
-/* =========================
-   CHAT CONTAINER
-========================= */
+/* CHAT AREA */
 
 .chat-container{
     width:100%;
@@ -144,9 +102,7 @@ section[data-testid="stSidebar"]{
     padding-bottom:120px;
 }
 
-/* =========================
-   USER MESSAGE
-========================= */
+/* USER MESSAGE */
 
 .user-row{
     display:flex;
@@ -164,9 +120,7 @@ section[data-testid="stSidebar"]{
     line-height:1.7;
 }
 
-/* =========================
-   BOT MESSAGE
-========================= */
+/* BOT MESSAGE */
 
 .bot-row{
     display:flex;
@@ -185,9 +139,7 @@ section[data-testid="stSidebar"]{
     border:1px solid rgba(255,255,255,0.05);
 }
 
-/* =========================
-   CHAT INPUT
-========================= */
+/* INPUT */
 
 .stChatInput{
     position:fixed;
@@ -206,16 +158,9 @@ section[data-testid="stSidebar"]{
     font-size:15px !important;
 }
 
-/* =========================
-   MOBILE RESPONSIVE
-========================= */
+/* MOBILE */
 
 @media(max-width:768px){
-
-    section[data-testid="stSidebar"]{
-        width:100% !important;
-        min-width:100% !important;
-    }
 
     .main-title{
         font-size:44px;
@@ -252,24 +197,10 @@ with st.sidebar:
     )
 
     if st.button("➕ New Chat"):
+
         st.session_state.messages = []
+
         st.rerun()
-
-    st.markdown(
-        "<div class='recent'>Recent Chats</div>",
-        unsafe_allow_html=True
-    )
-
-    for item in st.session_state.chat_history:
-
-        st.markdown(
-            f"""
-            <div class='chat-item'>
-                💬 {item}
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
 
 # =====================================
 # MAIN TITLE
@@ -350,13 +281,10 @@ if prompt:
         "hi",
         "hello",
         "hey",
-        "hii",
-        "yo"
+        "hii"
     ]
 
     clean = prompt.lower().strip()
-
-    # SIMPLE GREETING REPLY
 
     if clean in greetings:
 
