@@ -1,3 +1,7 @@
+# =========================================
+# AASHVI AI FULL CODE
+# =========================================
+
 import streamlit as st
 import os
 import time
@@ -131,13 +135,11 @@ if "current_chat" not in st.session_state:
     )[0]
 
 # =========================================
-# CUSTOM CSS
+# CSS
 # =========================================
 
 st.markdown("""
 <style>
-
-/* HIDE STREAMLIT */
 
 #MainMenu {
     visibility: hidden;
@@ -155,8 +157,6 @@ header {
     display: none;
 }
 
-/* APP */
-
 .stApp {
     background: #0b1120;
     color: white;
@@ -171,17 +171,15 @@ section[data-testid="stSidebar"] {
     border-right: 1px solid rgba(255,255,255,0.06);
 }
 
-/* LOGO */
-
 .logo {
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 700;
     color: white;
     margin-top: 8px;
     margin-bottom: 25px;
 }
 
-/* BUTTON */
+/* BUTTONS */
 
 .stButton button {
     width: 100%;
@@ -201,24 +199,21 @@ section[data-testid="stSidebar"] {
     background: #334155;
 }
 
-/* RECENT */
+/* TITLES */
 
 .recent-title {
     color: #94a3b8;
     font-size: 12px;
     margin-top: 20px;
     margin-bottom: 12px;
-    padding-left: 5px;
 }
-
-/* MAIN TITLE */
 
 .main-title {
     text-align: center;
     font-size: 52px;
     font-weight: 800;
     color: white;
-    margin-top: 20px;
+    margin-top: 25px;
 }
 
 .sub-title {
@@ -323,7 +318,7 @@ with st.sidebar:
         unsafe_allow_html=True
     )
 
-    # CHAT LIST + DELETE
+    # CHAT LIST
 
     for chat_name in list(
         st.session_state.chat_sessions.keys()
@@ -355,8 +350,6 @@ with st.sidebar:
                 key=f"delete_{chat_name}"
             ):
 
-                # DELETE FROM DATABASE
-
                 cursor.execute(
                     """
                     DELETE FROM chats
@@ -367,13 +360,9 @@ with st.sidebar:
 
                 conn.commit()
 
-                # DELETE FROM SESSION
-
                 del st.session_state.chat_sessions[
                     chat_name
                 ]
-
-                # CREATE NEW EMPTY CHAT
 
                 if len(
                     st.session_state.chat_sessions
@@ -404,7 +393,7 @@ messages = st.session_state.chat_sessions[
 ]
 
 # =========================================
-# WELCOME SCREEN
+# HOME SCREEN
 # =========================================
 
 if len(messages) == 0:
@@ -427,93 +416,47 @@ if len(messages) == 0:
         unsafe_allow_html=True
     )
 
-    # SINGLE LINE CARDS
-
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
 
-        st.markdown(
-            "<div class='card-btn'>",
-            unsafe_allow_html=True
-        )
-
         if st.button(
-            "✨ Viral Reel Script",
-            key="viral_script"
+            "✨ Viral Reel Script"
         ):
 
             prompt = (
                 "Create a viral Instagram reel script"
             )
 
-        st.markdown(
-            "</div>",
-            unsafe_allow_html=True
-        )
-
     with col2:
 
-        st.markdown(
-            "<div class='card-btn'>",
-            unsafe_allow_html=True
-        )
-
         if st.button(
-            "🚀 YouTube Ideas",
-            key="youtube_ideas"
+            "🚀 YouTube Ideas"
         ):
 
             prompt = (
                 "Give me viral YouTube video ideas"
             )
 
-        st.markdown(
-            "</div>",
-            unsafe_allow_html=True
-        )
-
     with col3:
 
-        st.markdown(
-            "<div class='card-btn'>",
-            unsafe_allow_html=True
-        )
-
         if st.button(
-            "💻 Python Error",
-            key="python_error"
+            "💻 Python Error"
         ):
 
             prompt = (
                 "Help me fix my Python error"
             )
 
-        st.markdown(
-            "</div>",
-            unsafe_allow_html=True
-        )
-
     with col4:
 
-        st.markdown(
-            "<div class='card-btn'>",
-            unsafe_allow_html=True
-        )
-
         if st.button(
-            "📈 SEO Strategy",
-            key="seo_strategy"
+            "📈 SEO Strategy"
         ):
 
             prompt = (
-                "Create an SEO strategy for YouTube"
+                "Create an SEO strategy"
             )
-
-        st.markdown(
-            "</div>",
-            unsafe_allow_html=True
-        )
 
 # =========================================
 # SHOW CHAT
@@ -544,7 +487,7 @@ for message in messages:
         )
 
 # =========================================
-# CHAT INPUT
+# INPUT
 # =========================================
 
 user_input = st.chat_input(
@@ -560,6 +503,45 @@ if "prompt" in locals():
 # =========================================
 
 if user_input:
+
+    # =========================================
+    # AUTO CHAT RENAME
+    # =========================================
+
+    if (
+        st.session_state.current_chat.startswith("Chat")
+        or st.session_state.current_chat == "New Chat"
+    ):
+
+        title = user_input[:30]
+
+        title = title.replace("\n", " ")
+
+        if len(title) > 25:
+
+            title = title[:25] + "..."
+
+        old_chat = st.session_state.current_chat
+
+        st.session_state.chat_sessions[title] = (
+            st.session_state.chat_sessions.pop(old_chat)
+        )
+
+        cursor.execute(
+            """
+            UPDATE chats
+            SET chat_name=?
+            WHERE chat_name=?
+            """,
+            (
+                title,
+                old_chat
+            )
+        )
+
+        conn.commit()
+
+        st.session_state.current_chat = title
 
     # SAVE USER MESSAGE
 
@@ -611,7 +593,6 @@ if user_input:
             ],
 
             temperature=0.7,
-
             max_tokens=1024
         )
 
