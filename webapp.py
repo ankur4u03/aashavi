@@ -1,375 +1,271 @@
 import streamlit as st
 import os
-import time
 from groq import Groq
 
-# =========================================
 # PAGE CONFIG
-# =========================================
-
 st.set_page_config(
     page_title="Aashvi AI",
     page_icon="🌸",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="wide"
 )
 
-# =========================================
-# GROQ CLIENT
-# =========================================
-
+# API KEY
 client = Groq(
     api_key=os.getenv("GROQ_API_KEY")
 )
 
-# =========================================
 # SESSION STATE
-# =========================================
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-if "chat_sessions" not in st.session_state:
-
-    st.session_state.chat_sessions = {
-        "New Chat": []
-    }
-
-if "current_chat" not in st.session_state:
-
-    st.session_state.current_chat = "New Chat"
-
-# =========================================
 # CUSTOM CSS
-# =========================================
-
 st.markdown("""
 <style>
 
-/* HIDE STREAMLIT */
-
-#MainMenu {
-    visibility: hidden;
+/* MAIN APP */
+.stApp{
+    background: linear-gradient(to bottom, #020817, #07122b);
+    color:white;
+    overflow:hidden;
 }
 
-footer {
-    visibility: hidden;
-}
-
-header {
-    visibility: hidden;
-}
-
-[data-testid="stToolbar"] {
-    display: none;
-}
-
-/* APP */
-
-.stApp {
-    background: #0f172a;
-    color: white;
-}
+/* REMOVE STREAMLIT */
+#MainMenu {visibility:hidden;}
+footer {visibility:hidden;}
+header {visibility:hidden;}
 
 /* SIDEBAR */
-
-section[data-testid="stSidebar"] {
-    background: #111827;
-    width: 260px !important;
-    min-width: 260px !important;
-    border-right: 1px solid rgba(255,255,255,0.08);
+.sidebar{
+    background:#081225;
+    height:100vh;
+    padding:25px 18px;
+    border-right:1px solid rgba(255,255,255,0.08);
 }
 
-/* LOGO */
-
-.logo {
-    font-size: 30px;
-    font-weight: bold;
-    color: white;
-    margin-top: 10px;
-    margin-bottom: 30px;
+.logo{
+    font-size:28px;
+    font-weight:700;
+    margin-bottom:35px;
 }
 
-/* BUTTON */
-
-.stButton button {
-    width: 100%;
-    border-radius: 14px;
-    border: none;
-    background: #1e293b;
-    color: white;
-    padding: 14px;
-    transition: 0.3s;
-    font-size: 15px;
-    font-weight: 600;
-    text-align: left;
-    margin-bottom: 10px;
+.newchat{
+    background:#182742;
+    padding:14px 18px;
+    border-radius:16px;
+    font-size:20px;
+    font-weight:600;
+    margin-bottom:35px;
+    cursor:pointer;
+    width:180px;
 }
 
-.stButton button:hover {
-    background: #334155;
-    transform: scale(1.02);
+.newchat:hover{
+    background:#223455;
 }
 
-/* RECENT TITLE */
-
-.recent-title {
-    color: #94a3b8;
-    font-size: 14px;
-    margin-top: 25px;
-    margin-bottom: 15px;
-    padding-left: 5px;
+.recent{
+    color:#9aa4bf;
+    font-size:15px;
+    margin-bottom:18px;
 }
 
-/* MAIN TITLE */
-
-.main-title {
-    text-align: center;
-    font-size: 68px;
-    font-weight: 800;
-    color: white;
-    margin-top: 60px;
+.chat-item{
+    background:#13203a;
+    padding:13px 16px;
+    border-radius:14px;
+    margin-bottom:12px;
+    cursor:pointer;
+    transition:0.3s;
 }
 
-.sub-title {
-    text-align: center;
-    color: #9ca3af;
-    font-size: 22px;
-    margin-bottom: 45px;
+.chat-item:hover{
+    background:#1d2a4a;
 }
 
-/* CHAT AREA */
-
-.user-message {
-    background: #2563eb;
-    color: white;
-    padding: 14px 18px;
-    border-radius: 18px 18px 4px 18px;
-    width: fit-content;
-    max-width: 75%;
-    margin-left: auto;
-    margin-bottom: 15px;
-    font-size: 16px;
-    box-shadow: 0px 4px 18px rgba(37,99,235,0.3);
+/* MAIN */
+.main-area{
+    padding-top:70px;
+    text-align:center;
 }
 
-.ai-message {
-    background: #1e293b;
-    color: white;
-    padding: 14px 18px;
-    border-radius: 18px 18px 18px 4px;
-    width: fit-content;
-    max-width: 75%;
-    margin-bottom: 15px;
-    border: 1px solid rgba(255,255,255,0.05);
-    font-size: 16px;
+.title{
+    font-size:72px;
+    font-weight:800;
+    color:white;
+}
+
+.subtitle{
+    font-size:24px;
+    color:#b9c1d9;
+    margin-top:10px;
+}
+
+/* CARDS */
+.cards-container{
+    display:flex;
+    justify-content:center;
+    gap:18px;
+    margin-top:50px;
+    flex-wrap:wrap;
+}
+
+.card{
+    background:#16213a;
+    padding:14px 18px;
+    border-radius:14px;
+    color:white;
+    font-size:16px;
+    font-weight:500;
+    cursor:pointer;
+    border:1px solid rgba(255,255,255,0.05);
+    transition:0.3s;
+    min-width:220px;
+    max-width:220px;
+    text-align:center;
+}
+
+.card:hover{
+    background:#1d2a4a;
+    transform:translateY(-2px);
+}
+
+/* CHAT */
+.user-msg{
+    background:#2563eb;
+    padding:14px 18px;
+    border-radius:18px;
+    width:fit-content;
+    margin-left:auto;
+    margin-top:25px;
+    margin-bottom:12px;
+    max-width:60%;
+    text-align:left;
+}
+
+.ai-msg{
+    background:#182742;
+    padding:14px 18px;
+    border-radius:18px;
+    width:fit-content;
+    margin-right:auto;
+    margin-bottom:18px;
+    max-width:70%;
+    text-align:left;
 }
 
 /* INPUT */
-
-.stChatInput {
-    position: fixed;
-    bottom: 20px;
-    left: 28%;
-    width: 65%;
+.stChatInput{
+    position:fixed;
+    bottom:20px;
+    left:340px;
+    right:40px;
 }
 
-.stChatInput input {
-    background: #1e293b !important;
-    color: white !important;
-    border: 1px solid rgba(255,255,255,0.05) !important;
-    border-radius: 16px !important;
-    padding: 14px !important;
-}
-
-/* MOBILE */
-
-@media (max-width: 768px) {
-
-    section[data-testid="stSidebar"] {
-        width: 100% !important;
-        min-width: 100% !important;
-    }
-
-    .main-title {
-        font-size: 42px;
-    }
-
-    .stChatInput {
-        left: 5%;
-        width: 90%;
-    }
-
-    .user-message,
-    .ai-message {
-        max-width: 95%;
-    }
+.stChatInput input{
+    background:#111827 !important;
+    color:white !important;
+    border:1px solid rgba(255,255,255,0.08) !important;
+    border-radius:18px !important;
+    padding:18px !important;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-# =========================================
+# LAYOUT
+col1, col2 = st.columns([1, 4])
+
 # SIDEBAR
-# =========================================
+with col1:
 
-with st.sidebar:
+    st.markdown("""
+    <div class="sidebar">
 
-    st.markdown(
-        "<div class='logo'>🌸 Aashvi AI</div>",
-        unsafe_allow_html=True
-    )
+        <div class="logo">🌸 Aashvi AI</div>
 
-    # NEW CHAT
+        <div class="newchat">➕ New Chat</div>
 
-    if st.button("➕ New Chat"):
+        <div class="recent">Recent Chats</div>
 
-        new_chat_name = f"Chat {len(st.session_state.chat_sessions)+1}"
+        <div class="chat-item">💬 Motivation Ideas</div>
 
-        st.session_state.chat_sessions[new_chat_name] = []
+        <div class="chat-item">💬 Viral Content</div>
 
-        st.session_state.current_chat = new_chat_name
+        <div class="chat-item">💬 YouTube SEO</div>
 
-        st.rerun()
+    </div>
+    """, unsafe_allow_html=True)
 
-    # RECENT TITLE
+# MAIN AREA
+with col2:
 
-    st.markdown(
-        "<div class='recent-title'>Recent Chats</div>",
-        unsafe_allow_html=True
-    )
+    st.markdown("""
+    <div class="main-area">
 
-    # CHAT HISTORY
+        <div class="title">🌸 Aashvi AI</div>
 
-    for chat_name in list(st.session_state.chat_sessions.keys()):
+        <div class="subtitle">
+            Think Faster with Aashvi AI ⚡
+        </div>
 
-        if st.button(
-            f"💬 {chat_name}",
-            key=f"open_{chat_name}"
-        ):
+    </div>
+    """, unsafe_allow_html=True)
 
-            st.session_state.current_chat = chat_name
+    # SHOW CARDS ONLY IF NO CHAT
+    if len(st.session_state.messages) == 0:
 
-            st.rerun()
+        st.markdown("""
+        <div class="cards-container">
 
-# =========================================
-# MAIN PAGE
-# =========================================
+            <div class="card">✨ Create Viral Reel Script</div>
 
-messages = st.session_state.chat_sessions[
-    st.session_state.current_chat
-]
+            <div class="card">💻 Fix Python Error</div>
 
-# =========================================
-# WELCOME SCREEN
-# =========================================
+            <div class="card">🚀 YouTube Video Ideas</div>
 
-if len(messages) == 0:
+            <div class="card">📈 SEO Strategy</div>
 
-    st.markdown(
-        "<div class='main-title'>🌸 Aashvi AI</div>",
-        unsafe_allow_html=True
-    )
+        </div>
+        """, unsafe_allow_html=True)
 
-    st.markdown(
-        "<div class='sub-title'>Think Faster with Aashvi AI ⚡</div>",
-        unsafe_allow_html=True
-    )
+    # SHOW CHAT
+    for msg in st.session_state.messages:
 
-    # SUGGESTION CARDS
+        if msg["role"] == "user":
 
-    col1, col2 = st.columns(2)
+            st.markdown(
+                f"<div class='user-msg'>{msg['content']}</div>",
+                unsafe_allow_html=True
+            )
 
-    with col1:
+        else:
 
-        if st.button("✨ Create Viral Reel Script"):
+            st.markdown(
+                f"<div class='ai-msg'>{msg['content']}</div>",
+                unsafe_allow_html=True
+            )
 
-            prompt = "Create a viral Instagram reel script"
-
-        if st.button("🚀 YouTube Video Ideas"):
-
-            prompt = "Give me viral YouTube video ideas"
-
-    with col2:
-
-        if st.button("💻 Fix Python Error"):
-
-            prompt = "Help me fix my Python error"
-
-        if st.button("📈 SEO Strategy"):
-
-            prompt = "Create an SEO strategy for YouTube"
-
-# =========================================
-# SHOW CHAT HISTORY
-# =========================================
-
-for message in messages:
-
-    if message["role"] == "user":
-
-        st.markdown(
-            f"<div class='user-message'>{message['content']}</div>",
-            unsafe_allow_html=True
-        )
-
-    else:
-
-        st.markdown(
-            f"<div class='ai-message'>{message['content']}</div>",
-            unsafe_allow_html=True
-        )
-
-# =========================================
 # CHAT INPUT
-# =========================================
+prompt = st.chat_input("Ask anything...")
 
-user_input = st.chat_input("Ask anything...")
+if prompt:
 
-# =========================================
-# HANDLE SUGGESTION BUTTONS
-# =========================================
-
-if "prompt" in locals():
-
-    user_input = prompt
-
-# =========================================
-# AI RESPONSE
-# =========================================
-
-if user_input:
-
-    # SAVE USER MESSAGE
-
-    st.session_state.chat_sessions[
-        st.session_state.current_chat
-    ].append(
-        {
-            "role": "user",
-            "content": user_input
-        }
-    )
-
-    st.markdown(
-        f"<div class='user-message'>{user_input}</div>",
-        unsafe_allow_html=True
-    )
-
-    # THINKING EFFECT
-
-    thinking = st.empty()
-
-    thinking.markdown(
-        "<div class='ai-message'>✨ Aashvi AI is thinking...</div>",
-        unsafe_allow_html=True
-    )
+    # SAVE USER MSG
+    st.session_state.messages.append({
+        "role": "user",
+        "content": prompt
+    })
 
     try:
 
         completion = client.chat.completions.create(
-
             model="llama-3.3-70b-versatile",
 
-            messages=st.session_state.chat_sessions[
-                st.session_state.current_chat
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
             ],
 
             temperature=0.7,
@@ -378,25 +274,13 @@ if user_input:
 
         reply = completion.choices[0].message.content
 
-        time.sleep(1)
+        # SAVE AI MSG
+        st.session_state.messages.append({
+            "role": "assistant",
+            "content": reply
+        })
 
-        thinking.empty()
-
-        st.markdown(
-            f"<div class='ai-message'>{reply}</div>",
-            unsafe_allow_html=True
-        )
-
-        # SAVE AI RESPONSE
-
-        st.session_state.chat_sessions[
-            st.session_state.current_chat
-        ].append(
-            {
-                "role": "assistant",
-                "content": reply
-            }
-        )
+        st.rerun()
 
     except Exception as e:
 
