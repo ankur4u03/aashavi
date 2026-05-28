@@ -23,6 +23,20 @@ client = Groq(
 )
 
 # =========================================
+# SESSION STATE
+# =========================================
+
+if "chat_sessions" not in st.session_state:
+
+    st.session_state.chat_sessions = {
+        "New Chat": []
+    }
+
+if "current_chat" not in st.session_state:
+
+    st.session_state.current_chat = "New Chat"
+
+# =========================================
 # CUSTOM CSS
 # =========================================
 
@@ -86,10 +100,12 @@ section[data-testid="stSidebar"] {
     font-size: 15px;
     font-weight: 600;
     text-align: left;
+    margin-bottom: 10px;
 }
 
 .stButton button:hover {
     background: #334155;
+    transform: scale(1.02);
 }
 
 /* RECENT TITLE */
@@ -106,17 +122,17 @@ section[data-testid="stSidebar"] {
 
 .main-title {
     text-align: center;
-    font-size: 65px;
+    font-size: 68px;
     font-weight: 800;
     color: white;
-    margin-top: 30px;
+    margin-top: 60px;
 }
 
 .sub-title {
     text-align: center;
     color: #9ca3af;
-    font-size: 20px;
-    margin-bottom: 40px;
+    font-size: 22px;
+    margin-bottom: 45px;
 }
 
 /* CHAT AREA */
@@ -173,7 +189,7 @@ section[data-testid="stSidebar"] {
     }
 
     .main-title {
-        font-size: 40px;
+        font-size: 42px;
     }
 
     .stChatInput {
@@ -191,20 +207,6 @@ section[data-testid="stSidebar"] {
 """, unsafe_allow_html=True)
 
 # =========================================
-# SESSION STATE
-# =========================================
-
-if "chat_sessions" not in st.session_state:
-
-    st.session_state.chat_sessions = {
-        "New Chat": []
-    }
-
-if "current_chat" not in st.session_state:
-
-    st.session_state.current_chat = "New Chat"
-
-# =========================================
 # SIDEBAR
 # =========================================
 
@@ -215,7 +217,7 @@ with st.sidebar:
         unsafe_allow_html=True
     )
 
-    # NEW CHAT BUTTON
+    # NEW CHAT
 
     if st.button("➕ New Chat"):
 
@@ -251,23 +253,53 @@ with st.sidebar:
 # MAIN PAGE
 # =========================================
 
-st.markdown(
-    "<div class='main-title'>🌸 Aashvi AI</div>",
-    unsafe_allow_html=True
-)
+messages = st.session_state.chat_sessions[
+    st.session_state.current_chat
+]
 
-st.markdown(
-    "<div class='sub-title'>Think Faster with Aashvi AI ⚡</div>",
-    unsafe_allow_html=True
-)
+# =========================================
+# WELCOME SCREEN
+# =========================================
+
+if len(messages) == 0:
+
+    st.markdown(
+        "<div class='main-title'>🌸 Aashvi AI</div>",
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        "<div class='sub-title'>Think Faster with Aashvi AI ⚡</div>",
+        unsafe_allow_html=True
+    )
+
+    # SUGGESTION CARDS
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+
+        if st.button("✨ Create Viral Reel Script"):
+
+            prompt = "Create a viral Instagram reel script"
+
+        if st.button("🚀 YouTube Video Ideas"):
+
+            prompt = "Give me viral YouTube video ideas"
+
+    with col2:
+
+        if st.button("💻 Fix Python Error"):
+
+            prompt = "Help me fix my Python error"
+
+        if st.button("📈 SEO Strategy"):
+
+            prompt = "Create an SEO strategy for YouTube"
 
 # =========================================
 # SHOW CHAT HISTORY
 # =========================================
-
-messages = st.session_state.chat_sessions[
-    st.session_state.current_chat
-]
 
 for message in messages:
 
@@ -289,13 +321,21 @@ for message in messages:
 # CHAT INPUT
 # =========================================
 
-prompt = st.chat_input("Ask anything...")
+user_input = st.chat_input("Ask anything...")
+
+# =========================================
+# HANDLE SUGGESTION BUTTONS
+# =========================================
+
+if "prompt" in locals():
+
+    user_input = prompt
 
 # =========================================
 # AI RESPONSE
 # =========================================
 
-if prompt:
+if user_input:
 
     # SAVE USER MESSAGE
 
@@ -304,12 +344,12 @@ if prompt:
     ].append(
         {
             "role": "user",
-            "content": prompt
+            "content": user_input
         }
     )
 
     st.markdown(
-        f"<div class='user-message'>{prompt}</div>",
+        f"<div class='user-message'>{user_input}</div>",
         unsafe_allow_html=True
     )
 
@@ -328,11 +368,8 @@ if prompt:
 
             model="llama-3.3-70b-versatile",
 
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt
-                }
+            messages=st.session_state.chat_sessions[
+                st.session_state.current_chat
             ],
 
             temperature=0.7,
