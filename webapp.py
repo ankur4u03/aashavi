@@ -1,369 +1,150 @@
-# =========================================
-# AASHVI AI - FINAL FIXED VERSION
-# =========================================
-
 import streamlit as st
-import os
 import time
-import sqlite3
-from groq import Groq
 
-# =========================================
+# =========================
 # PAGE CONFIG
-# =========================================
+# =========================
 
 st.set_page_config(
     page_title="Aashvi AI",
     page_icon="🌸",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="wide"
 )
 
-# =========================================
-# DATABASE
-# =========================================
-
-conn = sqlite3.connect(
-    "aashvi_ai.db",
-    check_same_thread=False
-)
-
-cursor = conn.cursor()
-
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS chats (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    chat_name TEXT,
-    role TEXT,
-    content TEXT
-)
-""")
-
-conn.commit()
-
-# =========================================
-# GROQ CLIENT
-# =========================================
-
-client = Groq(
-    api_key=os.getenv("GROQ_API_KEY")
-)
-
-# =========================================
-# LOAD CHATS
-# =========================================
-
-def load_chats():
-
-    cursor.execute(
-        "SELECT DISTINCT chat_name FROM chats"
-    )
-
-    rows = cursor.fetchall()
-
-    sessions = {}
-
-    for row in rows:
-
-        chat_name = row[0]
-
-        cursor.execute(
-            """
-            SELECT role, content
-            FROM chats
-            WHERE chat_name=?
-            """,
-            (chat_name,)
-        )
-
-        msgs = cursor.fetchall()
-
-        sessions[chat_name] = []
-
-        for msg in msgs:
-
-            sessions[chat_name].append(
-                {
-                    "role": msg[0],
-                    "content": msg[1]
-                }
-            )
-
-    if not sessions:
-
-        sessions["New Chat"] = []
-
-    return sessions
-
-# =========================================
-# SAVE MESSAGE
-# =========================================
-
-def save_message(chat_name, role, content):
-
-    cursor.execute(
-        """
-        INSERT INTO chats
-        (chat_name, role, content)
-        VALUES (?, ?, ?)
-        """,
-        (
-            chat_name,
-            role,
-            content
-        )
-    )
-
-    conn.commit()
-
-# =========================================
+# =========================
 # SESSION STATE
-# =========================================
+# =========================
 
-if "chat_sessions" not in st.session_state:
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-    st.session_state.chat_sessions = load_chats()
+if "chat_list" not in st.session_state:
+    st.session_state.chat_list = ["New Chat"]
 
-if "current_chat" not in st.session_state:
-
-    st.session_state.current_chat = list(
-        st.session_state.chat_sessions.keys()
-    )[0]
-
-# =========================================
+# =========================
 # CSS
-# =========================================
+# =========================
 
 st.markdown("""
 <style>
 
-/* =========================
-   HIDE STREAMLIT
-========================= */
-
 #MainMenu,
 footer,
-[data-testid="stToolbar"]{
-    display:none !important;
+header {
+    display:none;
 }
-
-/* =========================
-   FORCE SIDEBAR
-========================= */
-
-[data-testid="stSidebar"]{
-    display:block !important;
-    visibility:visible !important;
-}
-
-/* =========================
-   APP
-========================= */
 
 .stApp{
-    background:#020617;
+    background:#0b1020;
     color:white;
 }
 
-/* =========================
-   SIDEBAR
-========================= */
+/* Sidebar */
 
 section[data-testid="stSidebar"]{
-    background:#0f172a !important;
-    width:280px !important;
-    min-width:280px !important;
-    border-right:1px solid rgba(255,255,255,0.06);
+    background:#111827;
+    width:260px !important;
 }
 
-/* =========================
-   MAIN
-========================= */
-
-.main .block-container{
-    max-width:1000px;
-    padding-top:40px;
-    padding-bottom:120px;
-}
-
-/* =========================
-   LOGO
-========================= */
+/* Logo */
 
 .logo{
     font-size:34px;
-    font-weight:800;
-    color:white;
-    margin-top:10px;
-    margin-bottom:30px;
+    font-weight:700;
+    margin-bottom:25px;
 }
 
-/* =========================
-   BUTTONS
-========================= */
+/* New Chat Button */
 
 .stButton button{
     width:100%;
-    border:none;
-    background:#1e293b;
+    border-radius:12px;
+    background:#1f2937;
     color:white;
-    border-radius:14px;
+    border:none;
     padding:12px;
-    margin-bottom:10px;
-    transition:0.2s;
-    text-align:left;
+    font-size:15px;
 }
 
 .stButton button:hover{
-    background:#334155;
+    background:#374151;
 }
 
-/* =========================
-   TITLES
-========================= */
+/* Chat Messages */
 
-.recent-title{
-    color:#94a3b8;
-    font-size:13px;
-    margin-top:25px;
-    margin-bottom:15px;
+.user-msg{
+    background:#2563eb;
+    padding:14px 18px;
+    border-radius:18px;
+    width:fit-content;
+    max-width:70%;
+    margin-left:auto;
+    margin-top:12px;
+    color:white;
 }
+
+.bot-msg{
+    background:#1f2937;
+    padding:14px 18px;
+    border-radius:18px;
+    width:fit-content;
+    max-width:70%;
+    margin-top:12px;
+    color:white;
+}
+
+/* Center Title */
 
 .main-title{
     text-align:center;
-    font-size:72px;
-    font-weight:800;
-    color:white;
     margin-top:60px;
+    font-size:70px;
+    font-weight:800;
 }
 
-.sub-title{
+.sub{
     text-align:center;
     color:#9ca3af;
     font-size:22px;
-    margin-bottom:60px;
+    margin-bottom:50px;
 }
 
-/* =========================
-   CHAT
-========================= */
-
-.user-wrap{
-    display:flex;
-    justify-content:flex-end;
-    margin-bottom:24px;
-}
-
-.user-bubble{
-    background:#2563eb;
-    color:white;
-    padding:14px 18px;
-    border-radius:18px 18px 4px 18px;
-    max-width:75%;
-    font-size:15px;
-    line-height:1.8;
-    box-shadow:0 0 20px rgba(37,99,235,0.25);
-}
-
-.ai-wrap{
-    display:flex;
-    justify-content:flex-start;
-    margin-bottom:24px;
-}
-
-.ai-bubble{
-    background:#111827;
-    color:white;
-    padding:16px 18px;
-    border-radius:18px 18px 18px 4px;
-    max-width:75%;
-    font-size:15px;
-    line-height:1.8;
-    border:1px solid rgba(255,255,255,0.05);
-    overflow-x:auto;
-}
-
-/* =========================
-   MARKDOWN
-========================= */
-
-.ai-bubble p,
-.ai-bubble li,
-.ai-bubble span{
-    color:white !important;
-    line-height:1.8 !important;
-}
-
-/* =========================
-   CODE BLOCKS
-========================= */
-
-.ai-bubble pre{
-    background:#020617 !important;
-    padding:16px !important;
-    border-radius:14px !important;
-    overflow-x:auto !important;
-    border:1px solid rgba(255,255,255,0.08);
-}
-
-.ai-bubble code{
-    color:#38bdf8 !important;
-}
-
-/* =========================
-   INPUT
-========================= */
+/* Input */
 
 .stChatInput{
-    max-width:1000px;
-    margin:auto;
+    position:fixed;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-40%);
+    width:60%;
 }
 
-.stChatInput input{
-    background:#1e293b !important;
-    color:white !important;
-    border:none !important;
-    border-radius:18px !important;
-    padding:16px !important;
-    font-size:15px !important;
-}
-
-/* =========================
-   MOBILE
-========================= */
+/* Mobile */
 
 @media(max-width:768px){
 
     .main-title{
-        font-size:44px;
+        font-size:42px;
     }
 
-    .sub-title{
-        font-size:16px;
+    .stChatInput{
+        width:90%;
+        left:50%;
+        transform:translateX(-50%);
     }
 
-    .user-bubble,
-    .ai-bubble{
-        max-width:92%;
-    }
-
-    section[data-testid="stSidebar"]{
-        width:85% !important;
-        min-width:85% !important;
-    }
-
-    .main .block-container{
-        padding-left:12px;
-        padding-right:12px;
+    .user-msg,
+    .bot-msg{
+        max-width:90%;
     }
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-# =========================================
+# =========================
 # SIDEBAR
-# =========================================
+# =========================
 
 with st.sidebar:
 
@@ -372,133 +153,43 @@ with st.sidebar:
         unsafe_allow_html=True
     )
 
-    # NEW CHAT
-
     if st.button("➕ New Chat"):
-
-        new_chat = f"Chat {len(st.session_state.chat_sessions)+1}"
-
-        st.session_state.chat_sessions[
-            new_chat
-        ] = []
-
-        st.session_state.current_chat = new_chat
-
+        st.session_state.messages = []
         st.rerun()
 
-    st.markdown(
-        "<div class='recent-title'>Recent Chats</div>",
-        unsafe_allow_html=True
-    )
+    st.markdown("### Recent Chats")
 
-    # CHAT LIST
+    for chat in st.session_state.chat_list:
+        st.markdown(f"💬 {chat}")
 
-    for chat_name in list(
-        st.session_state.chat_sessions.keys()
-    ):
+# =========================
+# MAIN TITLE
+# =========================
 
-        col1, col2 = st.columns([5,1])
-
-        with col1:
-
-            if st.button(
-                f"💬 {chat_name}",
-                key=f"open_{chat_name}"
-            ):
-
-                st.session_state.current_chat = (
-                    chat_name
-                )
-
-                st.rerun()
-
-        with col2:
-
-            if st.button(
-                "🗑️",
-                key=f"delete_{chat_name}"
-            ):
-
-                cursor.execute(
-                    """
-                    DELETE FROM chats
-                    WHERE chat_name=?
-                    """,
-                    (chat_name,)
-                )
-
-                conn.commit()
-
-                del st.session_state.chat_sessions[
-                    chat_name
-                ]
-
-                if len(
-                    st.session_state.chat_sessions
-                ) == 0:
-
-                    st.session_state.chat_sessions[
-                        "New Chat"
-                    ] = []
-
-                    st.session_state.current_chat = (
-                        "New Chat"
-                    )
-
-                else:
-
-                    st.session_state.current_chat = list(
-                        st.session_state.chat_sessions.keys()
-                    )[0]
-
-                st.rerun()
-
-# =========================================
-# CURRENT CHAT
-# =========================================
-
-messages = st.session_state.chat_sessions[
-    st.session_state.current_chat
-]
-
-# =========================================
-# HOME SCREEN
-# =========================================
-
-if len(messages) == 0:
+if len(st.session_state.messages) == 0:
 
     st.markdown(
-        """
-        <div class='main-title'>
-            🌸 Aashvi AI
-        </div>
-        """,
+        "<div class='main-title'>🌸 Aashvi AI</div>",
         unsafe_allow_html=True
     )
 
     st.markdown(
-        """
-        <div class='sub-title'>
-            What can I help you with today?
-        </div>
-        """,
+        "<div class='sub'>What can I help you with today?</div>",
         unsafe_allow_html=True
     )
 
-# =========================================
-# SHOW CHATS
-# =========================================
+# =========================
+# SHOW MESSAGES
+# =========================
 
-for message in messages:
+for msg in st.session_state.messages:
 
-    if message["role"] == "user":
+    if msg["role"] == "user":
 
         st.markdown(
             f"""
-            <div class="user-wrap">
-                <div class="user-bubble">
-                    {message["content"]}
-                </div>
+            <div class='user-msg'>
+                {msg["content"]}
             </div>
             """,
             unsafe_allow_html=True
@@ -508,178 +199,40 @@ for message in messages:
 
         st.markdown(
             f"""
-            <div class="ai-wrap">
-                <div class="ai-bubble">
-                    {message["content"]}
-                </div>
+            <div class='bot-msg'>
+                {msg["content"]}
             </div>
             """,
             unsafe_allow_html=True
         )
 
-# =========================================
-# INPUT
-# =========================================
+# =========================
+# CHAT INPUT
+# =========================
 
-user_input = st.chat_input(
-    "Ask anything..."
-)
+prompt = st.chat_input("Ask anything...")
 
-# =========================================
-# AI
-# =========================================
+# =========================
+# RESPONSE
+# =========================
 
-if user_input:
+if prompt:
 
-    # AUTO TITLE
+    st.session_state.messages.append({
+        "role":"user",
+        "content":prompt
+    })
 
-    if (
-        st.session_state.current_chat.startswith("Chat")
-        or st.session_state.current_chat == "New Chat"
-    ):
+    greetings = ["hi","hello","hey","hii"]
 
-        title = user_input[:25]
-
-        old_chat = st.session_state.current_chat
-
-        st.session_state.chat_sessions[
-            title
-        ] = st.session_state.chat_sessions.pop(
-            old_chat
-        )
-
-        cursor.execute(
-            """
-            UPDATE chats
-            SET chat_name=?
-            WHERE chat_name=?
-            """,
-            (
-                title,
-                old_chat
-            )
-        )
-
-        conn.commit()
-
-        st.session_state.current_chat = title
-
-    # SAVE USER
-
-    st.session_state.chat_sessions[
-        st.session_state.current_chat
-    ].append(
-        {
-            "role":"user",
-            "content":user_input
-        }
-    )
-
-    save_message(
-        st.session_state.current_chat,
-        "user",
-        user_input
-    )
-
-    st.markdown(
-        f"""
-        <div class="user-wrap">
-            <div class="user-bubble">
-                {user_input}
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    # GREETINGS
-
-    greetings = [
-        "hi",
-        "hello",
-        "hey",
-        "hii",
-        "yo",
-        "hola"
-    ]
-
-    clean = user_input.lower().strip()
-
-    # SIMPLE RESPONSE
-
-    if clean in greetings:
-
+    if prompt.lower() in greetings:
         reply = "Hello 👋 How can I help you today?"
-
     else:
+        reply = f"You said: {prompt}"
 
-        try:
+    st.session_state.messages.append({
+        "role":"assistant",
+        "content":reply
+    })
 
-            completion = client.chat.completions.create(
-
-                model="llama-3.3-70b-versatile",
-
-                messages=st.session_state.chat_sessions[
-                    st.session_state.current_chat
-                ],
-
-                temperature=0.7,
-                max_tokens=1024
-            )
-
-            reply = completion.choices[0].message.content
-
-        except Exception as e:
-
-            reply = f"Error: {e}"
-
-    # STREAM EFFECT
-
-    placeholder = st.empty()
-
-    full = ""
-
-    for word in reply.split():
-
-        full += word + " "
-
-        placeholder.markdown(
-            f"""
-            <div class="ai-wrap">
-                <div class="ai-bubble">
-                    {full}▌
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-        time.sleep(0.02)
-
-    placeholder.markdown(
-        f"""
-        <div class="ai-wrap">
-            <div class="ai-bubble">
-                {reply}
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    # SAVE AI
-
-    st.session_state.chat_sessions[
-        st.session_state.current_chat
-    ].append(
-        {
-            "role":"assistant",
-            "content":reply
-        }
-    )
-
-    save_message(
-        st.session_state.current_chat,
-        "assistant",
-        reply
-    )
+    st.rerun()
