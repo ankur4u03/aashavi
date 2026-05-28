@@ -92,10 +92,14 @@ section[data-testid="stSidebar"] {
     background: #334155;
 }
 
-/* CHAT LIST */
+/* RECENT TITLE */
 
-.chat-btn {
-    margin-bottom: 10px;
+.recent-title {
+    color: #94a3b8;
+    font-size: 14px;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    padding-left: 5px;
 }
 
 /* MAIN TITLE */
@@ -223,9 +227,14 @@ with st.sidebar:
 
         st.rerun()
 
-    st.markdown("<br>", unsafe_allow_html=True)
+    # RECENT TITLE
 
-    # CHAT HISTORY ONLY
+    st.markdown(
+        "<div class='recent-title'>Recent Chats</div>",
+        unsafe_allow_html=True
+    )
+
+    # CHAT HISTORY
 
     for chat_name in list(st.session_state.chat_sessions.keys()):
 
