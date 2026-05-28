@@ -141,145 +141,202 @@ if "current_chat" not in st.session_state:
 st.markdown("""
 <style>
 
-/* HIDE STREAMLIT */
+/* =========================
+   HIDE STREAMLIT
+========================= */
 
-#MainMenu {
-    visibility: hidden;
+#MainMenu,
+footer,
+header,
+[data-testid="stToolbar"]{
+    display:none;
 }
 
-footer {
-    visibility: hidden;
+/* =========================
+   APP
+========================= */
+
+.stApp{
+    background:#0b1120;
+    color:white;
 }
 
-header {
-    visibility: hidden;
+/* =========================
+   SIDEBAR
+========================= */
+
+section[data-testid="stSidebar"]{
+    background:#111827;
+    width:260px !important;
+    min-width:260px !important;
+    border-right:1px solid rgba(255,255,255,0.06);
 }
 
-[data-testid="stToolbar"] {
-    display: none;
+/* =========================
+   LOGO
+========================= */
+
+.logo{
+    font-size:30px;
+    font-weight:700;
+    margin-top:10px;
+    margin-bottom:30px;
+    color:white;
 }
 
-/* APP */
+/* =========================
+   BUTTONS
+========================= */
 
-.stApp {
-    background: #0b1120;
-    color: white;
+.stButton button{
+    width:100%;
+    border:none;
+    border-radius:14px;
+    background:#1e293b;
+    color:white;
+    padding:12px;
+    font-size:14px;
+    transition:0.2s;
+    margin-bottom:10px;
 }
 
-/* SIDEBAR */
-
-section[data-testid="stSidebar"] {
-    background: #111827;
-    width: 240px !important;
-    min-width: 240px !important;
-    border-right: 1px solid rgba(255,255,255,0.06);
+.stButton button:hover{
+    background:#334155;
 }
 
-/* LOGO */
+/* =========================
+   TITLES
+========================= */
 
-.logo {
-    font-size: 24px;
-    font-weight: 700;
-    color: white;
-    margin-top: 8px;
-    margin-bottom: 25px;
+.recent-title{
+    color:#94a3b8;
+    font-size:13px;
+    margin-top:20px;
+    margin-bottom:15px;
 }
 
-/* BUTTONS */
-
-.stButton button {
-    width: 100%;
-    border-radius: 12px;
-    border: none;
-    background: #1e293b;
-    color: white;
-    padding: 10px;
-    transition: 0.2s;
-    font-size: 13px;
-    font-weight: 500;
-    text-align: left;
-    margin-bottom: 8px;
+.main-title{
+    text-align:center;
+    font-size:62px;
+    font-weight:800;
+    margin-top:40px;
+    color:white;
 }
 
-.stButton button:hover {
-    background: #334155;
+.sub-title{
+    text-align:center;
+    font-size:20px;
+    color:#9ca3af;
+    margin-bottom:40px;
 }
 
-/* TITLES */
+/* =========================
+   CHAT CONTAINER
+========================= */
 
-.recent-title {
-    color: #94a3b8;
-    font-size: 12px;
-    margin-top: 20px;
-    margin-bottom: 12px;
+.main .block-container{
+    max-width:950px;
+    padding-top:30px;
+    padding-bottom:120px;
 }
 
-.main-title {
-    text-align: center;
-    font-size: 52px;
-    font-weight: 800;
-    color: white;
-    margin-top: 25px;
+/* =========================
+   CHAT MESSAGE
+========================= */
+
+[data-testid="stChatMessage"]{
+    background:transparent !important;
+    border:none !important;
+    padding:0px !important;
+    margin-bottom:18px;
 }
 
-.sub-title {
-    text-align: center;
-    color: #9ca3af;
-    font-size: 16px;
-    margin-bottom: 35px;
+/* USER MESSAGE */
+
+[data-testid="stChatMessage"]:has(div[data-testid="chatAvatarIcon-user"]){
+    background:#2563eb20 !important;
+    border-radius:18px !important;
+    padding:14px 18px !important;
 }
 
-/* CHAT */
+/* ASSISTANT MESSAGE */
 
-[data-testid="stChatMessage"] {
-    background: transparent !important;
-    border: none !important;
-    padding: 0px !important;
+[data-testid="stChatMessage"]:has(div[data-testid="chatAvatarIcon-assistant"]){
+    background:#111827 !important;
+    border-radius:18px !important;
+    padding:16px 18px !important;
 }
 
-/* INPUT */
+/* =========================
+   TEXT
+========================= */
 
-.stChatInput {
-    position: fixed;
-    bottom: 18px;
-    left: 28%;
-    width: 63%;
+p, li{
+    font-size:16px !important;
+    line-height:1.8 !important;
+    color:#f3f4f6 !important;
 }
 
-.stChatInput input {
-    background: #1e293b !important;
-    color: white !important;
-    border: 1px solid rgba(255,255,255,0.08) !important;
-    border-radius: 16px !important;
-    padding: 10px !important;
-    font-size: 14px !important;
+/* =========================
+   INPUT BOX
+========================= */
+
+.stChatInput{
+    position:fixed;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-35%);
+    width:60%;
 }
 
-/* MARKDOWN */
-
-h1, h2, h3 {
-    color: white !important;
+.stChatInput input{
+    background:#1e293b !important;
+    color:white !important;
+    border:none !important;
+    border-radius:18px !important;
+    padding:14px !important;
+    font-size:15px !important;
 }
 
-p, li {
-    color: #e5e7eb !important;
-    line-height: 1.8;
+/* =========================
+   CODE BLOCKS
+========================= */
+
+pre{
+    background:#0f172a !important;
+    border-radius:14px !important;
+    padding:16px !important;
+    border:1px solid rgba(255,255,255,0.06);
 }
 
-/* CODE BLOCK */
-
-pre {
-    background: #111827 !important;
-    border-radius: 12px !important;
-    padding: 16px !important;
-    overflow-x: auto;
+code{
+    color:#38bdf8 !important;
 }
 
-code {
-    color: #38bdf8 !important;
-    background: #111827 !important;
-    padding: 3px 6px;
-    border-radius: 6px;
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:768px){
+
+    .main-title{
+        font-size:42px;
+    }
+
+    .sub-title{
+        font-size:16px;
+    }
+
+    .stChatInput{
+        width:90%;
+        left:50%;
+        transform:translateX(-50%);
+    }
+
+    section[data-testid="stSidebar"]{
+        width:100% !important;
+        min-width:100% !important;
+    }
 }
 
 </style>
@@ -415,48 +472,6 @@ if len(messages) == 0:
         unsafe_allow_html=True
     )
 
-    col1, col2, col3, col4 = st.columns(4)
-
-    with col1:
-
-        if st.button(
-            "✨ Viral Reel Script"
-        ):
-
-            prompt = (
-                "Create a viral Instagram reel script"
-            )
-
-    with col2:
-
-        if st.button(
-            "🚀 YouTube Ideas"
-        ):
-
-            prompt = (
-                "Give me viral YouTube video ideas"
-            )
-
-    with col3:
-
-        if st.button(
-            "💻 Python Error"
-        ):
-
-            prompt = (
-                "Help me fix my Python error"
-            )
-
-    with col4:
-
-        if st.button(
-            "📈 SEO Strategy"
-        ):
-
-            prompt = (
-                "Create an SEO strategy"
-            )
-
 # =========================================
 # SHOW CHAT HISTORY
 # =========================================
@@ -474,10 +489,6 @@ for message in messages:
 user_input = st.chat_input(
     "Ask anything..."
 )
-
-if "prompt" in locals():
-
-    user_input = prompt
 
 # =========================================
 # AI RESPONSE
@@ -566,7 +577,7 @@ if user_input:
     clean_input = user_input.lower().strip()
 
     # =========================================
-    # ONLY FOR HI / HELLO
+    # GREETING RESPONSE
     # =========================================
 
     if clean_input in greetings:
@@ -590,8 +601,6 @@ if user_input:
                 time.sleep(0.03)
 
             response_placeholder.markdown(reply)
-
-        # SAVE RESPONSE
 
         st.session_state.chat_sessions[
             st.session_state.current_chat
