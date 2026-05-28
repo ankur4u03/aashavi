@@ -31,7 +31,7 @@ if "current_chat" not in st.session_state:
 st.markdown("""
 <style>
 
-/* HIDE */
+/* HIDE STREAMLIT */
 
 #MainMenu,
 footer,
@@ -64,7 +64,7 @@ section[data-testid="stSidebar"]{
     margin-bottom:30px;
 }
 
-/* BUTTON */
+/* BUTTONS */
 
 .stButton button{
     width:100%;
@@ -75,7 +75,7 @@ section[data-testid="stSidebar"]{
     padding:12px;
     font-size:15px;
     transition:0.2s;
-    margin-bottom:8px;
+    margin-bottom:10px;
     text-align:left;
 }
 
@@ -86,7 +86,7 @@ section[data-testid="stSidebar"]{
 /* RECENT */
 
 .recent{
-    margin-top:20px;
+    margin-top:25px;
     margin-bottom:10px;
     color:#9ca3af;
     font-size:14px;
@@ -98,27 +98,20 @@ section[data-testid="stSidebar"]{
     text-align:center;
     font-size:72px;
     font-weight:800;
-    margin-top:30px;
+    margin-top:25px;
     color:white;
-}
-
-.sub-title{
-    text-align:center;
-    color:#9ca3af;
-    font-size:22px;
-    margin-bottom:40px;
 }
 
 /* CHAT AREA */
 
 .chat-container{
     width:100%;
-    max-width:900px;
+    max-width:1000px;
     margin:auto;
     padding-bottom:120px;
 }
 
-/* USER */
+/* USER MESSAGE */
 
 .user-row{
     display:flex;
@@ -133,9 +126,11 @@ section[data-testid="stSidebar"]{
     border-radius:18px 18px 4px 18px;
     max-width:70%;
     font-size:15px;
+    line-height:1.7;
+    box-shadow:0 2px 10px rgba(37,99,235,0.3);
 }
 
-/* BOT */
+/* BOT MESSAGE */
 
 .bot-row{
     display:flex;
@@ -150,9 +145,11 @@ section[data-testid="stSidebar"]{
     border-radius:18px 18px 18px 4px;
     max-width:70%;
     font-size:15px;
+    line-height:1.7;
+    border:1px solid rgba(255,255,255,0.06);
 }
 
-/* INPUT */
+/* CHAT INPUT */
 
 .stChatInput{
     position:fixed;
@@ -168,6 +165,7 @@ section[data-testid="stSidebar"]{
     border:none !important;
     border-radius:18px !important;
     padding:16px !important;
+    font-size:15px !important;
 }
 
 /* MOBILE */
@@ -176,10 +174,6 @@ section[data-testid="stSidebar"]{
 
     .main-title{
         font-size:42px;
-    }
-
-    .sub-title{
-        font-size:17px;
     }
 
     .user-msg,
@@ -191,6 +185,11 @@ section[data-testid="stSidebar"]{
         width:92%;
         left:50%;
         transform:translateX(-50%);
+    }
+
+    section[data-testid="stSidebar"]{
+        width:100% !important;
+        min-width:100% !important;
     }
 }
 
@@ -259,17 +258,8 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.markdown(
-    """
-    <div class='sub-title'>
-        What can I help you with today?
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
 # =====================================
-# SHOW CHAT
+# CHAT AREA
 # =====================================
 
 st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
@@ -311,12 +301,12 @@ st.markdown("</div>", unsafe_allow_html=True)
 prompt = st.chat_input("Ask anything...")
 
 # =====================================
-# RESPONSE
+# AI RESPONSE
 # =====================================
 
 if prompt:
 
-    # SAVE USER
+    # SAVE USER MESSAGE
 
     st.session_state.chat_sessions[
         st.session_state.current_chat
@@ -325,6 +315,10 @@ if prompt:
         "content":prompt
     })
 
+    clean = prompt.lower().strip()
+
+    # SIMPLE AI REPLIES
+
     greetings = [
         "hi",
         "hello",
@@ -332,19 +326,29 @@ if prompt:
         "hii"
     ]
 
-    clean = prompt.lower().strip()
-
-    # BOT REPLY
-
     if clean in greetings:
 
         reply = "Hello 👋 How can I help you today?"
 
+    elif "fruit" in clean:
+
+        reply = """
+1. Apple 🍎  
+2. Mango 🥭  
+3. Banana 🍌  
+4. Orange 🍊  
+5. Grapes 🍇
+"""
+
+    elif "your name" in clean:
+
+        reply = "I'm Aashvi AI 🌸"
+
     else:
 
-        reply = f"You said: {prompt}"
+        reply = "I'm Aashvi AI 🤖 Ask me anything!"
 
-    # SAVE BOT
+    # SAVE BOT MESSAGE
 
     st.session_state.chat_sessions[
         st.session_state.current_chat
