@@ -567,7 +567,7 @@ if user_input:
         st.markdown(user_input)
 
     # =========================================
-    # GREETING REPLY
+    # GREETING CHECK
     # =========================================
 
     greetings = [
@@ -581,6 +581,10 @@ if user_input:
     ]
 
     clean_input = user_input.lower().strip()
+
+    # =========================================
+    # ONLY FOR HI / HELLO
+    # =========================================
 
     if clean_input in greetings:
 
@@ -602,7 +606,7 @@ if user_input:
 
                 time.sleep(0.03)
 
-        # SAVE AI RESPONSE
+        # SAVE RESPONSE
 
         st.session_state.chat_sessions[
             st.session_state.current_chat
@@ -619,11 +623,11 @@ if user_input:
             reply
         )
 
-    else:
+    # =========================================
+    # NORMAL AI RESPONSE
+    # =========================================
 
-        # =========================================
-        # NORMAL AI RESPONSE
-        # =========================================
+    else:
 
         with st.chat_message("assistant"):
 
