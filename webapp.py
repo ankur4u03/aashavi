@@ -3,9 +3,9 @@ import os
 import time
 from groq import Groq
 
-# =========================================
+# =====================================
 # PAGE CONFIG
-# =========================================
+# =====================================
 
 st.set_page_config(
     page_title="Aashvi AI",
@@ -14,29 +14,29 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# =========================================
+# =====================================
 # API
-# =========================================
+# =====================================
 
 client = Groq(
     api_key=os.getenv("GROQ_API_KEY")
 )
 
-# =========================================
+# =====================================
 # SESSION STATE
-# =========================================
+# =====================================
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# =========================================
+# =====================================
 # CSS
-# =========================================
+# =====================================
 
 st.markdown("""
 <style>
 
-/* FULL APP */
+/* APP */
 
 .stApp {
     background-color: #212121;
@@ -66,15 +66,15 @@ header {
 section[data-testid="stSidebar"] {
     background-color: #171717;
     border-right: 1px solid #2b2b2b;
-    width: 260px !important;
+    width: 240px !important;
 }
 
-/* SIDEBAR BUTTONS */
+/* REMOVE BUTTON STYLE */
 
 .stButton button {
     background: transparent;
-    color: white;
     border: none;
+    color: white;
     text-align: left;
     padding: 12px;
     border-radius: 10px;
@@ -89,38 +89,30 @@ section[data-testid="stSidebar"] {
 /* LOGO */
 
 .logo {
-    font-size: 28px;
+    font-size: 30px;
     font-weight: 700;
     color: white;
     margin-bottom: 25px;
 }
 
-/* CHATGPT STYLE TITLE */
+/* TITLE */
 
 .main-title {
     text-align: center;
-    font-size: 48px;
+    font-size: 52px;
     font-weight: 700;
-    margin-top: 40px;
     color: white;
+    margin-top: 40px;
 }
 
 .sub-title {
     text-align: center;
-    color: #a1a1aa;
-    margin-bottom: 40px;
+    color: #9ca3af;
     font-size: 18px;
+    margin-bottom: 40px;
 }
 
-/* CHAT AREA */
-
-.chat-container {
-    width: 100%;
-    max-width: 850px;
-    margin: auto;
-}
-
-/* USER MESSAGE */
+/* USER CHAT */
 
 .user-message {
     background: #303030;
@@ -133,7 +125,7 @@ section[data-testid="stSidebar"] {
     line-height: 1.6;
 }
 
-/* AI MESSAGE */
+/* AI CHAT */
 
 .ai-message {
     background: transparent;
@@ -184,9 +176,9 @@ section[data-testid="stSidebar"] {
 </style>
 """, unsafe_allow_html=True)
 
-# =========================================
+# =====================================
 # SIDEBAR
-# =========================================
+# =====================================
 
 with st.sidebar:
 
@@ -197,19 +189,14 @@ with st.sidebar:
 
     st.button("➕ New Chat")
 
-    st.button("🔍 Search Chats")
-
-    st.button("📚 Library")
-
-    st.button("⚙ Settings")
-
     st.markdown("---")
 
     st.markdown(
         """
-        <div style='color:#a1a1aa;
+        <div style='color:#9ca3af;
         font-size:14px;
-        margin-top:20px;'>
+        margin-top:10px;
+        margin-bottom:15px;'>
 
         Recent Chats
 
@@ -218,39 +205,15 @@ with st.sidebar:
         unsafe_allow_html=True
     )
 
-    st.button("💬 AI Website Ideas")
+    st.button("💬 Motivation Ideas")
 
-    st.button("💬 Viral Reel Script")
+    st.button("💬 Viral Content")
 
-    st.button("💬 YouTube SEO Tips")
+    st.button("💬 YouTube SEO")
 
-    st.button("💬 Instagram Growth")
-
-    st.markdown("---")
-
-    st.markdown(
-        """
-        <div style="
-        padding:14px;
-        border-radius:12px;
-        background:#202020;
-        margin-top:20px;
-        ">
-
-        👤 <b>Ankur</b><br>
-        <span style='color:#a1a1aa;
-        font-size:13px;'>
-        Aashvi AI Creator
-        </span>
-
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-# =========================================
-# MAIN HEADER
-# =========================================
+# =====================================
+# MAIN TITLE
+# =====================================
 
 st.markdown(
     "<div class='main-title'>🌸 Aashvi AI</div>",
@@ -262,15 +225,9 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# =========================================
-# CHAT CONTAINER
-# =========================================
-
-st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
-
-# =========================================
-# SHOW MESSAGES
-# =========================================
+# =====================================
+# SHOW CHAT
+# =====================================
 
 for message in st.session_state.messages:
 
@@ -296,15 +253,15 @@ for message in st.session_state.messages:
             unsafe_allow_html=True
         )
 
-# =========================================
+# =====================================
 # INPUT
-# =========================================
+# =====================================
 
 prompt = st.chat_input("Ask anything")
 
-# =========================================
+# =====================================
 # RESPONSE
-# =========================================
+# =====================================
 
 if prompt:
 
@@ -375,5 +332,3 @@ if prompt:
     except Exception as e:
 
         st.error(f"Error: {e}")
-
-st.markdown("</div>", unsafe_allow_html=True)
