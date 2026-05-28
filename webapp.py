@@ -19,7 +19,10 @@ st.set_page_config(
 # DATABASE
 # =========================================
 
-conn = sqlite3.connect("aashvi_ai.db", check_same_thread=False)
+conn = sqlite3.connect(
+    "aashvi_ai.db",
+    check_same_thread=False
+)
 
 cursor = conn.cursor()
 
@@ -43,12 +46,14 @@ client = Groq(
 )
 
 # =========================================
-# LOAD CHATS FROM DB
+# LOAD CHATS
 # =========================================
 
 def load_chats():
 
-    cursor.execute("SELECT DISTINCT chat_name FROM chats")
+    cursor.execute(
+        "SELECT DISTINCT chat_name FROM chats"
+    )
 
     chat_names = cursor.fetchall()
 
@@ -59,7 +64,11 @@ def load_chats():
         chat_name = name[0]
 
         cursor.execute(
-            "SELECT role, content FROM chats WHERE chat_name=?",
+            """
+            SELECT role, content
+            FROM chats
+            WHERE chat_name=?
+            """,
             (chat_name,)
         )
 
@@ -86,11 +95,23 @@ def load_chats():
 # SAVE MESSAGE
 # =========================================
 
-def save_message(chat_name, role, content):
+def save_message(
+    chat_name,
+    role,
+    content
+):
 
     cursor.execute(
-        "INSERT INTO chats (chat_name, role, content) VALUES (?, ?, ?)",
+        """
+        INSERT INTO chats
         (chat_name, role, content)
+        VALUES (?, ?, ?)
+        """,
+        (
+            chat_name,
+            role,
+            content
+        )
     )
 
     conn.commit()
@@ -116,6 +137,8 @@ if "current_chat" not in st.session_state:
 st.markdown("""
 <style>
 
+/* HIDE STREAMLIT */
+
 #MainMenu {
     visibility: hidden;
 }
@@ -132,10 +155,14 @@ header {
     display: none;
 }
 
+/* APP */
+
 .stApp {
     background: #0b1120;
     color: white;
 }
+
+/* SIDEBAR */
 
 section[data-testid="stSidebar"] {
     background: #111827;
@@ -144,6 +171,8 @@ section[data-testid="stSidebar"] {
     border-right: 1px solid rgba(255,255,255,0.06);
 }
 
+/* LOGO */
+
 .logo {
     font-size: 22px;
     font-weight: 700;
@@ -151,6 +180,8 @@ section[data-testid="stSidebar"] {
     margin-top: 8px;
     margin-bottom: 25px;
 }
+
+/* BUTTON */
 
 .stButton button {
     width: 100%;
@@ -170,6 +201,8 @@ section[data-testid="stSidebar"] {
     background: #334155;
 }
 
+/* RECENT */
+
 .recent-title {
     color: #94a3b8;
     font-size: 12px;
@@ -177,6 +210,8 @@ section[data-testid="stSidebar"] {
     margin-bottom: 12px;
     padding-left: 5px;
 }
+
+/* MAIN TITLE */
 
 .main-title {
     text-align: center;
@@ -192,6 +227,8 @@ section[data-testid="stSidebar"] {
     font-size: 16px;
     margin-bottom: 35px;
 }
+
+/* CHAT */
 
 .user-message {
     background: #2563eb;
@@ -216,6 +253,8 @@ section[data-testid="stSidebar"] {
     font-size: 14px;
 }
 
+/* INPUT */
+
 .stChatInput {
     position: fixed;
     bottom: 18px;
@@ -231,6 +270,8 @@ section[data-testid="stSidebar"] {
     padding: 10px !important;
     font-size: 14px !important;
 }
+
+/* CARDS */
 
 .card-btn .stButton button {
     background: #172033;
@@ -267,31 +308,92 @@ with st.sidebar:
 
         new_chat_name = f"Chat {len(st.session_state.chat_sessions)+1}"
 
-        st.session_state.chat_sessions[new_chat_name] = []
+        st.session_state.chat_sessions[
+            new_chat_name
+        ] = []
 
         st.session_state.current_chat = new_chat_name
 
         st.rerun()
 
-    # RECENT
+    # RECENT CHATS
 
     st.markdown(
         "<div class='recent-title'>Recent Chats</div>",
         unsafe_allow_html=True
     )
 
-    # CHAT HISTORY
+    # CHAT LIST + DELETE
 
-    for chat_name in list(st.session_state.chat_sessions.keys()):
+    for chat_name in list(
+        st.session_state.chat_sessions.keys()
+    ):
 
-        if st.button(
-            f"💬 {chat_name}",
-            key=f"open_{chat_name}"
-        ):
+        col1, col2 = st.columns([5,1])
 
-            st.session_state.current_chat = chat_name
+        # OPEN CHAT
 
-            st.rerun()
+        with col1:
+
+            if st.button(
+                f"💬 {chat_name}",
+                key=f"open_{chat_name}"
+            ):
+
+                st.session_state.current_chat = (
+                    chat_name
+                )
+
+                st.rerun()
+
+        # DELETE CHAT
+
+        with col2:
+
+            if st.button(
+                "🗑️",
+                key=f"delete_{chat_name}"
+            ):
+
+                # DELETE FROM DATABASE
+
+                cursor.execute(
+                    """
+                    DELETE FROM chats
+                    WHERE chat_name=?
+                    """,
+                    (chat_name,)
+                )
+
+                conn.commit()
+
+                # DELETE FROM SESSION
+
+                del st.session_state.chat_sessions[
+                    chat_name
+                ]
+
+                # CREATE NEW EMPTY CHAT
+
+                if len(
+                    st.session_state.chat_sessions
+                ) == 0:
+
+                    st.session_state.chat_sessions[
+                        "New Chat"
+                    ] = []
+
+                    st.session_state.current_chat = (
+                        "New Chat"
+                    )
+
+                else:
+
+                    st.session_state.current_chat = list(
+                        st.session_state.chat_sessions.keys()
+                    )[0]
+
+                st.rerun()
 
 # =========================================
 # MAIN PAGE
@@ -302,46 +404,116 @@ messages = st.session_state.chat_sessions[
 ]
 
 # =========================================
-# HOME SCREEN
+# WELCOME SCREEN
 # =========================================
 
 if len(messages) == 0:
 
     st.markdown(
-        "<div class='main-title'>🌸 Aashvi AI</div>",
+        """
+        <div class='main-title'>
+            🌸 Aashvi AI
+        </div>
+        """,
         unsafe_allow_html=True
     )
 
     st.markdown(
-        "<div class='sub-title'>Think Faster with Aashvi AI ⚡</div>",
+        """
+        <div class='sub-title'>
+            Think Faster with Aashvi AI ⚡
+        </div>
+        """,
         unsafe_allow_html=True
     )
+
+    # SINGLE LINE CARDS
 
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
 
-        if st.button("✨ Viral Reel Script"):
+        st.markdown(
+            "<div class='card-btn'>",
+            unsafe_allow_html=True
+        )
 
-            prompt = "Create a viral Instagram reel script"
+        if st.button(
+            "✨ Viral Reel Script",
+            key="viral_script"
+        ):
+
+            prompt = (
+                "Create a viral Instagram reel script"
+            )
+
+        st.markdown(
+            "</div>",
+            unsafe_allow_html=True
+        )
 
     with col2:
 
-        if st.button("🚀 YouTube Ideas"):
+        st.markdown(
+            "<div class='card-btn'>",
+            unsafe_allow_html=True
+        )
 
-            prompt = "Give me viral YouTube video ideas"
+        if st.button(
+            "🚀 YouTube Ideas",
+            key="youtube_ideas"
+        ):
+
+            prompt = (
+                "Give me viral YouTube video ideas"
+            )
+
+        st.markdown(
+            "</div>",
+            unsafe_allow_html=True
+        )
 
     with col3:
 
-        if st.button("💻 Python Error"):
+        st.markdown(
+            "<div class='card-btn'>",
+            unsafe_allow_html=True
+        )
 
-            prompt = "Help me fix my Python error"
+        if st.button(
+            "💻 Python Error",
+            key="python_error"
+        ):
+
+            prompt = (
+                "Help me fix my Python error"
+            )
+
+        st.markdown(
+            "</div>",
+            unsafe_allow_html=True
+        )
 
     with col4:
 
-        if st.button("📈 SEO Strategy"):
+        st.markdown(
+            "<div class='card-btn'>",
+            unsafe_allow_html=True
+        )
 
-            prompt = "Create an SEO strategy for YouTube"
+        if st.button(
+            "📈 SEO Strategy",
+            key="seo_strategy"
+        ):
+
+            prompt = (
+                "Create an SEO strategy for YouTube"
+            )
+
+        st.markdown(
+            "</div>",
+            unsafe_allow_html=True
+        )
 
 # =========================================
 # SHOW CHAT
@@ -352,22 +524,32 @@ for message in messages:
     if message["role"] == "user":
 
         st.markdown(
-            f"<div class='user-message'>{message['content']}</div>",
+            f"""
+            <div class='user-message'>
+                {message['content']}
+            </div>
+            """,
             unsafe_allow_html=True
         )
 
     else:
 
         st.markdown(
-            f"<div class='ai-message'>{message['content']}</div>",
+            f"""
+            <div class='ai-message'>
+                {message['content']}
+            </div>
+            """,
             unsafe_allow_html=True
         )
 
 # =========================================
-# INPUT
+# CHAT INPUT
 # =========================================
 
-user_input = st.chat_input("Ask anything...")
+user_input = st.chat_input(
+    "Ask anything..."
+)
 
 if "prompt" in locals():
 
@@ -397,7 +579,11 @@ if user_input:
     )
 
     st.markdown(
-        f"<div class='user-message'>{user_input}</div>",
+        f"""
+        <div class='user-message'>
+            {user_input}
+        </div>
+        """,
         unsafe_allow_html=True
     )
 
@@ -406,7 +592,11 @@ if user_input:
     thinking = st.empty()
 
     thinking.markdown(
-        "<div class='ai-message'>✨ Aashvi AI is thinking...</div>",
+        """
+        <div class='ai-message'>
+            ✨ Aashvi AI is thinking...
+        </div>
+        """,
         unsafe_allow_html=True
     )
 
@@ -421,6 +611,7 @@ if user_input:
             ],
 
             temperature=0.7,
+
             max_tokens=1024
         )
 
@@ -431,7 +622,11 @@ if user_input:
         thinking.empty()
 
         st.markdown(
-            f"<div class='ai-message'>{reply}</div>",
+            f"""
+            <div class='ai-message'>
+                {reply}
+            </div>
+            """,
             unsafe_allow_html=True
         )
 
