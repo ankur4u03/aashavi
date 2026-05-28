@@ -6,138 +6,143 @@ from groq import Groq
 st.set_page_config(
     page_title="Aashvi AI",
     page_icon="🌸",
-    layout="centered",
+    layout="wide",
     initial_sidebar_state="collapsed"
 )
-
-# HIDE STREAMLIT BRANDING
-hide_streamlit_style = """
-<style>
-
-/* HIDE MENU + FOOTER + HEADER */
-
-#MainMenu {
-    visibility: hidden;
-}
-
-footer {
-    visibility: hidden;
-}
-
-header {
-    visibility: hidden;
-}
-
-/* HIDE TOOLBAR */
-
-[data-testid="stToolbar"] {
-    display: none !important;
-}
-
-/* HIDE TOP RIGHT DEPLOY BUTTON */
-
-[data-testid="stDeployButton"] {
-    display: none !important;
-}
-
-/* HIDE STREAMLIT BADGE */
-
-.viewerBadge_container__1QSob {
-    display: none !important;
-}
-
-.styles_viewerBadge__1yB5_ {
-    display: none !important;
-}
-
-.viewerBadge_link__1S137 {
-    display: none !important;
-}
-
-a[title="Hosted with Streamlit"] {
-    display: none !important;
-}
-
-/* HIDE FLOATING BUTTON */
-
-.stActionButton {
-    display: none !important;
-}
-
-/* HIDE STATUS */
-
-[data-testid="stStatusWidget"] {
-    display: none !important;
-}
-
-/* REMOVE EXTRA SPACE */
-
-.block-container {
-    padding-top: 1rem;
-}
-
-/* APP BACKGROUND */
-
-.stApp {
-    background: linear-gradient(to bottom, #050816, #0b1026);
-    color: white;
-}
-
-/* TITLE */
-
-.main-title {
-    text-align: center;
-    font-size: 55px;
-    font-weight: bold;
-    color: white;
-    margin-top: 20px;
-}
-
-/* SUBTITLE */
-
-.sub-title {
-    text-align: center;
-    color: #b0b3c7;
-    font-size: 18px;
-    margin-bottom: 40px;
-}
-
-/* CHAT INPUT */
-
-.stChatInput input {
-    background-color: #111827 !important;
-    color: white !important;
-    border-radius: 12px;
-}
-
-/* CHAT MESSAGE */
-
-.stChatMessage {
-    background-color: #1b2338;
-    border-radius: 15px;
-    padding: 10px;
-    margin-bottom: 10px;
-}
-
-</style>
-"""
-
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 # API KEY
 client = Groq(
     api_key=os.getenv("GROQ_API_KEY")
 )
 
+# CUSTOM CSS
+st.markdown("""
+<style>
+
+/* HIDE STREAMLIT */
+
+#MainMenu,
+footer,
+header,
+[data-testid="stToolbar"],
+[data-testid="stDecoration"],
+[data-testid="stStatusWidget"],
+[data-testid="stDeployButton"] {
+    display: none !important;
+}
+
+/* APP BACKGROUND */
+
+.stApp {
+    background: #0f172a;
+    color: white;
+}
+
+/* MAIN CONTAINER */
+
+.block-container {
+    padding-top: 1rem;
+    max-width: 900px;
+}
+
+/* TITLE */
+
+.main-title {
+    text-align: center;
+    font-size: 52px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 5px;
+}
+
+.sub-title {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 18px;
+    margin-bottom: 35px;
+}
+
+/* CHAT BUBBLE */
+
+.user-msg {
+    background: #2563eb;
+    color: white;
+    padding: 14px 18px;
+    border-radius: 18px 18px 5px 18px;
+    margin-bottom: 12px;
+    margin-left: 20%;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.ai-msg {
+    background: #1e293b;
+    color: white;
+    padding: 14px 18px;
+    border-radius: 18px 18px 18px 5px;
+    margin-bottom: 12px;
+    margin-right: 20%;
+    font-size: 16px;
+    line-height: 1.6;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+/* CHAT INPUT */
+
+.stChatInput {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(900px, calc(100% - 30px));
+    z-index: 999;
+}
+
+.stChatInput input {
+    background: #1e293b !important;
+    color: white !important;
+    border-radius: 16px !important;
+    border: 1px solid #334155 !important;
+    padding: 14px !important;
+}
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+
+    .main-title {
+        font-size: 38px;
+    }
+
+    .sub-title {
+        font-size: 15px;
+    }
+
+    .user-msg {
+        margin-left: 5%;
+    }
+
+    .ai-msg {
+        margin-right: 5%;
+    }
+
+    .stChatInput {
+        width: calc(100% - 16px);
+        bottom: 10px;
+    }
+}
+
+</style>
+""", unsafe_allow_html=True)
+
 # TITLE
 st.markdown(
-    "<h1 class='main-title'>🌸 Aashvi AI</h1>",
+    "<div class='main-title'>🌸 Aashvi AI</div>",
     unsafe_allow_html=True
 )
 
-# SUBTITLE
 st.markdown(
-    "<p class='sub-title'>Think Faster with Aashvi AI ⚡</p>",
+    "<div class='sub-title'>Think Faster with Aashvi AI ⚡</div>",
     unsafe_allow_html=True
 )
 
@@ -148,28 +153,39 @@ if "messages" not in st.session_state:
 # SHOW CHAT HISTORY
 for message in st.session_state.messages:
 
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+    if message["role"] == "user":
+
+        st.markdown(
+            f"<div class='user-msg'>{message['content']}</div>",
+            unsafe_allow_html=True
+        )
+
+    else:
+
+        st.markdown(
+            f"<div class='ai-msg'>{message['content']}</div>",
+            unsafe_allow_html=True
+        )
 
 # USER INPUT
-prompt = st.chat_input("Ask anything...")
+prompt = st.chat_input("Message Aashvi AI...")
 
 if prompt:
 
     # SAVE USER MESSAGE
-    st.session_state.messages.append(
-        {
-            "role": "user",
-            "content": prompt
-        }
-    )
+    st.session_state.messages.append({
+        "role": "user",
+        "content": prompt
+    })
 
     # SHOW USER MESSAGE
-    with st.chat_message("user"):
-        st.markdown(prompt)
+    st.markdown(
+        f"<div class='user-msg'>{prompt}</div>",
+        unsafe_allow_html=True
+    )
 
     # AI RESPONSE
-    with st.chat_message("assistant"):
+    with st.spinner("Aashvi AI is typing..."):
 
         try:
 
@@ -189,15 +205,17 @@ if prompt:
 
             reply = completion.choices[0].message.content
 
-            st.markdown(reply)
+            # SHOW AI MESSAGE
+            st.markdown(
+                f"<div class='ai-msg'>{reply}</div>",
+                unsafe_allow_html=True
+            )
 
             # SAVE AI RESPONSE
-            st.session_state.messages.append(
-                {
-                    "role": "assistant",
-                    "content": reply
-                }
-            )
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": reply
+            })
 
         except Exception as e:
 
