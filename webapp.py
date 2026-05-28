@@ -1,11 +1,7 @@
-# =========================================
-# AASHVI AI - FINAL PERFECT CHATGPT UI
-# =========================================
-
 import streamlit as st
 import os
-import sqlite3
 import time
+import sqlite3
 from groq import Groq
 
 # =========================================
@@ -40,6 +36,14 @@ CREATE TABLE IF NOT EXISTS chats (
 """)
 
 conn.commit()
+
+# =========================================
+# GROQ CLIENT
+# =========================================
+
+client = Groq(
+    api_key=os.getenv("GROQ_API_KEY")
+)
 
 # =========================================
 # LOAD CHATS
@@ -113,15 +117,7 @@ def save_message(
     conn.commit()
 
 # =========================================
-# GROQ CLIENT
-# =========================================
-
-client = Groq(
-    api_key=os.getenv("GROQ_API_KEY")
-)
-
-# =========================================
-# SESSION
+# SESSION STATE
 # =========================================
 
 if "chat_sessions" not in st.session_state:
@@ -141,7 +137,7 @@ if "current_chat" not in st.session_state:
 st.markdown("""
 <style>
 
-/* HIDE */
+/* HIDE STREAMLIT */
 
 #MainMenu {
     visibility: hidden;
@@ -162,244 +158,149 @@ header {
 /* APP */
 
 .stApp {
-    background: #000000;
+    background: #0b1120;
     color: white;
 }
 
 /* SIDEBAR */
 
 section[data-testid="stSidebar"] {
-
-    background: #111111;
-
-    width: 260px !important;
-    min-width: 260px !important;
-
-    border-right: 1px solid rgba(255,255,255,0.05);
+    background: #111827;
+    width: 240px !important;
+    min-width: 240px !important;
+    border-right: 1px solid rgba(255,255,255,0.06);
 }
 
 /* LOGO */
 
 .logo {
-
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 700;
-
     color: white;
-
-    margin-top: 10px;
-    margin-bottom: 30px;
+    margin-top: 8px;
+    margin-bottom: 25px;
 }
 
-/* BUTTON */
+/* BUTTONS */
 
 .stButton button {
-
     width: 100%;
-
     border-radius: 12px;
-
     border: none;
-
-    background: #1a1a1a;
-
+    background: #1e293b;
     color: white;
-
-    padding: 12px;
-
+    padding: 10px;
     transition: 0.2s;
-
-    font-size: 14px;
-
+    font-size: 13px;
+    font-weight: 500;
     text-align: left;
-
     margin-bottom: 8px;
 }
 
 .stButton button:hover {
-
-    background: #2b2b2b;
+    background: #334155;
 }
 
-/* RECENT */
+/* TITLES */
 
 .recent-title {
-
-    color: #888;
-
+    color: #94a3b8;
     font-size: 12px;
-
     margin-top: 20px;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
-/* HOME */
-
 .main-title {
-
     text-align: center;
-
-    font-size: 68px;
-
+    font-size: 52px;
     font-weight: 800;
-
     color: white;
-
-    margin-top: 130px;
+    margin-top: 25px;
 }
 
 .sub-title {
-
     text-align: center;
-
-    color: #a1a1aa;
-
-    font-size: 20px;
-
-    margin-top: 8px;
-    margin-bottom: 40px;
+    color: #9ca3af;
+    font-size: 16px;
+    margin-bottom: 35px;
 }
 
-/* HOME BUTTONS */
-
-.home-btn .stButton button {
-
-    border-radius: 30px;
-
-    background: #1a1a1a;
-
-    min-height: 45px;
-
-    text-align: center;
-
-    font-size: 13px;
-}
-
-/* CHAT CONTAINER */
-
-.chat-container {
-
-    width: 100%;
-
-    overflow: auto;
-}
-
-/* USER MESSAGE */
+/* CHAT */
 
 .user-message {
-
     background: #2563eb;
-
     color: white;
-
-    padding: 14px 18px;
-
+    padding: 12px 16px;
     border-radius: 18px 18px 4px 18px;
-
-    display: inline-block;
-
-    max-width: 70%;
-
-    float: right;
-
-    clear: both;
-
-    margin-top: 16px;
-    margin-bottom: 16px;
-
-    margin-right: 35px;
-
-    font-size: 15px;
-
+    width: fit-content;
+    max-width: 75%;
+    margin-left: auto;
+    margin-bottom: 14px;
+    font-size: 14px;
     line-height: 1.7;
-
-    word-wrap: break-word;
-
-    white-space: pre-wrap;
 }
 
-/* AI MESSAGE */
-
 .ai-message {
-
-    background: #1a1a1a;
-
+    background: #1e293b;
     color: white;
-
-    padding: 14px 18px;
-
+    padding: 12px 16px;
     border-radius: 18px 18px 18px 4px;
-
-    display: inline-block;
-
-    max-width: 70%;
-
-    float: left;
-
-    clear: both;
-
-    margin-top: 16px;
-    margin-bottom: 16px;
-
-    margin-left: 35px;
-
-    font-size: 15px;
-
-    line-height: 1.8;
-
-    word-wrap: break-word;
-
-    white-space: pre-wrap;
+    width: fit-content;
+    max-width: 75%;
+    margin-bottom: 14px;
+    font-size: 14px;
+    line-height: 1.7;
 }
 
 /* INPUT */
 
 .stChatInput {
-
     position: fixed;
-
-    bottom: 20px;
-
-    left: 50%;
-
-    transform: translateX(-50%);
-
-    width: 760px;
-
-    max-width: 90%;
+    bottom: 18px;
+    left: 28%;
+    width: 63%;
 }
 
 .stChatInput input {
-
-    background: #1a1a1a !important;
-
+    background: #1e293b !important;
     color: white !important;
-
     border: 1px solid rgba(255,255,255,0.08) !important;
-
-    border-radius: 18px !important;
-
-    padding: 14px !important;
-
-    font-size: 15px !important;
+    border-radius: 16px !important;
+    padding: 10px !important;
+    font-size: 14px !important;
 }
 
-/* CODE */
+/* CARDS */
 
-pre {
-
-    background: #111827 !important;
-
-    border-radius: 12px !important;
-
-    padding: 16px !important;
-
-    overflow-x: auto;
+.card-btn .stButton button {
+    background: #172033;
+    border-radius: 14px;
+    padding: 10px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 12px;
+    min-height: 42px;
 }
+
+.card-btn .stButton button:hover {
+    background: #253046;
+}
+
+/* CODE BLOCK */
 
 code {
-
+    background: #111827 !important;
     color: #38bdf8 !important;
+    padding: 3px 6px;
+    border-radius: 6px;
+}
+
+pre {
+    background: #111827 !important;
+    border-radius: 12px !important;
+    padding: 14px !important;
+    overflow-x: auto;
 }
 
 </style>
@@ -426,13 +327,11 @@ with st.sidebar:
             new_chat_name
         ] = []
 
-        st.session_state.current_chat = (
-            new_chat_name
-        )
+        st.session_state.current_chat = new_chat_name
 
         st.rerun()
 
-    # RECENT
+    # RECENT CHATS
 
     st.markdown(
         "<div class='recent-title'>Recent Chats</div>",
@@ -447,6 +346,8 @@ with st.sidebar:
 
         col1, col2 = st.columns([5,1])
 
+        # OPEN CHAT
+
         with col1:
 
             if st.button(
@@ -459,6 +360,8 @@ with st.sidebar:
                 )
 
                 st.rerun()
+
+        # DELETE CHAT
 
         with col2:
 
@@ -502,7 +405,7 @@ with st.sidebar:
                 st.rerun()
 
 # =========================================
-# MAIN
+# MAIN PAGE
 # =========================================
 
 messages = st.session_state.chat_sessions[
@@ -527,41 +430,53 @@ if len(messages) == 0:
     st.markdown(
         """
         <div class='sub-title'>
-            How can I help you today?
+            Think Faster with Aashvi AI ⚡
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    st.markdown(
-        "<div class='home-btn'>",
-        unsafe_allow_html=True
-    )
-
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4 = st.columns(4)
 
     with col1:
 
-        if st.button("🎬 Reel Ideas"):
+        if st.button(
+            "✨ Viral Reel Script"
+        ):
 
-            prompt = "Give me viral reel ideas"
+            prompt = (
+                "Create a viral Instagram reel script"
+            )
 
     with col2:
 
-        if st.button("💻 Python Help"):
+        if st.button(
+            "🚀 YouTube Ideas"
+        ):
 
-            prompt = "Help me with Python"
+            prompt = (
+                "Give me viral YouTube video ideas"
+            )
 
     with col3:
 
-        if st.button("📈 SEO Tips"):
+        if st.button(
+            "💻 Python Error"
+        ):
 
-            prompt = "Give me SEO tips"
+            prompt = (
+                "Help me fix my Python error"
+            )
 
-    st.markdown(
-        "</div>",
-        unsafe_allow_html=True
-    )
+    with col4:
+
+        if st.button(
+            "📈 SEO Strategy"
+        ):
+
+            prompt = (
+                "Create an SEO strategy"
+            )
 
 # =========================================
 # SHOW CHAT
@@ -573,12 +488,10 @@ for message in messages:
 
         st.markdown(
             f"""
-<div class='chat-container'>
-<div class='user-message'>
-{message['content']}
-</div>
-</div>
-""",
+            <div class='user-message'>
+                {message['content']}
+            </div>
+            """,
             unsafe_allow_html=True
         )
 
@@ -586,12 +499,10 @@ for message in messages:
 
         st.markdown(
             f"""
-<div class='chat-container'>
-<div class='ai-message'>
-{message['content']}
-</div>
-</div>
-""",
+            <div class='ai-message'>
+                {message['content']}
+            </div>
+            """,
             unsafe_allow_html=True
         )
 
@@ -613,7 +524,7 @@ if "prompt" in locals():
 
 if user_input:
 
-    # AUTO RENAME
+    # AUTO CHAT RENAME
 
     if (
         st.session_state.current_chat.startswith("Chat")
@@ -650,7 +561,7 @@ if user_input:
 
         st.session_state.current_chat = title
 
-    # SAVE USER
+    # SAVE USER MESSAGE
 
     st.session_state.chat_sessions[
         st.session_state.current_chat
@@ -667,38 +578,38 @@ if user_input:
         user_input
     )
 
-    # SHOW USER
-
     st.markdown(
         f"""
-<div class='chat-container'>
-<div class='user-message'>
-{user_input}
-</div>
-</div>
-""",
+        <div class='user-message'>
+            {user_input}
+        </div>
+        """,
         unsafe_allow_html=True
     )
 
-    # GREETING REPLY
+    # STREAMING RESPONSE
 
-    greetings = [
-        "hi",
-        "hello",
-        "hey",
-        "hii",
-        "yo"
-    ]
+    try:
 
-    if user_input.lower().strip() in greetings:
+        completion = client.chat.completions.create(
 
-        reply = """
-What can I help you with today?
-"""
+            model="llama-3.3-70b-versatile",
 
-        response_placeholder = st.empty()
+            messages=st.session_state.chat_sessions[
+                st.session_state.current_chat
+            ],
+
+            temperature=0.7,
+            max_tokens=1024
+        )
+
+        reply = completion.choices[0].message.content
+
+        # TYPING EFFECT
 
         full_response = ""
+
+        response_placeholder = st.empty()
 
         for word in reply.split():
 
@@ -706,16 +617,16 @@ What can I help you with today?
 
             response_placeholder.markdown(
                 f"""
-<div class='chat-container'>
-<div class='ai-message'>
-{full_response}
-</div>
-</div>
-""",
+                <div class='ai-message'>
+                    {full_response}
+                </div>
+                """,
                 unsafe_allow_html=True
             )
 
             time.sleep(0.03)
+
+        # SAVE AI RESPONSE
 
         st.session_state.chat_sessions[
             st.session_state.current_chat
@@ -732,60 +643,6 @@ What can I help you with today?
             reply
         )
 
-    else:
+    except Exception as e:
 
-        try:
-
-            completion = client.chat.completions.create(
-
-                model="llama-3.3-70b-versatile",
-
-                messages=st.session_state.chat_sessions[
-                    st.session_state.current_chat
-                ],
-
-                temperature=0.7,
-                max_tokens=1024
-            )
-
-            reply = completion.choices[0].message.content
-
-            response_placeholder = st.empty()
-
-            full_response = ""
-
-            for word in reply.split():
-
-                full_response += word + " "
-
-                response_placeholder.markdown(
-                    f"""
-<div class='chat-container'>
-<div class='ai-message'>
-{full_response}
-</div>
-</div>
-""",
-                    unsafe_allow_html=True
-                )
-
-                time.sleep(0.02)
-
-            st.session_state.chat_sessions[
-                st.session_state.current_chat
-            ].append(
-                {
-                    "role": "assistant",
-                    "content": reply
-                }
-            )
-
-            save_message(
-                st.session_state.current_chat,
-                "assistant",
-                reply
-            )
-
-        except Exception as e:
-
-            st.error(f"Error: {e}")
+        st.error(f"Error: {e}")
