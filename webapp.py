@@ -13,7 +13,7 @@ st.set_page_config(
 )
 
 # =========================
-# API CLIENT
+# API
 # =========================
 
 client = Groq(
@@ -27,14 +27,19 @@ client = Groq(
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+if "chat_title" not in st.session_state:
+    st.session_state.chat_title = "New Chat"
+
 # =========================
-# CUSTOM CSS
+# CSS
 # =========================
 
 st.markdown("""
 <style>
 
-/* HIDE STREAMLIT DEFAULT UI */
+/* =========================
+HIDE STREAMLIT
+========================= */
 
 #MainMenu {
     visibility: hidden;
@@ -60,18 +65,19 @@ header {
     display: none;
 }
 
-[data-testid="collapsedControl"] {
-    display: none;
-}
-
-/* APP */
+/* =========================
+APP
+========================= */
 
 .stApp {
     background-color: #212121;
     color: white;
+    overflow: hidden;
 }
 
-/* SIDEBAR */
+/* =========================
+SIDEBAR
+========================= */
 
 section[data-testid="stSidebar"] {
     background-color: #171717;
@@ -79,79 +85,109 @@ section[data-testid="stSidebar"] {
     width: 260px !important;
 }
 
-/* SIDEBAR LOGO */
+/* =========================
+LOGO
+========================= */
 
-.sidebar-logo {
-    font-size: 38px;
+.logo {
+    font-size: 42px;
     font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: 35px;
     color: white;
-    margin-top: 10px;
-    margin-bottom: 30px;
 }
 
-/* NEW CHAT BUTTON */
+/* =========================
+BUTTONS
+========================= */
 
 .stButton button {
     width: 100%;
-    background-color: transparent;
+    background: transparent;
     color: white;
-    border: 1px solid #3a3a3a;
-    border-radius: 12px;
-    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
     text-align: left;
     font-size: 16px;
-    transition: 0.3s;
+    transition: 0.2s;
 }
 
 .stButton button:hover {
-    background-color: #2a2a2a;
-    border: 1px solid #555;
+    background-color: #2b2b2b;
 }
 
-/* CHAT TITLE */
+/* =========================
+RECENT CHAT
+========================= */
+
+.chat-item {
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    color: white;
+    font-size: 15px;
+    background-color: transparent;
+    transition: 0.2s;
+}
+
+.chat-item:hover {
+    background-color: #2a2a2a;
+    cursor: pointer;
+}
+
+/* =========================
+TITLE
+========================= */
 
 .main-title {
     text-align: center;
-    font-size: 70px;
+    font-size: 72px;
     font-weight: 800;
     color: white;
-    margin-top: 60px;
-    margin-bottom: 10px;
+    margin-top: 70px;
 }
-
-/* SUBTITLE */
 
 .sub-title {
     text-align: center;
     color: #b4b4b4;
-    font-size: 24px;
-    margin-bottom: 50px;
+    font-size: 26px;
+    margin-bottom: 60px;
 }
 
-/* CHAT MESSAGE */
+/* =========================
+CHATGPT STYLE CHAT
+========================= */
 
-.chat-user {
-    background-color: #2f2f2f;
-    padding: 18px;
-    border-radius: 14px;
-    margin-bottom: 15px;
-    font-size: 18px;
+.user-message {
+    max-width: 850px;
+    margin: auto;
+    background-color: #303030;
+    padding: 18px 22px;
+    border-radius: 18px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-size: 17px;
+    color: white;
 }
 
-.chat-ai {
-    background-color: transparent;
-    padding: 18px;
-    border-radius: 14px;
-    margin-bottom: 15px;
-    font-size: 18px;
-    line-height: 1.7;
+.ai-message {
+    max-width: 850px;
+    margin: auto;
+    padding: 10px 5px;
+    margin-bottom: 25px;
+    font-size: 17px;
+    line-height: 1.8;
+    color: white;
 }
 
-/* INPUT */
+/* =========================
+INPUT
+========================= */
 
 .stChatInput {
     position: fixed;
-    bottom: 20px;
+    bottom: 18px;
     left: 320px;
     right: 40px;
 }
@@ -161,33 +197,21 @@ section[data-testid="stSidebar"] {
     color: white !important;
     border: 1px solid #444 !important;
     border-radius: 18px !important;
-    padding: 18px !important;
+    padding: 20px !important;
     font-size: 17px !important;
 }
 
-/* RECENT */
+/* =========================
+SCROLL
+========================= */
 
-.recent-title {
-    color: #8e8e8e;
-    font-size: 14px;
-    margin-top: 25px;
-    margin-bottom: 10px;
+::-webkit-scrollbar {
+    width: 7px;
 }
 
-/* CHAT HISTORY */
-
-.chat-history {
-    padding: 12px;
+::-webkit-scrollbar-thumb {
+    background: #444;
     border-radius: 10px;
-    color: white;
-    margin-bottom: 8px;
-    background-color: transparent;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.chat-history:hover {
-    background-color: #2a2a2a;
 }
 
 </style>
@@ -200,37 +224,38 @@ section[data-testid="stSidebar"] {
 with st.sidebar:
 
     st.markdown(
-        "<div class='sidebar-logo'>🌸 Aashvi AI</div>",
+        "<div class='logo'>🌸 Aashvi AI</div>",
         unsafe_allow_html=True
     )
 
     if st.button("➕ New Chat"):
 
         st.session_state.messages = []
+        st.session_state.chat_title = "New Chat"
         st.rerun()
 
+    st.markdown("<br>", unsafe_allow_html=True)
+
     st.markdown(
-        "<div class='recent-title'>Recent Chats</div>",
+        "<div style='color:#9e9e9e;font-size:14px;margin-bottom:15px;'>Recent Chats</div>",
         unsafe_allow_html=True
     )
 
-    st.markdown(
-        "<div class='chat-history'>💬 Motivation Ideas</div>",
-        unsafe_allow_html=True
-    )
+    # AUTO TITLE LIKE CHATGPT
+
+    if len(st.session_state.messages) > 0:
+
+        first_msg = st.session_state.messages[0]["content"][:28]
+
+        st.session_state.chat_title = first_msg
 
     st.markdown(
-        "<div class='chat-history'>💬 Viral Content</div>",
-        unsafe_allow_html=True
-    )
-
-    st.markdown(
-        "<div class='chat-history'>💬 YouTube SEO</div>",
+        f"<div class='chat-item'>💬 {st.session_state.chat_title}</div>",
         unsafe_allow_html=True
     )
 
 # =========================
-# MAIN TITLE
+# TITLE
 # =========================
 
 if len(st.session_state.messages) == 0:
@@ -246,7 +271,7 @@ if len(st.session_state.messages) == 0:
     )
 
 # =========================
-# SHOW CHAT
+# CHAT HISTORY
 # =========================
 
 for message in st.session_state.messages:
@@ -255,8 +280,8 @@ for message in st.session_state.messages:
 
         st.markdown(
             f"""
-            <div class='chat-user'>
-                {message['content']}
+            <div class='user-message'>
+                {message["content"]}
             </div>
             """,
             unsafe_allow_html=True
@@ -266,21 +291,21 @@ for message in st.session_state.messages:
 
         st.markdown(
             f"""
-            <div class='chat-ai'>
-                {message['content']}
+            <div class='ai-message'>
+                {message["content"]}
             </div>
             """,
             unsafe_allow_html=True
         )
 
 # =========================
-# USER INPUT
+# INPUT
 # =========================
 
 prompt = st.chat_input("Ask anything")
 
 # =========================
-# AI RESPONSE
+# RESPONSE
 # =========================
 
 if prompt:
@@ -298,7 +323,7 @@ if prompt:
 
     st.markdown(
         f"""
-        <div class='chat-user'>
+        <div class='user-message'>
             {prompt}
         </div>
         """,
@@ -311,14 +336,10 @@ if prompt:
 
             model="llama-3.3-70b-versatile",
 
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ],
+            messages=st.session_state.messages,
 
             temperature=0.7,
+
             max_tokens=1024
         )
 
@@ -328,7 +349,7 @@ if prompt:
 
         st.markdown(
             f"""
-            <div class='chat-ai'>
+            <div class='ai-message'>
                 {reply}
             </div>
             """,
